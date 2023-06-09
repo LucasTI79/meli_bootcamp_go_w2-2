@@ -15,6 +15,7 @@ var (
 
 type Service interface {
 	Get(id int) (*domain.Buyer, error)
+	GetAll() (*[]domain.Buyer, error)
 }
 
 type service struct {
@@ -43,4 +44,19 @@ func (service *service) Get(id int) (*domain.Buyer, error) {
 	}
 
 	return &buyer, nil
+}
+
+func (service *service) GetAll() (*[]domain.Buyer, error) {
+	// TODO: Remove this
+	ctx := context.TODO()
+
+	buyers := make([]domain.Buyer, 0)
+
+	buyers, err := service.repository.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &buyers, nil
+
 }

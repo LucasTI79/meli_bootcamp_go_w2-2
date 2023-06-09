@@ -45,7 +45,16 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 }
 
 func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+
+		if buyers, err := handler.buyerService.GetAll(); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		} else {
+			c.JSON(http.StatusOK, gin.H{"data": *buyers})
+			return
+		}
+	}
 }
 
 func (handler *BuyerHandler) Create() gin.HandlerFunc {
