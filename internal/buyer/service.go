@@ -1,16 +1,46 @@
 package buyer
 
-import "errors"
+import (
+	"context"
+	"database/sql"
+	"errors"
+
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+)
 
 // Errors
 var (
 	ErrNotFound = errors.New("buyer not found")
 )
 
-type Service interface{}
+type Service interface {
+	Get(id int) (*domain.Buyer, error)
+}
 
-type service struct{}
+type service struct {
+	repository Repository
+}
 
-func NewService() Service {
-	return &service{}
+func NewService(repository Repository) Service {
+	return &service{
+		repository,
+	}
+}
+
+func (service *service) Get(id int) (*domain.Buyer, error) {
+	// TODO: Remove this
+	ctx := context.TODO()
+
+	// Buscar o buyer pelo ID e trata o erro retornado pelo repository
+	buyer, err := service.repository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &buyer, nil
 }

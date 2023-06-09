@@ -6,3 +6,7 @@ type Buyer struct {
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
 }
+
+type BuyerIDRequestDTO struct {
+	ID int `uri:"id" binding:"required"`
+}
