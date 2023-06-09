@@ -17,7 +17,7 @@ type Service interface {
 	GetAll(ctx context.Context) ([]domain.Seller, error)
 	Get(ctx context.Context, id int) (*domain.Seller, error)
 	Save(ctx context.Context, CID int, CompanyName, Adress, Telephone string) (*domain.Seller, error)
-	Update(ctx context.Context, id, CID int, CompanyName, Adress, Telephone string) (*domain.Seller, error)
+	Update(ctx context.Context, id int, updatedSeller domain.Seller) (*domain.Seller, error)
 	Delete(ctx context.Context, id int) error
 }
 
@@ -39,7 +39,7 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Seller, error) {
 	return sellers, nil
 }
 
-func (s *service) Get(ctx context.Context, id int) (*domain.Seller, error){
+func (s *service) Get(ctx context.Context, id int) (*domain.Seller, error) {
 	seller, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,6 @@ func (s *service) Get(ctx context.Context, id int) (*domain.Seller, error){
 
 	return &seller, nil
 }
-
 
 func (s *service) Save(ctx context.Context, cid int, companyName, address, telephone string) (*domain.Seller, error) {
 	existingSeller := s.sellerRepository.Exists(ctx, cid)
@@ -80,38 +79,42 @@ func (s *service) Save(ctx context.Context, cid int, companyName, address, telep
 	return &savedSeller, nil
 }
 
-func (s *service) Update(ctx context.Context, id int, cid int, companyName, address, telephone string) (*domain.Seller, error) {
-	seller, err := s.sellerRepository.Get(ctx, id)
+func (s *service) Update(ctx context.Context, id int, updatedSeller domain.Seller) (*domain.Seller, error) {
+	existingSeller, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	if seller.ID == 0 {
+	if existingSeller.ID == 0 {
 		return nil, ErrNotFound
 	}
 
-	existingSeller := s.sellerRepository.Exists(ctx, cid)
-
-	if existingSeller && cid != seller.CID {
-		return nil, ErrConflict
+	if updatedSeller.CID != 0 {
+		existingSellerSearch := s.sellerRepository.Exists(ctx, updatedSeller.CID)
+		if existingSellerSearch && updatedSeller.CID != existingSeller.CID {
+			return nil, ErrConflict
+		}
+		existingSeller.CID = updatedSeller.CID
+	}
+	if updatedSeller.CompanyName != "" {
+		existingSeller.CompanyName = updatedSeller.CompanyName
+	}
+	if updatedSeller.Address != "" {
+		existingSeller.Address = updatedSeller.Address
+	}
+	if updatedSeller.Telephone != "" {
+		existingSeller.Telephone = updatedSeller.Telephone
 	}
 
-	updateSeller := domain.Seller{
-		CID:         cid,
-		CompanyName: companyName,
-		Address:     address,
-		Telephone:   telephone,
-	}
-
-	err1 := s.sellerRepository.Update(ctx, updateSeller)
+	err1 := s.sellerRepository.Update(ctx, existingSeller)
 	if err1 != nil {
 		return nil, err1
 	}
 
-	return &updateSeller, nil
+	return &existingSeller, nil
 }
 
-func (s *service) Delete(ctx context.Context, id int) error{
+func (s *service) Delete(ctx context.Context, id int) error {
 	seller, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
 		return err

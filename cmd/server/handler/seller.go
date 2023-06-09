@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
@@ -108,14 +109,14 @@ func (s *Seller) Update() gin.HandlerFunc {
 			return
 		}
 
-		var req request
+		var updatedSeller domain.Seller
 
-		if err := c.Bind(&req); err != nil {
+		if err := c.Bind(&updatedSeller); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
 		}
 
-		sellerUpdated, err := s.sellerService.Update(c, int(id), req.CID, req.CompanyName, req.Address, req.Telephone)
+		sellerUpdated, err := s.sellerService.Update(c, int(id), updatedSeller)
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to update: %s", err.Error())
 			return
