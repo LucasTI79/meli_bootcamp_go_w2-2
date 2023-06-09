@@ -18,6 +18,7 @@ type Service interface {
 	GetAll() (*[]domain.Buyer, error)
 	Create(buyer *domain.Buyer) (*domain.Buyer, error)
 	Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error)
+	Delete(id int) error
 }
 
 type service struct {
@@ -107,4 +108,16 @@ func (service *service) Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO)
 
 	return buyer, nil
 
+}
+
+func (service *service) Delete(id int) error {
+	// TODO: Remove this
+	ctx := context.TODO()
+
+	// Busca o buyer pelo ID
+	if _, err := service.Get(id); err != nil {
+		return err
+	}
+
+	return service.repository.Delete(ctx, id)
 }

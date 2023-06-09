@@ -123,5 +123,26 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 }
 
 func (handler *BuyerHandler) Delete() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+
+		// Parse id from url
+		var buyerRequest domain.BuyerIDRequestDTO
+		if err := c.ShouldBindUri(&buyerRequest); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": ErrMissingIdOnRequest.Error()})
+			return
+		}
+
+		if err := handler.buyerService.Delete(buyerRequest.ID); err != nil {
+			switch err {
+			case buyer.ErrNotFound:
+				c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			default:
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
+			return
+		} else {
+			c.JSON(http.StatusNoContent, gin.H{})
+			return
+		}
+	}
 }
