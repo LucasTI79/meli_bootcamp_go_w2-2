@@ -16,6 +16,7 @@ var (
 type Service interface {
 	Get(id int) (*domain.Buyer, error)
 	GetAll() (*[]domain.Buyer, error)
+	Create(buyer *domain.Buyer) (*domain.Buyer, error)
 }
 
 type service struct {
@@ -59,4 +60,18 @@ func (service *service) GetAll() (*[]domain.Buyer, error) {
 
 	return &buyers, nil
 
+}
+
+func (service *service) Create(buyer *domain.Buyer) (*domain.Buyer, error) {
+	// TODO: Remove this
+	ctx := context.TODO()
+
+	id, err := service.repository.Save(ctx, *buyer)
+	if err != nil {
+		return nil, err
+	}
+
+	buyer.ID = id
+
+	return buyer, nil
 }

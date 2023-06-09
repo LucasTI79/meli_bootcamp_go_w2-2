@@ -58,7 +58,30 @@ func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 }
 
 func (handler *BuyerHandler) Create() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+
+		// Parse buyer from body
+		createBuyerRequestDTO := new(domain.CreateBuyerRequestDTO)
+		if err := c.ShouldBindJSON(createBuyerRequestDTO); err != nil {
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Parse DTO to entity
+		buyer := &domain.Buyer{
+			CardNumberID: createBuyerRequestDTO.CardNumberID,
+			FirstName:    createBuyerRequestDTO.FirstName,
+			LastName:     createBuyerRequestDTO.LastName,
+		}
+
+		if buyer, err := handler.buyerService.Create(buyer); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		} else {
+			c.JSON(http.StatusCreated, gin.H{"buyer": buyer})
+			return
+		}
+	}
 }
 
 func (handler *BuyerHandler) Update() gin.HandlerFunc {
