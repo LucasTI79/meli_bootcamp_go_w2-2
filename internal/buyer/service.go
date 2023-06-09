@@ -17,6 +17,7 @@ type Service interface {
 	Get(id int) (*domain.Buyer, error)
 	GetAll() (*[]domain.Buyer, error)
 	Create(buyer *domain.Buyer) (*domain.Buyer, error)
+	Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error)
 }
 
 type service struct {
@@ -74,4 +75,36 @@ func (service *service) Create(buyer *domain.Buyer) (*domain.Buyer, error) {
 	buyer.ID = id
 
 	return buyer, nil
+}
+
+func (service *service) Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
+	// TODO: Remove this
+	ctx := context.TODO()
+
+	// Busca o buyer pelo ID
+	buyer, err := service.Get(updateBuyerRequest.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Sobrescreve os dados do buyer, se houver alteração no request
+	if updateBuyerRequest.CardNumberID != nil {
+		buyer.CardNumberID = *updateBuyerRequest.CardNumberID
+	}
+
+	if updateBuyerRequest.FirstName != nil {
+		buyer.FirstName = *updateBuyerRequest.FirstName
+	}
+
+	if updateBuyerRequest.LastName != nil {
+		buyer.LastName = *updateBuyerRequest.LastName
+	}
+
+	// Atualiza o buyer no banco de dados
+	if err := service.repository.Update(ctx, *buyer); err != nil {
+		return nil, err
+	}
+
+	return buyer, nil
+
 }
