@@ -1,16 +1,17 @@
 package handler
 
 import (
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/gin-gonic/gin"
 )
 
 type Employee struct {
-	// employeeService employee.Service
+	service employee.Service
 }
 
-func NewEmployee() *Employee {
+func NewEmployee(e employee.Service) *Employee {
 	return &Employee{
-		// employeeService: e,
+		service: e,
 	}
 }
 
@@ -19,7 +20,11 @@ func (e *Employee) Get() gin.HandlerFunc {
 }
 
 func (e *Employee) GetAll() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(ctx *gin.Context) {
+		e.service.GetAll(ctx)
+
+		// p, err := linha de cima
+	}
 }
 
 func (e *Employee) Create() gin.HandlerFunc {
