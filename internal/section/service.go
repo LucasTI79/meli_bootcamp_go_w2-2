@@ -2,6 +2,7 @@ package section
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
@@ -13,15 +14,11 @@ var (
 	ErrConflict = errors.New("section with Section Number already exists")
 )
 
-type RequestError struct {
-	Err    error
-	Status int
-}
-
 type Service interface {
 	Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
 		warehouseID, productTypeID int) (*domain.Section, error)
 	GetAll(ctx context.Context) ([]domain.Section, error)
+	Get(ctx context.Context, id int) (*domain.Section, error)
 }
 
 type service struct {
@@ -74,4 +71,18 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Section, error) {
 	}
 
 	return sections, nil
+}
+
+func (s *service) Get(ctx context.Context, id int) (*domain.Section, error) {
+	section, err := s.sectionRepository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &section, nil
 }

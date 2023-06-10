@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
@@ -42,7 +43,24 @@ func (s *Section) GetAll() gin.HandlerFunc {
 }
 
 func (s *Section) Get() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, err.Error())
+			return
+		}
+		sectionResponse, err := s.sectionService.Get(c, int(id))
+		if err != nil {
+			switch err {
+			case section.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error getting section %s", err.Error()))
+			}
+			return
+		}
+		web.Success(c, http.StatusOK, sectionResponse)
+	}
 }
 
 func (s *Section) Create() gin.HandlerFunc {
@@ -93,19 +111,18 @@ func (s *Section) Create() gin.HandlerFunc {
 			return
 		}
 
-		section, err := s.sectionService.Save(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
+		sectionResponse, err := s.sectionService.Save(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
 			req.MinimumCapacity, req.MaximumCapacity, req.WarehouseID, req.ProductTypeID)
 		if err != nil {
-			if err.Error() == "section with Section Number already exists" {
+			switch err {
+			case section.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
-				return
-			} else {
+			default:
 				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error saving request %s", err.Error()))
-				return
 			}
-
+			return
 		}
-		web.Success(c, http.StatusCreated, section)
+		web.Success(c, http.StatusCreated, sectionResponse)
 	}
 }
 
