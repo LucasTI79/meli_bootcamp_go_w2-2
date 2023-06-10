@@ -131,5 +131,25 @@ func (s *Section) Update() gin.HandlerFunc {
 }
 
 func (s *Section) Delete() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+		err = s.sectionService.Delete(c, int(id))
+		if err != nil {
+			switch err {
+			case section.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error deleting section %s", err.Error()))
+			}
+			return
+		}
+
+		web.Success(c, http.StatusNoContent, nil)
+
+	}
+
 }

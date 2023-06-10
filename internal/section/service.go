@@ -19,6 +19,7 @@ type Service interface {
 		warehouseID, productTypeID int) (*domain.Section, error)
 	GetAll(ctx context.Context) ([]domain.Section, error)
 	Get(ctx context.Context, id int) (*domain.Section, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -85,4 +86,17 @@ func (s *service) Get(ctx context.Context, id int) (*domain.Section, error) {
 	}
 
 	return &section, nil
+}
+
+func (s *service) Delete(ctx context.Context, id int) error {
+	err := s.sectionRepository.Delete(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return ErrNotFound
+		default:
+			return err
+		}
+	}
+	return nil
 }
