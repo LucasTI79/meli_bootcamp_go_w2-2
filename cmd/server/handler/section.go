@@ -31,7 +31,14 @@ func NewSection(s section.Service) *Section {
 }
 
 func (s *Section) GetAll() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		sections, err := s.sectionService.GetAll(c)
+		if err != nil {
+			web.Error(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		web.Success(c, http.StatusOK, sections)
+	}
 }
 
 func (s *Section) Get() gin.HandlerFunc {

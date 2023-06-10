@@ -21,6 +21,7 @@ type RequestError struct {
 type Service interface {
 	Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
 		warehouseID, productTypeID int) (*domain.Section, error)
+	GetAll(ctx context.Context) ([]domain.Section, error)
 }
 
 type service struct {
@@ -64,4 +65,13 @@ func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, m
 	}
 
 	return &savedSection, nil
+}
+
+func (s *service) GetAll(ctx context.Context) ([]domain.Section, error) {
+	sections, err := s.sectionRepository.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return sections, nil
 }
