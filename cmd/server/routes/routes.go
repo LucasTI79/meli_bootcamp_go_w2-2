@@ -3,6 +3,8 @@ package routes
 import (
 	"database/sql"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/gin-gonic/gin"
 )
 
@@ -45,7 +47,12 @@ func (r *router) buildSellerRoutes() {
 
 func (r *router) buildProductRoutes() {}
 
-func (r *router) buildSectionRoutes() {}
+func (r *router) buildSectionRoutes() {
+	repo := section.NewRepository(r.db)
+	service := section.NewService(repo)
+	handler := handler.NewSection(service)
+	r.rg.POST("/sections", handler.Create())
+}
 
 func (r *router) buildWarehouseRoutes() {}
 
