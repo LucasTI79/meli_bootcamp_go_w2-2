@@ -20,6 +20,8 @@ type Service interface {
 	GetAll(ctx context.Context) ([]domain.Section, error)
 	Get(ctx context.Context, id int) (*domain.Section, error)
 	Delete(ctx context.Context, id int) error
+	Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
+		warehouseID, productTypeID, id int) (*domain.Section, error)
 }
 
 type service struct {
@@ -99,4 +101,41 @@ func (s *service) Delete(ctx context.Context, id int) error {
 		}
 	}
 	return nil
+}
+
+func (s *service) Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
+	warehouseID, productTypeID, id int) (*domain.Section, error) {
+
+	updatedSection := domain.Section{
+		ID:                 id,
+		SectionNumber:      sectionNumber,
+		CurrentTemperature: currentTemperature,
+		MinimumTemperature: minimumTemperature,
+		CurrentCapacity:    currentCapacity,
+		MinimumCapacity:    minimumCapacity,
+		MaximumCapacity:    maximumCapacity,
+		WarehouseID:        warehouseID,
+		ProductTypeID:      productTypeID,
+	}
+	err := s.sectionRepository.Update(ctx, updatedSection)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	savedSection, err := s.sectionRepository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &savedSection, nil
 }

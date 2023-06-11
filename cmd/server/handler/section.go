@@ -127,7 +127,30 @@ func (s *Section) Create() gin.HandlerFunc {
 }
 
 func (s *Section) Update() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+		var req request
+		if err := c.Bind(&req); err != nil {
+			web.Error(c, http.StatusUnprocessableEntity, err.Error())
+			return
+		}
+		sectionResponse, err := s.sectionService.Update(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
+			req.MinimumCapacity, req.MaximumCapacity, req.WarehouseID, req.ProductTypeID, int(id))
+		if err != nil {
+			switch err {
+			case section.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error updating section %s", err.Error()))
+			}
+			return
+		}
+		web.Success(c, http.StatusOK, sectionResponse)
+	}
 }
 
 func (s *Section) Delete() gin.HandlerFunc {
