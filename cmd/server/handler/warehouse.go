@@ -79,7 +79,29 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 }
 
 func (w *Warehouse) Update() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		warehouseId, e := strconv.Atoi(c.Param("id"))
+		var req dtos.WarehouseRequestDTO
+
+		if e != nil {
+			web.Error(c, 400, "parameter id must be a integer")
+			return
+		}
+
+		if err := c.ShouldBindJSON(&req); err != nil {
+			web.Error(c, 400, "JSON format may be wrong")
+			return
+		}
+
+		result, err := w.warehouseService.Update(c, warehouseId, req)
+
+		if err != nil {
+			web.Error(c, 400, e.Error())
+			return
+		}
+
+		web.Success(c, 200, result)
+	}
 }
 
 func (w *Warehouse) Delete() gin.HandlerFunc {
