@@ -81,7 +81,7 @@ const docTemplate = `{
         },
         "/api/v1/sellers/{id}": {
             "get": {
-                "description": "Get the details of a Seller",
+                "description": "Get the details of a Sellers",
                 "consumes": [
                     "application/json"
                 ],
@@ -89,13 +89,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Seller"
+                    "Sellers"
                 ],
-                "summary": "Get Seller",
+                "summary": "Get Sellers",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of Seller to be searched",
+                        "description": "ID of Sellers to be searched",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -111,7 +111,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete Seller",
+                "description": "Delete Sellers",
                 "consumes": [
                     "application/json"
                 ],
@@ -119,13 +119,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Seller"
+                    "Sellers"
                 ],
-                "summary": "Delete Seller",
+                "summary": "Delete Sellers",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of a Seller to be excluded",
+                        "description": "ID of a Sellers to be excluded",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -141,7 +141,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Update the details of a Seller",
+                "description": "Update the details of a Sellers",
                 "consumes": [
                     "application/json"
                 ],
@@ -149,20 +149,20 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Seller"
+                    "Sellers"
                 ],
-                "summary": "Update Seller",
+                "summary": "Update Sellers",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of Seller to be updated",
+                        "description": "ID of Sellers to be updated",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Updated Seller details",
-                        "name": "Seller",
+                        "description": "Updated Sellers details",
+                        "name": "Sellers",
                         "in": "body",
                         "required": true,
                         "schema": {

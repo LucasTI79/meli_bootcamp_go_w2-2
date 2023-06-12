@@ -82,9 +82,9 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Delete Seller
+      description: Delete Sellers
       parameters:
-      - description: ID of a Seller to be excluded
+      - description: ID of a Sellers to be excluded
         in: path
         name: id
         required: true
@@ -96,15 +96,15 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/web.response'
-      summary: Delete Seller
+      summary: Delete Sellers
       tags:
-      - Seller
+      - Sellers
     get:
       consumes:
       - application/json
-      description: Get the details of a Seller
+      description: Get the details of a Sellers
       parameters:
-      - description: ID of Seller to be searched
+      - description: ID of Sellers to be searched
         in: path
         name: id
         required: true
@@ -116,22 +116,22 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/web.response'
-      summary: Get Seller
+      summary: Get Sellers
       tags:
-      - Seller
+      - Sellers
     patch:
       consumes:
       - application/json
-      description: Update the details of a Seller
+      description: Update the details of a Sellers
       parameters:
-      - description: ID of Seller to be updated
+      - description: ID of Sellers to be updated
         in: path
         name: id
         required: true
         type: string
-      - description: Updated Seller details
+      - description: Updated Sellers details
         in: body
-        name: Seller
+        name: Sellers
         required: true
         schema:
           $ref: '#/definitions/dtos.UpdateSellerRequestDTO'
@@ -142,7 +142,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/web.response'
-      summary: Update Seller
+      summary: Update Sellers
       tags:
-      - Seller
+      - Sellers
 swagger: "2.0"

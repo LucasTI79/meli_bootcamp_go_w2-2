@@ -103,13 +103,13 @@ func (s *Seller) Create() gin.HandlerFunc {
 }
 
 // Method Get
-// GetSeller godoc
-// @Summary Get Seller
-// @Tags Seller
-// @Description Get the details of a Seller
+// GetSellers godoc
+// @Summary Get Sellers
+// @Tags Sellers
+// @Description Get the details of a Sellers
 // @Accept  json
 // @Produce  json
-// @Param id path string true "ID of Seller to be searched"
+// @Param id path string true "ID of Sellers to be searched"
 // @Success 200 {object} web.response
 // @Router /api/v1/sellers/{id} [get]
 func (s *Seller) Get() gin.HandlerFunc {
@@ -131,14 +131,14 @@ func (s *Seller) Get() gin.HandlerFunc {
 }
 
 // Method Update
-// UpdateSeller godoc
-// @Summary Update Seller
-// @Tags Seller
-// @Description Update the details of a Seller
+// UpdateSellers godoc
+// @Summary Update Sellers
+// @Tags Sellers
+// @Description Update the details of a Sellers
 // @Accept  json
 // @Produce  json
-// @Param id path string true "ID of Seller to be updated"
-// @Param Seller body dtos.UpdateSellerRequestDTO true "Updated Seller details"
+// @Param id path string true "ID of Sellers to be updated"
+// @Param Sellers body dtos.UpdateSellerRequestDTO true "Updated Sellers details"
 // @Success 200 {object} web.response
 // @Router /api/v1/sellers/{id} [patch]
 func (s *Seller) Update() gin.HandlerFunc {
@@ -167,13 +167,13 @@ func (s *Seller) Update() gin.HandlerFunc {
 }
 
 // Method Delete
-// DeleteSeller godoc
-// @Summary Delete Seller
-// @Tags Seller
-// @Description Delete Seller
+// DeleteSellers godoc
+// @Summary Delete Sellers
+// @Tags Sellers
+// @Description Delete Sellers
 // @Accept  json
 // @Produce  json
-// @Param id path string true "ID of a Seller to be excluded"
+// @Param id path string true "ID of a Sellers to be excluded"
 // @Success 200 {object} web.response
 // @Router /api/v1/sellers/{id} [delete]
 func (s *Seller) Delete() gin.HandlerFunc {
