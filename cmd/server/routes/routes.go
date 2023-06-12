@@ -5,6 +5,9 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,16 +41,37 @@ func (r *router) setGroup() {
 }
 
 func (r *router) buildSellerRoutes() {
-	// Example
-	// repo := seller.NewRepository(r.db)
-	// service := seller.NewService(repo)
-	// handler := handler.NewSeller(service)
-	// r.r.GET("/seller", handler.GetAll)
+	repo := seller.NewRepository(r.db)
+	service := seller.NewService(repo)
+	handler := handler.NewSeller(service)
+	r.rg.POST("/sellers", handler.Create())
+	r.rg.GET("/sellers", handler.GetAll())
+	r.rg.GET("/sellers/:id", handler.Get())
+	r.rg.PATCH("/sellers/:id", handler.Update())
+	r.rg.DELETE("/sellers/:id", handler.Delete())
 }
 
-func (r *router) buildProductRoutes() {}
+func (r *router) buildProductRoutes() {
+	repo := product.NewRepository(r.db)
+	service := product.NewService(repo)
+	handler := handler.NewProduct(service)
+	r.rg.POST("/products", handler.Create())
+	r.rg.GET("/products", handler.GetAll())
+	r.rg.GET("/products/:id", handler.Get())
+	r.rg.DELETE("/products/:id", handler.Delete())
+	r.rg.PATCH("/products/:id", handler.Update())
+}
 
-func (r *router) buildSectionRoutes() {}
+func (r *router) buildSectionRoutes() {
+	repo := section.NewRepository(r.db)
+	service := section.NewService(repo)
+	handler := handler.NewSection(service)
+	r.rg.POST("/sections", handler.Create())
+	r.rg.GET("/sections", handler.GetAll())
+	r.rg.GET("/sections/:id", handler.Get())
+	r.rg.DELETE("/sections/:id", handler.Delete())
+	r.rg.PATCH("/sections/:id", handler.Update())
+}
 
 func (r *router) buildWarehouseRoutes() {}
 
