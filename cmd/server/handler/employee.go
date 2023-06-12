@@ -42,7 +42,11 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 
 func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		createEmployee := new(domain.RequestCreateEmployee)
+		createEmployee := domain.RequestCreateEmployee{}
+		if err := c.Bind(&createEmployee); err != nil {
+			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
+			return
+		}
 
 		employee := &domain.Employee{
 			CardNumberID: createEmployee.CardNumberID,
@@ -51,7 +55,13 @@ func (e *Employee) Save() gin.HandlerFunc {
 			WarehouseID:  createEmployee.WarehouseID,
 		}
 
-		e.service.Save(c, *employee)
+		employee, err := e.service.Save(c, *employee)
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
+			return
+		}
+
+		web.Success(c, http.StatusCreated, *employee)
 	}
 }
 

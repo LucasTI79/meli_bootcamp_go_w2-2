@@ -28,11 +28,13 @@ func NewService(r Repository) Service {
 }
 
 func (s *service) GetAll(ctx context.Context) (*[]domain.Employee, error) {
-	ps, err := s.repository.GetAll(ctx)
+	employees := []domain.Employee{}
+
+	employees, err := s.repository.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return &ps, nil
+	return &employees, nil
 }
 
 func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error) {
