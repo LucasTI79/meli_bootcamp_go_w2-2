@@ -20,6 +20,16 @@ func NewEmployee(e employee.Service) *Employee {
 	}
 }
 
+// Method Get
+// GetEmployees godoc
+// @Summary Get Employees
+// @Tags Employees
+// @Description Get the details of a Employees
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of Employees to be searched"
+// @Success 200 {object} web.response
+// @Router /api/v1/employees/{id} [get]
 func (e *Employee) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -38,6 +48,15 @@ func (e *Employee) Get() gin.HandlerFunc {
 	}
 }
 
+// Method GetAll
+// ListEmployees godoc
+// @Summary List Employees
+// @Tags Employees
+// @Description getAll employees
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} web.response
+// @Router /api/v1/employees [get]
 func (e *Employee) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		employee, err := e.service.GetAll(c)
@@ -55,6 +74,16 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 	}
 }
 
+// Method Save
+// CreateEmployees godoc
+// @Summary Create Employees
+// @Tags Employees
+// @Description Create employees
+// @Accept  json
+// @Produce  json
+// @Param Employees body domain.RequestCreateEmployee true "Employee to Create"
+// @Success 200 {object} web.response
+// @Router /api/v1/employee [post]
 func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// createEmployee := domain.RequestCreateEmployee{}
@@ -98,6 +127,17 @@ func (e *Employee) Save() gin.HandlerFunc {
 	}
 }
 
+// Method Update
+// UpdateEmployees godoc
+// @Summary Update Employees
+// @Tags Employees
+// @Description Update the details of a Employees
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of Employees to be updated"
+// @Param Employees body domain.RequestUpdateEmployee true "Updated Employeesers details"
+// @Success 200 {object} web.response
+// @Router /api/v1/employees/{id} [patch]
 func (e *Employee) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -123,6 +163,16 @@ func (e *Employee) Update() gin.HandlerFunc {
 	}
 }
 
+// Method Delete
+// DeleteEmployees godoc
+// @Summary Delete Employees
+// @Tags Employees
+// @Description Delete Employees
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of a Employees to be excluded"
+// @Success 200 {object} web.response
+// @Router /api/v1/employees/{id} [delete]
 func (e *Employee) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
