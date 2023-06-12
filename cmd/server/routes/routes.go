@@ -2,6 +2,9 @@ package routes
 
 import (
 	"database/sql"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
@@ -57,6 +60,11 @@ func (r *router) buildBuyerRoutes() {
 	buyerRepository := buyer.NewRepository(r.db)
 	buyerService := buyer.NewService(buyerRepository)
 	buyerHandler := handler.NewBuyer(buyerService)
+
+	// Create custom validation
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterStructValidation(dtos.UpdateBuyerRequestValidation, dtos.UpdateBuyerRequestDTO{})
+	}
 
 	buyerRoutes := r.rg.Group("/buyers/")
 	buyerRoutes.GET(":id", buyerHandler.Get())

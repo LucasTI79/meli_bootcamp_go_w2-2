@@ -17,8 +17,8 @@ var (
 type Service interface {
 	Get(ctx context.Context, id int) (*domain.Buyer, error)
 	GetAll(ctx context.Context) (*[]domain.Buyer, error)
-	Create(ctx context.Context, buyer *domain.Buyer) (*domain.Buyer, error)
-	Update(ctx context.Context, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error)
+	Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error)
+	Update(ctx context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error)
 	Delete(ctx context.Context, id int) error
 }
 
@@ -33,7 +33,6 @@ func NewService(repository Repository) Service {
 }
 
 func (service *service) Get(ctx context.Context, id int) (*domain.Buyer, error) {
-	// Buscar o buyer pelo ID e trata o erro retornado pelo repository
 	buyer, err := service.repository.Get(ctx, id)
 	if err != nil {
 		switch err {
@@ -59,7 +58,9 @@ func (service *service) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
 
 }
 
-func (service *service) Create(ctx context.Context, buyer *domain.Buyer) (*domain.Buyer, error) {
+func (service *service) Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
+	buyer := createBuyerRequest.ToDomain()
+
 	id, err := service.repository.Save(ctx, *buyer)
 	if err != nil {
 		return nil, err
@@ -70,9 +71,9 @@ func (service *service) Create(ctx context.Context, buyer *domain.Buyer) (*domai
 	return buyer, nil
 }
 
-func (service *service) Update(ctx context.Context, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
+func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
 	// Busca o buyer pelo ID
-	buyer, err := service.Get(ctx, updateBuyerRequest.ID)
+	buyer, err := service.Get(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +91,6 @@ func (service *service) Update(ctx context.Context, updateBuyerRequest *dtos.Upd
 		buyer.LastName = *updateBuyerRequest.LastName
 	}
 
-	// Atualiza o buyer no banco de dados
 	if err := service.repository.Update(ctx, *buyer); err != nil {
 		return nil, err
 	}
