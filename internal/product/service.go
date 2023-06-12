@@ -16,6 +16,7 @@ var (
 type Service interface {
 	Save(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
 		recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error)
+	GetAll(ctx context.Context) ([]domain.Product, error)
 }
 
 type service struct {
@@ -62,4 +63,13 @@ func (s *service) Save(ctx context.Context, description string, expiration_rate,
 	}
 
 	return &savedProduct, nil
+}
+
+func (s *service) GetAll(ctx context.Context) ([]domain.Product, error) {
+	products, err := s.productRepository.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }

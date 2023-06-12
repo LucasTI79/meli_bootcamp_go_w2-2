@@ -34,7 +34,14 @@ func NewProduct(p product.Service) *Product {
 }
 
 func (p *Product) GetAll() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		products, err := p.productService.GetAll(c)
+		if err != nil {
+			web.Error(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+		web.Success(c, http.StatusOK, products)
+	}
 }
 
 func (p *Product) Get() gin.HandlerFunc {
