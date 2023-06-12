@@ -7,7 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/routes"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/docs"
-	"github.com/swaggo/files"
+	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
