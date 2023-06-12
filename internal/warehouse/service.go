@@ -18,6 +18,7 @@ type Service interface{
 	GetAll(c context.Context) (*[]domain.Warehouse, error)
 	GetOne(c context.Context, id int) (*domain.Warehouse, error)
 	Update(c context.Context, id int, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
+	Delete(c context.Context, id int) error
 }
 
 type service struct{
@@ -89,6 +90,16 @@ func (s *service) Update(c context.Context, id int, dto dtos.WarehouseRequestDTO
 	}
 
 	return newWarehouse, nil
+}
+
+func (s *service) Delete(c context.Context, id int) error {
+	result := s.repository.Delete(c, id)
+
+	if result != nil {
+		return ErrNotFound
+	}
+
+	return nil
 }
 
 func NewService(r Repository) Service {
