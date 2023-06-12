@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"strconv"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/warehousesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse"
@@ -21,8 +22,21 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 
 func (w *Warehouse) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		warehouseId, e := strconv.Atoi(c.Param("id"))
 
+		if e != nil {
+			web.Error(c, 400, "parameter id must be a integer")
+			return
+		}
 
+		result, err := w.warehouseService.GetOne(c, warehouseId)
+
+		if err != nil {
+			web.Error(c, 404, err.Error())
+			return
+		}
+
+		web.Success(c, 200, result)
 	}
 }
 
