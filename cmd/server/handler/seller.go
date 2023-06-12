@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,15 @@ func NewSeller(s seller.Service) *Seller {
 	}
 }
 
+// Method GetAll
+// ListSellers godoc
+// @Summary List sellers
+// @Tags Sellers
+// @Description getAll sellers
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} web.response
+// @Router /api/v1/sellers [get]
 func (s *Seller) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sellers, err := s.sellerService.GetAll(c)
@@ -37,9 +47,19 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 	}
 }
 
+// Method Create
+// CreateSellers godoc
+// @Summary Create Sellers
+// @Tags Sellers
+// @Description Create sellers
+// @Accept  json
+// @Produce  json
+// @Param Seller body dtos.CreateSellerRequestDTO true "Seller to Create"
+// @Success 200 {object} web.response
+// @Router /api/v1/sellers [post]
 func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		createSellerRequestDTO := new(domain.CreateSellerRequestDTO)
+		createSellerRequestDTO := new(dtos.CreateSellerRequestDTO)
 		if err := c.Bind(&createSellerRequestDTO); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
@@ -82,6 +102,16 @@ func (s *Seller) Create() gin.HandlerFunc {
 	}
 }
 
+// Method Get
+// GetSeller godoc
+// @Summary Get Seller
+// @Tags Seller
+// @Description Get the details of a Seller
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of Seller to be searched"
+// @Success 200 {object} web.response
+// @Router /api/v1/sellers/{id} [get]
 func (s *Seller) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -100,6 +130,17 @@ func (s *Seller) Get() gin.HandlerFunc {
 	}
 }
 
+// Method Update
+// UpdateSeller godoc
+// @Summary Update Seller
+// @Tags Seller
+// @Description Update the details of a Seller
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of Seller to be updated"
+// @Param Seller body dtos.UpdateSellerRequestDTO true "Updated Seller details"
+// @Success 200 {object} web.response
+// @Router /api/v1/sellers/{id} [patch]
 func (s *Seller) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -108,7 +149,7 @@ func (s *Seller) Update() gin.HandlerFunc {
 			return
 		}
 
-		updateSellerRequestDTO := new(domain.UpdateSellerRequestDTO)
+		updateSellerRequestDTO := new(dtos.UpdateSellerRequestDTO)
 
 		if err := c.Bind(&updateSellerRequestDTO); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
@@ -125,6 +166,16 @@ func (s *Seller) Update() gin.HandlerFunc {
 	}
 }
 
+// Method Delete
+// DeleteSeller godoc
+// @Summary Delete Seller
+// @Tags Seller
+// @Description Delete Seller
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of a Seller to be excluded"
+// @Success 200 {object} web.response
+// @Router /api/v1/sellers/{id} [delete]
 func (s *Seller) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))

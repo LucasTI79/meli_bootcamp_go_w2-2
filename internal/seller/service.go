@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
@@ -18,7 +19,7 @@ type Service interface {
 	GetAll(ctx context.Context) (*[]domain.Seller, error)
 	Get(ctx context.Context, id int) (*domain.Seller, error)
 	Save(ctx context.Context, seller domain.Seller) (*domain.Seller, error)
-	Update(ctx context.Context, id int, updateSellerRequest *domain.UpdateSellerRequestDTO) (*domain.Seller, error)
+	Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error)
 	Delete(ctx context.Context, id int) error
 }
 
@@ -72,7 +73,7 @@ func (s *service) Save(ctx context.Context, seller domain.Seller) (*domain.Selle
 	return &seller, nil
 }
 
-func (s *service) Update(ctx context.Context, id int, updateSellerRequest *domain.UpdateSellerRequestDTO) (*domain.Seller, error) {
+func (s *service) Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {
 	existingSeller, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
 		switch err {
