@@ -1,0 +1,148 @@
+definitions:
+  dtos.CreateSellerRequestDTO:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      telephone:
+        type: string
+    required:
+    - address
+    - cid
+    - company_name
+    - telephone
+    type: object
+  dtos.UpdateSellerRequestDTO:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      telephone:
+        type: string
+    type: object
+  web.response:
+    properties:
+      data: {}
+    type: object
+info:
+  contact:
+    name: API Support
+    url: https://developers.mercadolibre.com.ar/support
+  description: This API Handle MELI - Sprint 1 - Grupo 2
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://developers.mercadolibre.com.ar/es_ar/terminos-y-condiciones
+  title: MELI Bootcamp API - Sprint 1 - Grupo 2
+  version: "1.0"
+paths:
+  /api/v1/sellers:
+    get:
+      consumes:
+      - application/json
+      description: getAll sellers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List sellers
+      tags:
+      - Sellers
+    post:
+      consumes:
+      - application/json
+      description: Create sellers
+      parameters:
+      - description: Seller to Create
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateSellerRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Sellers
+      tags:
+      - Sellers
+  /api/v1/sellers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Sellers
+      parameters:
+      - description: ID of a Sellers to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Sellers
+      tags:
+      - Sellers
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Sellers
+      parameters:
+      - description: ID of Sellers to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Sellers
+      tags:
+      - Sellers
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Sellers
+      parameters:
+      - description: ID of Sellers to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Sellers details
+        in: body
+        name: Sellers
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateSellerRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Sellers
+      tags:
+      - Sellers
+swagger: "2.0"
