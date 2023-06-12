@@ -22,6 +22,7 @@ EM NENHUM CASO VOCÊ DEVE COLOCAR UMA SENHA
 # Para documentar com o Swagger
 
 Rode os seguintes comandos pelo terminal na pasta principal do projeto, separadamente:
+
 go install github.com/swaggo/swag/cmd/swag@latest
 
 go mod tidy
