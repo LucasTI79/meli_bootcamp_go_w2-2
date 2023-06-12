@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/gin-gonic/gin"
@@ -60,7 +61,16 @@ func (r *router) buildProductRoutes() {
 	r.rg.PATCH("/products/:id", handler.Update())
 }
 
-func (r *router) buildSectionRoutes() {}
+func (r *router) buildSectionRoutes() {
+	repo := section.NewRepository(r.db)
+	service := section.NewService(repo)
+	handler := handler.NewSection(service)
+	r.rg.POST("/sections", handler.Create())
+	r.rg.GET("/sections", handler.GetAll())
+	r.rg.GET("/sections/:id", handler.Get())
+	r.rg.DELETE("/sections/:id", handler.Delete())
+	r.rg.PATCH("/sections/:id", handler.Update())
+}
 
 func (r *router) buildWarehouseRoutes() {}
 
