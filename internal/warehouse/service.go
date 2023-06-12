@@ -13,18 +13,32 @@ var (
 )
 
 type Service interface{
-	Create(dto domain.WarehouseRequestDTO) (domain.Warehouse, error)
+	Create(c context.Context,dto domain.WarehouseRequestDTO) (domain.Warehouse, error)
 }
 
 type service struct{
-	repository 
+	repository Repository
 }
 
-func (s *service) Create(c context.Context,  dto domain.Warehouse) (domain.Warehouse, error) {
-	result, err := s.repository.Save(c, dto)
-	return result, err
+func (s *service) Create(c context.Context, dto domain.WarehouseRequestDTO) (domain.Warehouse, error) {
+	exists := s.repository.Exists(c, dto.WarehouseCode)
+	if exists {
+		return domain.Warehouse{}, errors.New("já existe um warehouse com este código")
+	}
+
+	var formatter domain.Warehouse = domain.Warehouse{ID: 0, Address: dto.Address, Telephone: dto.Telephone, WarehouseCode: dto.WarehouseCode, MinimumCapacity: dto.MinimumCapacity, MinimumTemperature: dto.MinimumTemperature}
+
+	id, err := s.repository.Save(c, formatter)
+
+	if err != nil {
+		return domain.Warehouse{}, err
+	}
+
+	formatter.ID = id
+
+	return formatter, nil
 }
 
 func NewService(r Repository) Service {
-	return &service{}
+	return &service{ repository: r }
 }
