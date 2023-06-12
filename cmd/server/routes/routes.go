@@ -56,8 +56,8 @@ func (r *router) buildEmployeeRoutes() {
 	service := employee.NewService(repo)
 	handler := handler.NewEmployee(service)
 
-	r.rg.POST("/employee", handler.Save())
-	r.rg.GET("/employee", handler.GetAll())
+	r.rg.POST("/employees", handler.Save())
+	r.rg.GET("/employees", handler.GetAll())
 
 }
 
