@@ -29,7 +29,7 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 		result, err := w.warehouseService.GetAll(c)
 
 		if err != nil {
-			web.Error(c, 404, "no warehouses were found")
+			web.Error(c, 404, err.Error())
 			return
 		}
 
