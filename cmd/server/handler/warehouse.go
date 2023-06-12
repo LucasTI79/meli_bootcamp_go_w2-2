@@ -36,7 +36,32 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 			return
 		}
 
-		result, e := w.warehouseService.Create(req)
+		if req.Address == "" {
+			web.Error(c, 422, `field "address" is missing` )
+
+			return 
+		}
+		if req.Telephone == "" {
+			web.Error(c, 422, `field "telephone" is missing`)
+
+			return
+		}
+		if req.WarehouseCode == "" {
+			web.Error(c, 422, `field "warehousecode" is missing`)
+
+			return
+		}
+		if req.MinimumCapacity == 0 {
+			web.Error(c, 422, `field "minimumcapacity" is missing`)
+
+			return
+		}
+		if req.MinimumTemperature == 0 {
+			web.Error(c, 422, `field "minimumtemperature" is missing`)
+			return
+		}
+
+		result, e := w.warehouseService.Create(c, req)
 		if e != nil {
 			web.Error(c, 400, e.Error())
 		}
