@@ -59,6 +59,7 @@ func (r *router) buildEmployeeRoutes() {
 	r.rg.POST("/employees", handler.Save())
 	r.rg.GET("/employees", handler.GetAll())
 	r.rg.GET("/employees/:id", handler.Get())
+	r.rg.PATCH("/employees/:id", handler.Update())
 
 }
 

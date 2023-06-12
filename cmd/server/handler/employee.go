@@ -99,7 +99,28 @@ func (e *Employee) Save() gin.HandlerFunc {
 }
 
 func (e *Employee) Update() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+
+		ReqUpdateEmployee := new(domain.RequestUpdateEmployee)
+
+		if err := c.Bind(&ReqUpdateEmployee); err != nil {
+			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
+			return
+		}
+
+		employeeUpdate, err := e.service.Update(c, id, ReqUpdateEmployee)
+		if err != nil {
+			web.Error(c, http.StatusNotFound, "Error to update: %s", err.Error())
+			return
+		}
+
+		web.Success(c, http.StatusOK, employeeUpdate)
+	}
 }
 
 func (e *Employee) Delete() gin.HandlerFunc {

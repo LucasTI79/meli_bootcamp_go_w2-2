@@ -18,6 +18,7 @@ type Service interface {
 	Get(ctx context.Context, id int) (*domain.Employee, error)
 	GetAll(ctx context.Context) (*[]domain.Employee, error)
 	Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error)
+	Update(ctx context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error)
 }
 
 type service struct {
@@ -69,4 +70,41 @@ func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.E
 	employee.ID = id
 
 	return &employee, nil
+}
+
+func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error) {
+	existingEmployee, err := s.repository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	if reqUpdateEmployee.CardNumberID != nil {
+		existingEmployeeSearch := s.repository.Exists(ctx, *reqUpdateEmployee.CardNumberID)
+		if existingEmployeeSearch && *reqUpdateEmployee.CardNumberID != existingEmployee.CardNumberID {
+			return nil, ErrConflict
+		}
+		reqUpdateEmployee.CardNumberID = *&reqUpdateEmployee.CardNumberID
+	}
+
+	if reqUpdateEmployee.FirstName != nil {
+		existingEmployee.FirstName = *reqUpdateEmployee.FirstName
+	}
+	if reqUpdateEmployee.LastName != nil {
+		existingEmployee.LastName = *reqUpdateEmployee.LastName
+	}
+	if reqUpdateEmployee.WarehouseID != nil {
+		existingEmployee.WarehouseID = *reqUpdateEmployee.WarehouseID
+	}
+
+	err1 := s.repository.Update(ctx, existingEmployee)
+	if err1 != nil {
+		return nil, err1
+	}
+
+	return &existingEmployee, nil
 }
