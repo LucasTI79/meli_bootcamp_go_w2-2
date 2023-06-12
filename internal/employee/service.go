@@ -13,7 +13,7 @@ var (
 )
 
 type Service interface {
-	GetAll(ctx context.Context) ([]domain.Employee, error)
+	GetAll(ctx context.Context) (*[]domain.Employee, error)
 	Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error)
 }
 
@@ -27,12 +27,12 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) GetAll(ctx context.Context) ([]domain.Employee, error) {
+func (s *service) GetAll(ctx context.Context) (*[]domain.Employee, error) {
 	ps, err := s.repository.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return ps, nil
+	return &ps, nil
 }
 
 func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error) {

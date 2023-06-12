@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,10 +24,19 @@ func (e *Employee) Get() gin.HandlerFunc {
 }
 
 func (e *Employee) GetAll() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		e.service.GetAll(ctx)
+	return func(c *gin.Context) {
+		employee, err := e.service.GetAll(c)
+		if err != nil {
+			web.Error(c, http.StatusInternalServerError, "Failed to get employee: %s", err.Error())
+			return
+		}
 
-		// p, err := linha de cima
+		if len(*employee) == 0 {
+			web.Error(c, http.StatusNotFound, "There are no employee stored: %s", err.Error())
+			return
+		}
+
+		web.Success(c, http.StatusOK, *employee)
 	}
 }
 
