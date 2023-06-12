@@ -24,7 +24,7 @@ type service struct{
 func (s *service) Create(c context.Context, dto domain.WarehouseRequestDTO) (*domain.Warehouse, error) {
 	exists := s.repository.Exists(c, dto.WarehouseCode)
 	if exists {
-		return nil, errors.New("já existe um warehouse com este código")
+		return nil, errors.New("a warehouse with this warehouse_code already existis")
 	}
 
 	var formatter domain.Warehouse = domain.Warehouse{ID: 0, Address: dto.Address, Telephone: dto.Telephone, WarehouseCode: dto.WarehouseCode, MinimumCapacity: dto.MinimumCapacity, MinimumTemperature: dto.MinimumTemperature}
