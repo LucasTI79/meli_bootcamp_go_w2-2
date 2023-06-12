@@ -18,3 +18,15 @@ Verifique o status do MySQL: execute o comando 'make build-database' da raiz do 
 Execute o comando de criação do banco de dados: Verifique com o status 'mysql.server' para verificar se o serviço foi inicializado. Caso contrário, execute o comando 'mysql.server start'
 
 EM NENHUM CASO VOCÊ DEVE COLOCAR UMA SENHA
+
+# Para documentar com o Swagger
+
+Rode os seguintes comandos pelo terminal na pasta principal do projeto, separadamente:
+go install github.com/swaggo/swag/cmd/swag@latest
+
+go mod tidy
+
+export PATH=$PATH:$HOME/go/bin
+
+# Após fazer suas alterações de documentação, rode sempre o comando abaixo para atualizá-las no projeto
+swag init -g cmd/server/main.go
