@@ -53,8 +53,7 @@ func (r *router) buildWarehouseRoutes() {
 	repository:= warehouse.NewRepository(r.db)
 	service := warehouse.NewService(repository)
 	handler := handler.NewWarehouse(service)
-	r.eng.Group("/warehouses")
-	r.eng.POST("/", handler.Create())
+	r.rg.POST("/warehouses", handler.Create())
 }
 
 func (r *router) buildEmployeeRoutes() {}
