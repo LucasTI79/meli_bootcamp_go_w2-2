@@ -10,7 +10,7 @@ import (
 // Repository encapsulates the storage of a Seller.
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.Seller, error)
-	Get(ctx context.Context, id int) (domain.Seller, error)
+	Get(ctx context.Context, id int) (*domain.Seller, error)
 	Exists(ctx context.Context, cid int) bool
 	Save(ctx context.Context, s domain.Seller) (int, error)
 	Update(ctx context.Context, s domain.Seller) error
@@ -45,16 +45,20 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Seller, error) {
 	return sellers, nil
 }
 
-func (r *repository) Get(ctx context.Context, id int) (domain.Seller, error) {
+func (r *repository) Get(ctx context.Context, id int) (*domain.Seller, error) {
 	query := "SELECT * FROM sellers WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	s := domain.Seller{}
 	err := row.Scan(&s.ID, &s.CID, &s.CompanyName, &s.Address, &s.Telephone)
 	if err != nil {
-		return domain.Seller{}, err
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return &domain.Seller{}, err
+		}
 	}
-
-	return s, nil
+	return &s, nil
 }
 
 func (r *repository) Exists(ctx context.Context, cid int) bool {
