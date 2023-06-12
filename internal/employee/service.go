@@ -2,6 +2,7 @@ package employee
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
@@ -14,6 +15,7 @@ var (
 )
 
 type Service interface {
+	Get(ctx context.Context, id int) (*domain.Employee, error)
 	GetAll(ctx context.Context) (*[]domain.Employee, error)
 	Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error)
 }
@@ -26,6 +28,19 @@ func NewService(r Repository) Service {
 	return &service{
 		repository: r,
 	}
+}
+
+func (s *service) Get(ctx context.Context, id int) (*domain.Employee, error) {
+	employees, err := s.repository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+	return &employees, nil
 }
 
 func (s *service) GetAll(ctx context.Context) (*[]domain.Employee, error) {
