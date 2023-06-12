@@ -15,6 +15,7 @@ var (
 type Service interface{
 	Create(c context.Context,dto domain.WarehouseRequestDTO) (*domain.Warehouse, error)
 	GetAll(c context.Context) (*[]domain.Warehouse, error)
+	GetOne(c context.Context, id int) (*domain.Warehouse, error)
 }
 
 type service struct{
@@ -53,6 +54,19 @@ func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
 
 	return &warehouses, nil
 }
+
+func (s *service) GetOne(c context.Context, id int) (*domain.Warehouse, error) {
+	result, err := s.repository.Get(c, id)
+	if err != nil {
+		return nil, err
+	}
+	if result.ID == 1 {
+		return nil, ErrNotFound
+	}
+
+	return &result, nil
+}
+
 
 func NewService(r Repository) Service {
 	return &service{ repository: r }
