@@ -145,7 +145,30 @@ func (p *Product) Create() gin.HandlerFunc {
 }
 
 func (p *Product) Update() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+		var req requestProduct
+		if err := c.Bind(&req); err != nil {
+			web.Error(c, http.StatusUnprocessableEntity, err.Error())
+			return
+		}
+		sectionResponse, err := p.productService.Update(c, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
+			req.Length, req.Netweight, req.ProductCode, req.RecomFreezTemp, req.Width, req.ProductTypeID, req.SellerID, id)
+		if err != nil {
+			switch err {
+			case product.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error updating product %s", err.Error()))
+			}
+			return
+		}
+		web.Success(c, http.StatusOK, sectionResponse)
+	}
 }
 
 func (p *Product) Delete() gin.HandlerFunc {

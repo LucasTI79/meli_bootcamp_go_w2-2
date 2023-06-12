@@ -20,6 +20,8 @@ type Service interface {
 	GetAll(ctx context.Context) ([]domain.Product, error)
 	Get(ctx context.Context, id int) (*domain.Product, error)
 	Delete(ctx context.Context, id int) error
+	Update(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
+		recommended_freezing_temperature, width float32, product_type_id, seller_id, id int) (*domain.Product, error)
 }
 
 type service struct {
@@ -102,4 +104,44 @@ func (s *service) Delete(ctx context.Context, id int) error {
 		}
 	}
 	return nil
+}
+
+func (s *service) Update(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
+	recommended_freezing_temperature, width float32, product_type_id, seller_id, id int) (*domain.Product, error) {
+
+	updatedProduct := domain.Product{
+		ID:             id,
+		Description:    description,
+		ExpirationRate: expiration_rate,
+		FreezingRate:   freezing_rate,
+		Height:         height,
+		Length:         length,
+		Netweight:      netweight,
+		ProductCode:    product_code,
+		RecomFreezTemp: recommended_freezing_temperature,
+		Width:          width,
+		ProductTypeID:  product_type_id,
+		SellerID:       seller_id,
+	}
+	err := s.productRepository.Update(ctx, updatedProduct)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	savedProduct, err := s.productRepository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &savedProduct, nil
 }
