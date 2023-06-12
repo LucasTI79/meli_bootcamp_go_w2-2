@@ -6,21 +6,3 @@ type Buyer struct {
 	FirstName    string `json:"first_name"`
 	LastName     string `json:"last_name"`
 }
-
-type BuyerIDRequestDTO struct {
-	ID int `uri:"id" binding:"required"`
-}
-
-type CreateBuyerRequestDTO struct {
-	CardNumberID string `json:"card_number_id" binding:"required"`
-	FirstName    string `json:"first_name" binding:"required"`
-	LastName     string `json:"last_name" binding:"required"`
-}
-
-type UpdateBuyerRequestDTO struct {
-	ID int `uri:"id" binding:"required"`
-	// TODO: Validate if has at least one field to update
-	CardNumberID *string `json:"card_number_id" binding:"-"`
-	FirstName    *string `json:"first_name" binding:"-"`
-	LastName     *string `json:"last_name" binding:"-"`
-}

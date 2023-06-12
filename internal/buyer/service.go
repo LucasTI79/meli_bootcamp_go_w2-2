@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
@@ -17,7 +18,7 @@ type Service interface {
 	Get(ctx context.Context, id int) (*domain.Buyer, error)
 	GetAll(ctx context.Context) (*[]domain.Buyer, error)
 	Create(ctx context.Context, buyer *domain.Buyer) (*domain.Buyer, error)
-	Update(ctx context.Context, updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error)
+	Update(ctx context.Context, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error)
 	Delete(ctx context.Context, id int) error
 }
 
@@ -69,7 +70,7 @@ func (service *service) Create(ctx context.Context, buyer *domain.Buyer) (*domai
 	return buyer, nil
 }
 
-func (service *service) Update(ctx context.Context, updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
+func (service *service) Update(ctx context.Context, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
 	// Busca o buyer pelo ID
 	buyer, err := service.Get(ctx, updateBuyerRequest.ID)
 	if err != nil {
