@@ -34,7 +34,7 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 			return
 		}
 
-		if buyerResponse, err := handler.buyerService.Get(buyerRequest.ID); err != nil {
+		if buyerResponse, err := handler.buyerService.Get(c, buyerRequest.ID); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -53,7 +53,7 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if buyers, err := handler.buyerService.GetAll(); err != nil {
+		if buyers, err := handler.buyerService.GetAll(c); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		} else {
@@ -80,7 +80,7 @@ func (handler *BuyerHandler) Create() gin.HandlerFunc {
 			LastName:     createBuyerRequestDTO.LastName,
 		}
 
-		if buyer, err := handler.buyerService.Create(buyer); err != nil {
+		if buyer, err := handler.buyerService.Create(c, buyer); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		} else {
@@ -107,7 +107,7 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 			return
 		}
 
-		if updatedBuyer, err := handler.buyerService.Update(updateBuyerRequest); err != nil {
+		if updatedBuyer, err := handler.buyerService.Update(c, updateBuyerRequest); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -132,7 +132,7 @@ func (handler *BuyerHandler) Delete() gin.HandlerFunc {
 			return
 		}
 
-		if err := handler.buyerService.Delete(buyerRequest.ID); err != nil {
+		if err := handler.buyerService.Delete(c, buyerRequest.ID); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})

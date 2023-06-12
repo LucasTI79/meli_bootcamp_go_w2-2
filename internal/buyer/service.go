@@ -14,11 +14,11 @@ var (
 )
 
 type Service interface {
-	Get(id int) (*domain.Buyer, error)
-	GetAll() (*[]domain.Buyer, error)
-	Create(buyer *domain.Buyer) (*domain.Buyer, error)
-	Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error)
-	Delete(id int) error
+	Get(ctx context.Context, id int) (*domain.Buyer, error)
+	GetAll(ctx context.Context) (*[]domain.Buyer, error)
+	Create(ctx context.Context, buyer *domain.Buyer) (*domain.Buyer, error)
+	Update(ctx context.Context, updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -31,10 +31,7 @@ func NewService(repository Repository) Service {
 	}
 }
 
-func (service *service) Get(id int) (*domain.Buyer, error) {
-	// TODO: Remove this
-	ctx := context.TODO()
-
+func (service *service) Get(ctx context.Context, id int) (*domain.Buyer, error) {
 	// Buscar o buyer pelo ID e trata o erro retornado pelo repository
 	buyer, err := service.repository.Get(ctx, id)
 	if err != nil {
@@ -49,10 +46,7 @@ func (service *service) Get(id int) (*domain.Buyer, error) {
 	return &buyer, nil
 }
 
-func (service *service) GetAll() (*[]domain.Buyer, error) {
-	// TODO: Remove this
-	ctx := context.TODO()
-
+func (service *service) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
 	buyers := make([]domain.Buyer, 0)
 
 	buyers, err := service.repository.GetAll(ctx)
@@ -64,10 +58,7 @@ func (service *service) GetAll() (*[]domain.Buyer, error) {
 
 }
 
-func (service *service) Create(buyer *domain.Buyer) (*domain.Buyer, error) {
-	// TODO: Remove this
-	ctx := context.TODO()
-
+func (service *service) Create(ctx context.Context, buyer *domain.Buyer) (*domain.Buyer, error) {
 	id, err := service.repository.Save(ctx, *buyer)
 	if err != nil {
 		return nil, err
@@ -78,12 +69,9 @@ func (service *service) Create(buyer *domain.Buyer) (*domain.Buyer, error) {
 	return buyer, nil
 }
 
-func (service *service) Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
-	// TODO: Remove this
-	ctx := context.TODO()
-
+func (service *service) Update(ctx context.Context, updateBuyerRequest *domain.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
 	// Busca o buyer pelo ID
-	buyer, err := service.Get(updateBuyerRequest.ID)
+	buyer, err := service.Get(ctx, updateBuyerRequest.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -110,12 +98,9 @@ func (service *service) Update(updateBuyerRequest *domain.UpdateBuyerRequestDTO)
 
 }
 
-func (service *service) Delete(id int) error {
-	// TODO: Remove this
-	ctx := context.TODO()
-
+func (service *service) Delete(ctx context.Context, id int) error {
 	// Busca o buyer pelo ID
-	if _, err := service.Get(id); err != nil {
+	if _, err := service.Get(ctx, id); err != nil {
 		return err
 	}
 
