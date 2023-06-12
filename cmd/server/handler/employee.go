@@ -28,7 +28,7 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 	}
 }
 
-func (e *Employee) Create() gin.HandlerFunc {
+func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		createEmployee := new(domain.RequestCreateEmployee)
 
