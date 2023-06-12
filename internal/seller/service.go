@@ -2,7 +2,6 @@ package seller
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
@@ -46,15 +45,10 @@ func (s *service) GetAll(ctx context.Context) (*[]domain.Seller, error) {
 func (s *service) Get(ctx context.Context, id int) (*domain.Seller, error) {
 	seller, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
+		return nil, err
 	}
 
-	return &seller, nil
+	return seller, nil
 }
 
 func (s *service) Save(ctx context.Context, seller domain.Seller) (*domain.Seller, error) {
@@ -76,12 +70,7 @@ func (s *service) Save(ctx context.Context, seller domain.Seller) (*domain.Selle
 func (s *service) Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {
 	existingSeller, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
+		return nil, err
 	}
 
 	if updateSellerRequest.CID != nil {
@@ -101,23 +90,18 @@ func (s *service) Update(ctx context.Context, id int, updateSellerRequest *dtos.
 		existingSeller.Telephone = *updateSellerRequest.Telephone
 	}
 
-	err1 := s.sellerRepository.Update(ctx, existingSeller)
+	err1 := s.sellerRepository.Update(ctx, *existingSeller)
 	if err1 != nil {
 		return nil, err1
 	}
 
-	return &existingSeller, nil
+	return existingSeller, nil
 }
 
 func (s *service) Delete(ctx context.Context, id int) error {
 	_, err := s.sellerRepository.Get(ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return ErrNotFound
-		default:
-			return err
-		}
+		return err
 	}
 
 	err1 := s.sellerRepository.Delete(ctx, id)

@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
@@ -39,7 +40,7 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 		}
 
 		if len(*sellers) == 0 {
-			web.Error(c, http.StatusNotFound, "There are no sellers stored: %s", err.Error())
+			web.Error(c, http.StatusNoContent, "There are no sellers stored: %s", err.Error())
 			return
 		}
 
@@ -61,7 +62,7 @@ func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		createSellerRequestDTO := new(dtos.CreateSellerRequestDTO)
 		if err := c.Bind(&createSellerRequestDTO); err != nil {
-			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
+			web.Error(c, http.StatusUnprocessableEntity, "Error to read request: %s", err.Error())
 			return
 		}
 
@@ -120,13 +121,18 @@ func (s *Seller) Get() gin.HandlerFunc {
 			return
 		}
 
-		seller, err := s.sellerService.Get(c, int(id))
+		sellerResult, err := s.sellerService.Get(c, int(id))
+
 		if err != nil {
-			web.Error(c, http.StatusNotFound, "Seller not found: %s", err.Error())
+			if errors.Is(err, seller.ErrNotFound) {
+				web.Error(c, http.StatusNotFound, "Seller not found: %s", err.Error())
+				return
+			}
+			web.Error(c, http.StatusInternalServerError, "Error to process the request, try again: %s", err.Error())
 			return
 		}
 
-		web.Success(c, http.StatusOK, *seller)
+		web.Success(c, http.StatusOK, *sellerResult)
 	}
 }
 
