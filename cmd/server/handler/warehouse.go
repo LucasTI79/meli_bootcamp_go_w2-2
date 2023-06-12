@@ -105,7 +105,22 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 }
 
 func (w *Warehouse) Delete() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+			warehouseId, e := strconv.Atoi(c.Param("id"))	
+			if e != nil {
+				web.Error(c, 400, "parameter id must be a integer")
+				return
+			}
+
+			err := w.warehouseService.Delete(c, warehouseId)
+
+			if err != nil {
+				web.Error(c, 404, err.Error())
+				return
+			}
+
+			web.Success(c, 204, nil)
+	}
 }
 
 func WarehouseFullRequestValidator(c *gin.Context, req dtos.WarehouseRequestDTO) error {
