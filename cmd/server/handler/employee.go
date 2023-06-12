@@ -124,5 +124,19 @@ func (e *Employee) Update() gin.HandlerFunc {
 }
 
 func (e *Employee) Delete() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+
+		err = e.service.Delete(c, int(id))
+		if err != nil {
+			web.Error(c, http.StatusNotFound, "Error to delete: %s", err.Error())
+			return
+		}
+
+		web.Success(c, http.StatusNoContent, nil)
+	}
 }

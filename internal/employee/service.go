@@ -19,6 +19,7 @@ type Service interface {
 	GetAll(ctx context.Context) (*[]domain.Employee, error)
 	Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error)
 	Update(ctx context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -107,4 +108,23 @@ func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.
 	}
 
 	return &existingEmployee, nil
+}
+
+func (s *service) Delete(ctx context.Context, id int) error {
+	_, err := s.repository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return ErrNotFound
+		default:
+			return err
+		}
+	}
+
+	err1 := s.repository.Delete(ctx, id)
+	if err1 != nil {
+		return err
+	}
+
+	return nil
 }

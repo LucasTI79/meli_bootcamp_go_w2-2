@@ -60,6 +60,7 @@ func (r *router) buildEmployeeRoutes() {
 	r.rg.GET("/employees", handler.GetAll())
 	r.rg.GET("/employees/:id", handler.Get())
 	r.rg.PATCH("/employees/:id", handler.Update())
+	r.rg.DELETE("/employees/:id", handler.Delete())
 
 }
 
