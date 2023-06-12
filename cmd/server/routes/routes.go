@@ -54,6 +54,7 @@ func (r *router) buildWarehouseRoutes() {
 	service := warehouse.NewService(repository)
 	handler := handler.NewWarehouse(service)
 	r.rg.POST("/warehouses", handler.Create())
+	r.rg.GET("/warehouses", handler.GetAll())
 }
 
 func (r *router) buildEmployeeRoutes() {}
