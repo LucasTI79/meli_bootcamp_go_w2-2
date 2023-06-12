@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
@@ -45,7 +46,24 @@ func (p *Product) GetAll() gin.HandlerFunc {
 }
 
 func (p *Product) Get() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, err.Error())
+			return
+		}
+		productResponse, err := p.productService.Get(c, int(id))
+		if err != nil {
+			switch err {
+			case product.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error getting product %s", err.Error()))
+			}
+			return
+		}
+		web.Success(c, http.StatusOK, productResponse)
+	}
 }
 
 func (p *Product) Create() gin.HandlerFunc {

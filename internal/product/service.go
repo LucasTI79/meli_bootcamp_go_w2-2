@@ -2,6 +2,7 @@ package product
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
@@ -17,6 +18,7 @@ type Service interface {
 	Save(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
 		recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error)
 	GetAll(ctx context.Context) ([]domain.Product, error)
+	Get(ctx context.Context, id int) (*domain.Product, error)
 }
 
 type service struct {
@@ -72,4 +74,18 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Product, error) {
 	}
 
 	return products, nil
+}
+
+func (s *service) Get(ctx context.Context, id int) (*domain.Product, error) {
+	product, err := s.productRepository.Get(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err
+		}
+	}
+
+	return &product, nil
 }

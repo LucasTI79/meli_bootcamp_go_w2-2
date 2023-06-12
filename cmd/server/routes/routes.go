@@ -51,6 +51,7 @@ func (r *router) buildProductRoutes() {
 	handler := handler.NewProduct(service)
 	r.rg.POST("/products", handler.Create())
 	r.rg.GET("/products", handler.GetAll())
+	r.rg.GET("/products/:id", handler.Get())
 }
 
 func (r *router) buildSectionRoutes() {}
