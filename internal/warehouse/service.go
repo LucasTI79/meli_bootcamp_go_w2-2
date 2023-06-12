@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/warehousesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
@@ -13,7 +14,7 @@ var (
 )
 
 type Service interface{
-	Create(c context.Context,dto domain.WarehouseRequestDTO) (*domain.Warehouse, error)
+	Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
 	GetAll(c context.Context) (*[]domain.Warehouse, error)
 	GetOne(c context.Context, id int) (*domain.Warehouse, error)
 }
@@ -22,7 +23,7 @@ type service struct{
 	repository Repository
 }
 
-func (s *service) Create(c context.Context, dto domain.WarehouseRequestDTO) (*domain.Warehouse, error) {
+func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
 	exists := s.repository.Exists(c, dto.WarehouseCode)
 	if exists {
 		return nil, errors.New("a warehouse with this warehouse_code already existis")
