@@ -10,13 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type request struct {
-	CID         int    `json:"cid"`
-	CompanyName string `json:"company_name"`
-	Address     string `json:"address"`
-	Telephone   string `json:"telephone"`
-}
-
 type Seller struct {
 	sellerService seller.Service
 }
@@ -35,51 +28,57 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 			return
 		}
 
-		if len(sellers) == 0 {
+		if len(*sellers) == 0 {
 			web.Error(c, http.StatusNotFound, "There are no sellers stored: %s", err.Error())
 			return
 		}
 
-		web.Success(c, http.StatusOK, sellers)
+		web.Success(c, http.StatusOK, *sellers)
 	}
 }
 
 func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req request
-
-		if err := c.Bind(&req); err != nil {
+		createSellerRequestDTO := new(domain.CreateSellerRequestDTO)
+		if err := c.Bind(&createSellerRequestDTO); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
 		}
 
-		if req.CID <= 0.0 {
+		seller := &domain.Seller{
+			CID:         createSellerRequestDTO.CID,
+			CompanyName: createSellerRequestDTO.CompanyName,
+			Address:     createSellerRequestDTO.Address,
+			Telephone:   createSellerRequestDTO.Telephone,
+		}
+
+		if seller.CID <= 0.0 {
 			web.Error(c, http.StatusBadRequest, "Field CID is required: %s", "")
 			return
 		}
 
-		if req.CompanyName == "" {
+		if seller.CompanyName == "" {
 			web.Error(c, http.StatusBadRequest, "Field CompanyName is required: %s", "")
 			return
 		}
 
-		if req.Address == "" {
+		if seller.Address == "" {
 			web.Error(c, http.StatusBadRequest, "Field Address is required: %s", "")
 			return
 		}
 
-		if req.Telephone == "" {
+		if seller.Telephone == "" {
 			web.Error(c, http.StatusBadRequest, "Field Telephone is required: %s", "")
 			return
 		}
 
-		seller, err := s.sellerService.Save(c, req.CID, req.CompanyName, req.Address, req.Telephone)
+		seller, err := s.sellerService.Save(c, *seller)
 		if err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
 			return
 		}
 
-		web.Success(c, http.StatusCreated, seller)
+		web.Success(c, http.StatusCreated, *seller)
 	}
 }
 
@@ -97,7 +96,7 @@ func (s *Seller) Get() gin.HandlerFunc {
 			return
 		}
 
-		web.Success(c, http.StatusOK, seller)
+		web.Success(c, http.StatusOK, *seller)
 	}
 }
 
@@ -109,14 +108,14 @@ func (s *Seller) Update() gin.HandlerFunc {
 			return
 		}
 
-		var updatedSeller domain.Seller
+		updateSellerRequestDTO := new(domain.UpdateSellerRequestDTO)
 
-		if err := c.Bind(&updatedSeller); err != nil {
+		if err := c.Bind(&updateSellerRequestDTO); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
 		}
 
-		sellerUpdated, err := s.sellerService.Update(c, int(id), updatedSeller)
+		sellerUpdated, err := s.sellerService.Update(c, int(id), updateSellerRequestDTO)
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to update: %s", err.Error())
 			return
