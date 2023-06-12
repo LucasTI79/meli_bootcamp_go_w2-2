@@ -14,6 +14,7 @@ var (
 
 type Service interface{
 	Create(c context.Context,dto domain.WarehouseRequestDTO) (*domain.Warehouse, error)
+	GetAll(c context.Context) (*[]domain.Warehouse, error)
 }
 
 type service struct{
@@ -37,6 +38,16 @@ func (s *service) Create(c context.Context, dto domain.WarehouseRequestDTO) (*do
 	formatter.ID = id
 
 	return &formatter, nil
+}
+
+func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
+	warehouses, err  := s.repository.GetAll(c)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &warehouses, nil
 }
 
 func NewService(r Repository) Service {
