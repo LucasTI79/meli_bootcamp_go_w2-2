@@ -26,7 +26,7 @@ type service struct{
 func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
 	exists := s.repository.Exists(c, dto.WarehouseCode)
 	if exists {
-		return nil, errors.New("a warehouse with this warehouse_code already existis")
+		return nil, errors.New("a warehouse with this warehouse_code already exists")
 	}
 
 	var formatter domain.Warehouse = domain.Warehouse{ID: 0, Address: dto.Address, Telephone: dto.Telephone, WarehouseCode: dto.WarehouseCode, MinimumCapacity: dto.MinimumCapacity, MinimumTemperature: dto.MinimumTemperature}
@@ -50,7 +50,7 @@ func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
 	}
 
 	if len(warehouses) < 1 {
-		return nil, errors.New("no warehouses were found")
+		return nil, ErrNotFound
 	}
 
 	return &warehouses, nil
@@ -59,9 +59,6 @@ func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
 func (s *service) GetOne(c context.Context, id int) (*domain.Warehouse, error) {
 	result, err := s.repository.Get(c, id)
 	if err != nil {
-		return nil, err
-	}
-	if result.ID == 1 {
 		return nil, ErrNotFound
 	}
 
