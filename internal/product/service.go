@@ -19,6 +19,7 @@ type Service interface {
 		recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error)
 	GetAll(ctx context.Context) ([]domain.Product, error)
 	Get(ctx context.Context, id int) (*domain.Product, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -88,4 +89,17 @@ func (s *service) Get(ctx context.Context, id int) (*domain.Product, error) {
 	}
 
 	return &product, nil
+}
+
+func (s *service) Delete(ctx context.Context, id int) error {
+	err := s.productRepository.Delete(ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return ErrNotFound
+		default:
+			return err
+		}
+	}
+	return nil
 }

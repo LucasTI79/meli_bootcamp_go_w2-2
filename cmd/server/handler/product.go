@@ -149,5 +149,23 @@ func (p *Product) Update() gin.HandlerFunc {
 }
 
 func (p *Product) Delete() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+		err = p.productService.Delete(c, int(id))
+		if err != nil {
+			switch err {
+			case product.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error deleting product %s", err.Error()))
+			}
+			return
+		}
+
+		web.Success(c, http.StatusNoContent, nil)
+	}
 }
