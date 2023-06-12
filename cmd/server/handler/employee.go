@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +29,18 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 }
 
 func (e *Employee) Create() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+	return func(c *gin.Context) {
+		createEmployee := new(domain.RequestCreateEmployee)
+
+		employee := &domain.Employee{
+			CardNumberID: createEmployee.CardNumberID,
+			FirstName:    createEmployee.FirstName,
+			LastName:     createEmployee.LastName,
+			WarehouseID:  createEmployee.WarehouseID,
+		}
+
+		e.service.Save(c, *employee)
+	}
 }
 
 func (e *Employee) Update() gin.HandlerFunc {

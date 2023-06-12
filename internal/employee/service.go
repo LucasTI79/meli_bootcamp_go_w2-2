@@ -14,6 +14,7 @@ var (
 
 type Service interface {
 	GetAll(ctx context.Context) ([]domain.Employee, error)
+	Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error)
 }
 
 type service struct {
@@ -31,6 +32,23 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Employee, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return ps, nil
+}
+
+func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error) {
+
+	// existingEmployee := s.sellerRepository.Exists(ctx, seller.CID)
+
+	// if existingSeller {
+	// 	return nil, ErrConflict
+	// }
+
+	id, err := s.repository.Save(ctx, employee)
+	if err != nil {
+		return nil, err
+	}
+
+	employee.ID = id
+
+	return &employee, nil
 }
