@@ -10,6 +10,7 @@ import (
 // Errors
 var (
 	ErrNotFound = errors.New("employee not found")
+	ErrConflict = errors.New("409 Conflict: Employee with CardNumberID already exists")
 )
 
 type Service interface {
@@ -39,11 +40,11 @@ func (s *service) GetAll(ctx context.Context) (*[]domain.Employee, error) {
 
 func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error) {
 
-	// existingEmployee := s.sellerRepository.Exists(ctx, seller.CID)
+	existingEmployee := s.repository.Exists(ctx, employee.CardNumberID)
 
-	// if existingSeller {
-	// 	return nil, ErrConflict
-	// }
+	if existingEmployee {
+		return nil, ErrConflict
+	}
 
 	id, err := s.repository.Save(ctx, employee)
 	if err != nil {

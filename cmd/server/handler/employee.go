@@ -42,7 +42,8 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 
 func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		createEmployee := domain.RequestCreateEmployee{}
+		// createEmployee := domain.RequestCreateEmployee{}
+		createEmployee := new(domain.RequestCreateEmployee)
 		if err := c.Bind(&createEmployee); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
@@ -53,6 +54,23 @@ func (e *Employee) Save() gin.HandlerFunc {
 			FirstName:    createEmployee.FirstName,
 			LastName:     createEmployee.LastName,
 			WarehouseID:  createEmployee.WarehouseID,
+		}
+
+		if employee.CardNumberID <= "" {
+			web.Error(c, http.StatusBadRequest, "Field Card Number ID is required: %s", "")
+			return
+		}
+
+		if employee.FirstName == "" {
+			web.Error(c, http.StatusBadRequest, "Field First Name is required: %s", "")
+		}
+
+		if employee.LastName == "" {
+			web.Error(c, http.StatusBadRequest, "Field Last Name is required: %s", "")
+		}
+
+		if employee.WarehouseID == 0 {
+			web.Error(c, http.StatusBadRequest, "Field Ware House ID is required: %s", "")
 		}
 
 		employee, err := e.service.Save(c, *employee)
