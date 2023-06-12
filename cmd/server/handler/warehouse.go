@@ -1,7 +1,9 @@
 package handler
 
 import (
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	"errors"
+
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/warehousesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
@@ -40,30 +42,14 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req domain.WarehouseRequestDTO
+		var req dtos.WarehouseRequestDTO
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Response(c, 400, nil)
+			web.Error(c, 400, "JSON format may be wrong")
 			return
 		}
 
-		if req.Address == "" {
-			web.Error(c, 422, `field "address" is missing` )
-			return 
-		}
-		if req.Telephone == "" {
-			web.Error(c, 422, `field "telephone" is missing`)
-			return
-		}
-		if req.WarehouseCode == "" {
-			web.Error(c, 422, `field "warehousecode" is missing`)
-			return
-		}
-		if req.MinimumCapacity == 0 {
-			web.Error(c, 422, `field "minimumcapacity" is missing`)
-			return
-		}
-		if req.MinimumTemperature == 0 {
-			web.Error(c, 422, `field "minimumtemperature" is missing`)
+		if err := WarehouseFullRequestValidator(c, req); err != nil {
+			web.Error(c, 422, err.Error())
 			return
 		}
 
@@ -84,4 +70,24 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 
 func (w *Warehouse) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {}
+}
+
+func WarehouseFullRequestValidator(c *gin.Context, req dtos.WarehouseRequestDTO) error {
+		if req.Address == "" {
+			return errors.New("field address is required")
+		}
+		if req.Telephone == "" {
+			return errors.New("field telephone is required")
+		}
+		if req.WarehouseCode == "" {
+			return errors.New("field warehouse_code is required")
+		}
+		if req.MinimumCapacity == 0 {
+			return errors.New("field minimum_capacity is required")
+		}
+		if req.MinimumTemperature == 0 {
+			return errors.New("field minimum_temperature is required")
+		}
+
+		return nil
 }
