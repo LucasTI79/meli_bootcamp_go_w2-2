@@ -89,7 +89,7 @@ func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.
 		if existingEmployeeSearch && *reqUpdateEmployee.CardNumberID != existingEmployee.CardNumberID {
 			return nil, ErrConflict
 		}
-		reqUpdateEmployee.CardNumberID = *&reqUpdateEmployee.CardNumberID
+		existingEmployee.CardNumberID = *reqUpdateEmployee.CardNumberID
 	}
 
 	if reqUpdateEmployee.FirstName != nil {
