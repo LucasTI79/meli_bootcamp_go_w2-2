@@ -11,7 +11,8 @@ import (
 
 // Errors
 var (
-	ErrNotFound = errors.New("buyer not found")
+	ErrNotFound             = errors.New("buyer not found")
+	ErrCardNumberDuplicated = errors.New("Credit card already exists for another user")
 )
 
 type Service interface {
@@ -61,6 +62,11 @@ func (service *service) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
 func (service *service) Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
 	buyer := createBuyerRequest.ToDomain()
 
+	cardNumberAlreadyExists := service.repository.Exists(ctx, createBuyerRequest.CardNumberID)
+	if cardNumberAlreadyExists {
+		return nil, ErrCardNumberDuplicated
+	}
+
 	id, err := service.repository.Save(ctx, *buyer)
 	if err != nil {
 		return nil, err
@@ -80,6 +86,11 @@ func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *
 
 	// Sobrescreve os dados do buyer, se houver alteração no request
 	if updateBuyerRequest.CardNumberID != nil {
+		cardNumberAlreadyExists := service.repository.Exists(ctx, *updateBuyerRequest.CardNumberID)
+		if cardNumberAlreadyExists {
+			return nil, ErrCardNumberDuplicated
+		}
+
 		buyer.CardNumberID = *updateBuyerRequest.CardNumberID
 	}
 
