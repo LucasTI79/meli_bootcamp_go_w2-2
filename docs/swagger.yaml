@@ -1,3 +1,130 @@
+definitions:
+  domain.RequestCreateEmployee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  domain.RequestUpdateEmployee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  domain.Warehouse:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
+    type: object
+  dtos.CreateSellerRequestDTO:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      telephone:
+        type: string
+    required:
+    - address
+    - cid
+    - company_name
+    - telephone
+    type: object
+  dtos.UpdateSellerRequestDTO:
+    properties:
+      address:
+        type: string
+      cid:
+        type: integer
+      company_name:
+        type: string
+      telephone:
+        type: string
+    type: object
+  dtos.WarehouseRequestDTO:
+    properties:
+      address:
+        example: test
+        type: string
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
+    type: object
+  handler.requestProduct:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: integer
+      freezing_rate:
+        type: integer
+      height:
+        type: number
+      length:
+        type: number
+      netweight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
+    type: object
+  handler.requestSection:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
+  web.response:
+    properties:
+      data: {}
+    type: object
 info:
   contact:
     name: API Support
@@ -9,5 +136,514 @@ info:
   termsOfService: https://developers.mercadolibre.com.ar/es_ar/terminos-y-condiciones
   title: MELI Bootcamp API - Sprint 1 - Grupo 2
   version: "1.0"
-paths: {}
+paths:
+  /api/v1/Products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: ID of a Product to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Product
+      tags:
+      - Products
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Product
+      parameters:
+      - description: ID of Products to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Product details
+        in: body
+        name: Products
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Product
+      tags:
+      - Products
+  /api/v1/employee:
+    post:
+      consumes:
+      - application/json
+      description: Create employees
+      parameters:
+      - description: Employee to Create
+        in: body
+        name: Employees
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RequestCreateEmployee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Employees
+      tags:
+      - Employees
+  /api/v1/employees:
+    get:
+      consumes:
+      - application/json
+      description: getAll employees
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List Employees
+      tags:
+      - Employees
+  /api/v1/employees/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Employees
+      parameters:
+      - description: ID of a Employees to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Employees
+      tags:
+      - Employees
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Employees
+      parameters:
+      - description: ID of Employees to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Employees
+      tags:
+      - Employees
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Employees
+      parameters:
+      - description: ID of Employees to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Employeesers details
+        in: body
+        name: Employees
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RequestUpdateEmployee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Employees
+      tags:
+      - Employees
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      description: getAll products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product to Create
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestProduct'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Product
+      tags:
+      - Products
+  /api/v1/products/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Products
+      parameters:
+      - description: ID of Product to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Product
+      tags:
+      - Products
+  /api/v1/sections:
+    get:
+      consumes:
+      - application/json
+      description: getAll sections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List sections
+      tags:
+      - Sections
+    post:
+      consumes:
+      - application/json
+      description: Create sections
+      parameters:
+      - description: Section to Create
+        in: body
+        name: Section
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestSection'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Section
+      tags:
+      - Sections
+  /api/v1/sections/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Section
+      parameters:
+      - description: ID of a Section to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Section
+      tags:
+      - Sections
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Section
+      parameters:
+      - description: ID of Section to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Section
+      tags:
+      - Sections
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Section
+      parameters:
+      - description: ID of Section to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Section details
+        in: body
+        name: Sections
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestSection'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Section
+      tags:
+      - Sections
+  /api/v1/sellers:
+    get:
+      consumes:
+      - application/json
+      description: getAll sellers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List sellers
+      tags:
+      - Sellers
+    post:
+      consumes:
+      - application/json
+      description: Create sellers
+      parameters:
+      - description: Seller to Create
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateSellerRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Sellers
+      tags:
+      - Sellers
+  /api/v1/sellers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Sellers
+      parameters:
+      - description: ID of a Sellers to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Sellers
+      tags:
+      - Sellers
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Sellers
+      parameters:
+      - description: ID of Sellers to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Sellers
+      tags:
+      - Sellers
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Sellers
+      parameters:
+      - description: ID of Sellers to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Sellers details
+        in: body
+        name: Sellers
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateSellerRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Sellers
+      tags:
+      - Sellers
+  /api/v1/warehouses:
+    get:
+      description: get warehouses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Warehouse'
+            type: array
+      summary: List warehouses
+      tags:
+      - Warehouses
+    post:
+      consumes:
+      - application/json
+      description: Create warehouse
+      parameters:
+      - description: warehouse to create
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.WarehouseRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Warehouse'
+      summary: Create warehouse
+      tags:
+      - Warehouses
+  /api/v1/warehouses/:id:
+    delete:
+      description: delete warehouse by id
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      summary: Delete warehouse
+      tags:
+      - Warehouses
+    get:
+      description: get one warehouse by id
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Warehouse'
+      summary: Get warehouse
+      tags:
+      - Warehouses
+    put:
+      consumes:
+      - application/json
+      description: update warehouses
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Warehouse to update
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.WarehouseRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Warehouse'
+      summary: Update warehouses
+      tags:
+      - Warehouses
 swagger: "2.0"
