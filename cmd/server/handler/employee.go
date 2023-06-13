@@ -171,7 +171,7 @@ func (e *Employee) Update() gin.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "ID of a Employees to be excluded"
-// @Success 200 {object} web.response
+// @Success 204 {object} web.response
 // @Router /api/v1/employees/{id} [delete]
 func (e *Employee) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
