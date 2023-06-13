@@ -103,7 +103,7 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 			}
 			return
 		} else {
-			web.Success(c, http.StatusOK, updatedBuyer)
+			web.Response(c, http.StatusOK, updatedBuyer)
 			return
 		}
 	}
