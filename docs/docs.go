@@ -944,7 +944,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/warehouses/:id": {
+        "/api/v1/warehouses/{id}": {
             "get": {
                 "description": "get one warehouse by id",
                 "produces": [
@@ -972,7 +972,28 @@ const docTemplate = `{
                     }
                 }
             },
-            "put": {
+            "delete": {
+                "description": "delete warehouse by id",
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Delete warehouse",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Warehouse ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            },
+            "patch": {
                 "description": "update warehouses",
                 "consumes": [
                     "application/json"
@@ -1008,27 +1029,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/domain.Warehouse"
                         }
-                    }
-                }
-            },
-            "delete": {
-                "description": "delete warehouse by id",
-                "tags": [
-                    "Warehouses"
-                ],
-                "summary": "Delete warehouse",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Warehouse ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     }
                 }
             }

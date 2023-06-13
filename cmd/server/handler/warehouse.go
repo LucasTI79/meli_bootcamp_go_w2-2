@@ -29,7 +29,7 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 //	@Produce		json
 //	@Param			id	path		int	true	"Warehouse ID"
 //	@Success		200	{object}	domain.Warehouse
-//	@Router			/api/v1/warehouses/:id [get]
+//	@Router			/api/v1/warehouses/{id} [get]
 func (w *Warehouse) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
@@ -114,7 +114,7 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 // @Param			id			path		int							true	"Warehouse ID"
 // @Param			Warehouse	body		dtos.WarehouseRequestDTO	true	"Warehouse to update"
 // @Success		200			{object}	domain.Warehouse
-// @Router			/api/v1/warehouses/:id [put]
+// @Router			/api/v1/warehouses/{id} [patch]
 func (w *Warehouse) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
@@ -146,7 +146,7 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 // @Description	delete warehouse by id
 // @Param			id	path	int	true	"Warehouse ID"
 // @Success		204
-// @Router			/api/v1/warehouses/:id [delete]
+// @Router			/api/v1/warehouses/{id} [delete]
 func (w *Warehouse) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
