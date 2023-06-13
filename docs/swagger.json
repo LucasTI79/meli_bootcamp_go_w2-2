@@ -324,7 +324,28 @@
                 }
             }
         },
-        "/api/v1/employee": {
+        "/api/v1/employees": {
+            "get": {
+                "description": "getAll employees",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "List Employees",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create employees",
                 "consumes": [
@@ -348,29 +369,6 @@
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/employees": {
-            "get": {
-                "description": "getAll employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "List Employees",
                 "responses": {
                     "200": {
                         "description": "OK",

@@ -385,7 +385,21 @@ paths:
       summary: Update Buyer
       tags:
       - Buyers
-  /api/v1/employee:
+  /api/v1/employees:
+    get:
+      consumes:
+      - application/json
+      description: getAll employees
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List Employees
+      tags:
+      - Employees
     post:
       consumes:
       - application/json
@@ -405,21 +419,6 @@ paths:
           schema:
             $ref: '#/definitions/web.response'
       summary: Create Employees
-      tags:
-      - Employees
-  /api/v1/employees:
-    get:
-      consumes:
-      - application/json
-      description: getAll employees
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/web.response'
-      summary: List Employees
       tags:
       - Employees
   /api/v1/employees/{id}:
