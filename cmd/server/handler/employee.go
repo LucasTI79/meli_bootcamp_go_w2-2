@@ -86,7 +86,7 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 //	@Produce		json
 //	@Param			Employees	body		domain.RequestCreateEmployee	true	"Employee to Create"
 //	@Success		200			{object}	web.response
-//	@Router			/api/v1/employee [post]
+//	@Router			/api/v1/employees [post]
 func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// createEmployee := domain.RequestCreateEmployee{}
