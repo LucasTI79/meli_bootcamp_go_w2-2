@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
@@ -84,6 +85,17 @@ func (r *router) buildWarehouseRoutes() {
 	r.rg.DELETE("/warehouses/:id", handler.Delete())
 }
 
-func (r *router) buildEmployeeRoutes() {}
+func (r *router) buildEmployeeRoutes() {
+	repo := employee.NewRepository(r.db)
+	service := employee.NewService(repo)
+	handler := handler.NewEmployee(service)
+
+	r.rg.POST("/employees", handler.Save())
+	r.rg.GET("/employees", handler.GetAll())
+	r.rg.GET("/employees/:id", handler.Get())
+	r.rg.PATCH("/employees/:id", handler.Update())
+	r.rg.DELETE("/employees/:id", handler.Delete())
+
+}
 
 func (r *router) buildBuyerRoutes() {}

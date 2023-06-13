@@ -56,7 +56,7 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param Seller body dtos.CreateSellerRequestDTO true "Seller to Create"
-// @Success 200 {object} web.response
+// @Success 201 {object} web.response
 // @Router /api/v1/sellers [post]
 func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -180,7 +180,7 @@ func (s *Seller) Update() gin.HandlerFunc {
 // @Accept  json
 // @Produce  json
 // @Param id path string true "ID of a Sellers to be excluded"
-// @Success 200 {object} web.response
+// @Success 204 {object} web.response
 // @Router /api/v1/sellers/{id} [delete]
 func (s *Seller) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -195,5 +195,6 @@ func (s *Seller) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusNotFound, "Error to delete: %s", err.Error())
 			return
 		}
+		web.Success(c, http.StatusNoContent, nil)
 	}
 }
