@@ -332,7 +332,28 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/employee": {
+        "/api/v1/employees": {
+            "get": {
+                "description": "getAll employees",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Employees"
+                ],
+                "summary": "List Employees",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create employees",
                 "consumes": [
@@ -356,29 +377,6 @@ const docTemplate = `{
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/employees": {
-            "get": {
-                "description": "getAll employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "List Employees",
                 "responses": {
                     "200": {
                         "description": "OK",
