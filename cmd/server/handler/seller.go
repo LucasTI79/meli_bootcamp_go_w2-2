@@ -24,13 +24,14 @@ func NewSeller(s seller.Service) *Seller {
 
 // Method GetAll
 // ListSellers godoc
-// @Summary List sellers
-// @Tags Sellers
-// @Description getAll sellers
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} web.response
-// @Router /api/v1/sellers [get]
+//
+//	@Summary		List sellers
+//	@Tags			Sellers
+//	@Description	getAll sellers
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/sellers [get]
 func (s *Seller) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sellers, err := s.sellerService.GetAll(c)
@@ -50,14 +51,15 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 
 // Method Create
 // CreateSellers godoc
-// @Summary Create Sellers
-// @Tags Sellers
-// @Description Create sellers
-// @Accept  json
-// @Produce  json
-// @Param Seller body dtos.CreateSellerRequestDTO true "Seller to Create"
-// @Success 201 {object} web.response
-// @Router /api/v1/sellers [post]
+//
+//	@Summary		Create Sellers
+//	@Tags			Sellers
+//	@Description	Create sellers
+//	@Accept			json
+//	@Produce		json
+//	@Param			Seller	body		dtos.CreateSellerRequestDTO	true	"Seller to Create"
+//	@Success		201		{object}	web.response
+//	@Router			/api/v1/sellers [post]
 func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		createSellerRequestDTO := new(dtos.CreateSellerRequestDTO)
@@ -105,14 +107,15 @@ func (s *Seller) Create() gin.HandlerFunc {
 
 // Method Get
 // GetSellers godoc
-// @Summary Get Sellers
-// @Tags Sellers
-// @Description Get the details of a Sellers
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID of Sellers to be searched"
-// @Success 200 {object} web.response
-// @Router /api/v1/sellers/{id} [get]
+//
+//	@Summary		Get Sellers
+//	@Tags			Sellers
+//	@Description	Get the details of a Sellers
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"ID of Sellers to be searched"
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/sellers/{id} [get]
 func (s *Seller) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -138,15 +141,16 @@ func (s *Seller) Get() gin.HandlerFunc {
 
 // Method Update
 // UpdateSellers godoc
-// @Summary Update Sellers
-// @Tags Sellers
-// @Description Update the details of a Sellers
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID of Sellers to be updated"
-// @Param Sellers body dtos.UpdateSellerRequestDTO true "Updated Sellers details"
-// @Success 200 {object} web.response
-// @Router /api/v1/sellers/{id} [patch]
+//
+//	@Summary		Update Sellers
+//	@Tags			Sellers
+//	@Description	Update the details of a Sellers
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"ID of Sellers to be updated"
+//	@Param			Sellers	body		dtos.UpdateSellerRequestDTO	true	"Updated Sellers details"
+//	@Success		200		{object}	web.response
+//	@Router			/api/v1/sellers/{id} [patch]
 func (s *Seller) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -174,14 +178,15 @@ func (s *Seller) Update() gin.HandlerFunc {
 
 // Method Delete
 // DeleteSellers godoc
-// @Summary Delete Sellers
-// @Tags Sellers
-// @Description Delete Sellers
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID of a Sellers to be excluded"
-// @Success 204 {object} web.response
-// @Router /api/v1/sellers/{id} [delete]
+//
+//	@Summary		Delete Sellers
+//	@Tags			Sellers
+//	@Description	Delete Sellers
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"ID of a Sellers to be excluded"
+//	@Success		204	{object}	web.response
+//	@Router			/api/v1/sellers/{id} [delete]
 func (s *Seller) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))

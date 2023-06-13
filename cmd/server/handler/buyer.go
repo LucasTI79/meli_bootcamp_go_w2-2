@@ -22,6 +22,18 @@ func NewBuyer(buyerService buyer.Service) *BuyerHandler {
 	}
 }
 
+// Get is the handler to search for a buyer and return their details.
+//
+//	@Summary		Get Buyer
+//	@Tags			Buyers
+//	@Description	Get the details of a Buyer
+//	@Produce		json
+//	@Param			id	path		string	true	"ID of Buyer to be searched"
+//	@Success		200	{object}	domain.Buyer
+//	@Failure		400	{object}	web.errorResponse
+//	@Failure		404	{object}	web.errorResponse
+//	@Failure		500	{object}	web.errorResponse
+//	@Router			/api/v1/buyers/{id} [get]
 func (handler *BuyerHandler) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -47,6 +59,16 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 	}
 }
 
+// GetAll is the handler to search for all buyers.
+//
+//	@Summary		List Buyers
+//	@Tags			Buyers
+//	@Description	Get the details of all buyers on the database.
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	web.response{data=[]domain.Buyer}
+//	@Failure		500	{object}	web.errorResponse
+//	@Router			/api/v1/buyers [get]
 func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -60,6 +82,18 @@ func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 	}
 }
 
+// Create is the handler to create a buyer.
+//
+//	@Summary		Create Buyer
+//	@Tags			Buyers
+//	@Description	Save a buyer on the database.
+//	@Accept			json
+//	@Produce		json
+//	@Param			Seller	body		dtos.CreateBuyerRequestDTO	true	"Buyer to Create"
+//	@Success		201		{object}	domain.Buyer
+//	@Failure		422		{object}	web.errorResponse
+//	@Failure		500		{object}	web.errorResponse
+//	@Router			/api/v1/buyers [post]
 func (handler *BuyerHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -79,6 +113,20 @@ func (handler *BuyerHandler) Create() gin.HandlerFunc {
 	}
 }
 
+// Update is the handler to update a buyer details.
+//
+//	@Summary		Update Buyer
+//	@Tags			Buyers
+//	@Description	Update the details of a Buyer
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"ID of Buyer to be updated"
+//	@Param			Buyer	body		dtos.UpdateBuyerRequestDTO	true	"Updated Buyer details"
+//	@Success		200		{object}	domain.Buyer
+//	@Failure		400		{object}	web.errorResponse
+//	@Failure		404		{object}	web.errorResponse
+//	@Failure		500		{object}	web.errorResponse
+//	@Router			/api/v1/buyers/{id} [patch]
 func (handler *BuyerHandler) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
@@ -109,6 +157,19 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 	}
 }
 
+// Delete is the handler to delete a buyer.
+//
+//	@Summary		Delete Buyer
+//	@Tags			Buyers
+//	@Description	Delete Buyers
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	string	true	"ID of a Buyer to be excluded"
+//	@Success		204
+//	@Failure		400	{object}	web.errorResponse
+//	@Failure		404	{object}	web.errorResponse
+//	@Failure		500	{object}	web.errorResponse
+//	@Router			/api/v1/buyers/{id} [delete]
 func (handler *BuyerHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 

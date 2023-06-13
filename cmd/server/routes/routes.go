@@ -8,7 +8,6 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
@@ -80,7 +79,7 @@ func (r *router) buildSectionRoutes() {
 }
 
 func (r *router) buildWarehouseRoutes() {
-	repository:= warehouse.NewRepository(r.db)
+	repository := warehouse.NewRepository(r.db)
 	service := warehouse.NewService(repository)
 	handler := handler.NewWarehouse(service)
 	r.rg.POST("/warehouses", handler.Create())

@@ -3,10 +3,10 @@ package dtos
 import "github.com/go-playground/validator/v10"
 
 type UpdateBuyerRequestDTO struct {
-	ID           int
-	CardNumberID *string `json:"card_number_id"`
-	FirstName    *string `json:"first_name"`
-	LastName     *string `json:"last_name"`
+	ID           int     `swaggerignore:"true"`
+	CardNumberID *string `json:"card_number_id" extensions:"x-order=0"`
+	FirstName    *string `json:"first_name" extensions:"x-order=1"`
+	LastName     *string `json:"last_name" extensions:"x-order=2"`
 }
 
 // Check if it has at least one field to update

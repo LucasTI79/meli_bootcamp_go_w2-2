@@ -1,6 +1,7 @@
 #IDE's
 .vscode/
 .idea/
+.run/
 
 #temp
 tmp/
