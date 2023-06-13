@@ -8,6 +8,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse"
 	"github.com/gin-gonic/gin"
 )
 
@@ -73,7 +74,16 @@ func (r *router) buildSectionRoutes() {
 	r.rg.PATCH("/sections/:id", handler.Update())
 }
 
-func (r *router) buildWarehouseRoutes() {}
+func (r *router) buildWarehouseRoutes() {
+	repository:= warehouse.NewRepository(r.db)
+	service := warehouse.NewService(repository)
+	handler := handler.NewWarehouse(service)
+	r.rg.POST("/warehouses", handler.Create())
+	r.rg.GET("/warehouses", handler.GetAll())
+	r.rg.GET("/warehouses/:id", handler.Get())
+	r.rg.PATCH("/warehouses/:id", handler.Update())
+	r.rg.DELETE("/warehouses/:id", handler.Delete())
+}
 
 func (r *router) buildEmployeeRoutes() {
 	repo := employee.NewRepository(r.db)
