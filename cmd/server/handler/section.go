@@ -33,13 +33,14 @@ func NewSection(s section.Service) *Section {
 
 // Method GetAll
 // ListSections godoc
-// @Summary List sections
-// @Tags Sections
-// @Description getAll sections
-// @Accept  json
-// @Produce  json
-// @Success 200 {object} web.response
-// @Router /api/v1/sections [get]
+//
+//	@Summary		List sections
+//	@Tags			Sections
+//	@Description	getAll sections
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/sections [get]
 func (s *Section) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sections, err := s.sectionService.GetAll(c)
@@ -53,14 +54,15 @@ func (s *Section) GetAll() gin.HandlerFunc {
 
 // Method Get
 // GetSections godoc
-// @Summary Get Section
-// @Tags Sections
-// @Description Get the details of a Section
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID of Section to be searched"
-// @Success 200 {object} web.response
-// @Router /api/v1/sections/{id} [get]
+//
+//	@Summary		Get Section
+//	@Tags			Sections
+//	@Description	Get the details of a Section
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"ID of Section to be searched"
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/sections/{id} [get]
 func (s *Section) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -84,14 +86,15 @@ func (s *Section) Get() gin.HandlerFunc {
 
 // Method Create
 // CreateSections godoc
-// @Summary Create Section
-// @Tags Sections
-// @Description Create sections
-// @Accept  json
-// @Produce  json
-// @Param Section body requestSection true "Section to Create"
-// @Success 201 {object} web.response
-// @Router /api/v1/sections [post]
+//
+//	@Summary		Create Section
+//	@Tags			Sections
+//	@Description	Create sections
+//	@Accept			json
+//	@Produce		json
+//	@Param			Section	body		requestSection	true	"Section to Create"
+//	@Success		201		{object}	web.response
+//	@Router			/api/v1/sections [post]
 func (s *Section) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req requestSection
@@ -157,15 +160,16 @@ func (s *Section) Create() gin.HandlerFunc {
 
 // Method Update
 // UpdateSections godoc
-// @Summary Update Section
-// @Tags Sections
-// @Description Update the details of a Section
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID of Section to be updated"
-// @Param Sections body requestSection true "Updated Section details"
-// @Success 200 {object} web.response
-// @Router /api/v1/sections/{id} [patch]
+//
+//	@Summary		Update Section
+//	@Tags			Sections
+//	@Description	Update the details of a Section
+//	@Accept			json
+//	@Produce		json
+//	@Param			id			path		string			true	"ID of Section to be updated"
+//	@Param			Sections	body		requestSection	true	"Updated Section details"
+//	@Success		200			{object}	web.response
+//	@Router			/api/v1/sections/{id} [patch]
 func (s *Section) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -195,14 +199,15 @@ func (s *Section) Update() gin.HandlerFunc {
 
 // Method Delete
 // DeleteSections godoc
-// @Summary Delete Section
-// @Tags Sections
-// @Description Delete Section
-// @Accept  json
-// @Produce  json
-// @Param id path string true "ID of a Section to be excluded"
-// @Success 204 {object} web.response
-// @Router /api/v1/sections/{id} [delete]
+//
+//	@Summary		Delete Section
+//	@Tags			Sections
+//	@Description	Delete Section
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"ID of a Section to be excluded"
+//	@Success		204	{object}	web.response
+//	@Router			/api/v1/sections/{id} [delete]
 func (s *Section) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))

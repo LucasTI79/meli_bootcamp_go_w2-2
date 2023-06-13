@@ -95,6 +95,243 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/buyers": {
+            "get": {
+                "description": "Get the details of all buyers on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyers"
+                ],
+                "summary": "List Buyers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.Buyer"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Save a buyer on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyers"
+                ],
+                "summary": "Create Buyer",
+                "parameters": [
+                    {
+                        "description": "Buyer to Create",
+                        "name": "Seller",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CreateBuyerRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Buyer"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/buyers/{id}": {
+            "get": {
+                "description": "Get the details of a Buyer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyers"
+                ],
+                "summary": "Get Buyer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Buyer to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Buyer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Buyers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyers"
+                ],
+                "summary": "Delete Buyer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of a Buyer to be excluded",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update the details of a Buyer",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyers"
+                ],
+                "summary": "Update Buyer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Buyer to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated Buyer details",
+                        "name": "Buyer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateBuyerRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Buyer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/employee": {
             "post": {
                 "description": "Create employees",
@@ -798,6 +1035,27 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Buyer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "x-order": "0"
+                },
+                "card_number_id": {
+                    "type": "string",
+                    "x-order": "1"
+                },
+                "first_name": {
+                    "type": "string",
+                    "x-order": "2"
+                },
+                "last_name": {
+                    "type": "string",
+                    "x-order": "3"
+                }
+            }
+        },
         "domain.RequestCreateEmployee": {
             "type": "object",
             "properties": {
@@ -855,6 +1113,25 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.CreateBuyerRequestDTO": {
+            "type": "object",
+            "required": [
+                "card_number_id",
+                "first_name",
+                "last_name"
+            ],
+            "properties": {
+                "card_number_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        },
         "dtos.CreateSellerRequestDTO": {
             "type": "object",
             "required": [
@@ -875,6 +1152,23 @@ const docTemplate = `{
                 },
                 "telephone": {
                     "type": "string"
+                }
+            }
+        },
+        "dtos.UpdateBuyerRequestDTO": {
+            "type": "object",
+            "properties": {
+                "card_number_id": {
+                    "type": "string",
+                    "x-order": "0"
+                },
+                "first_name": {
+                    "type": "string",
+                    "x-order": "1"
+                },
+                "last_name": {
+                    "type": "string",
+                    "x-order": "2"
                 }
             }
         },
@@ -899,8 +1193,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string",
-                    "example": "test"
+                    "type": "string"
                 },
                 "minimum_capacity": {
                     "type": "integer"
@@ -983,6 +1276,17 @@ const docTemplate = `{
                 }
             }
         },
+        "web.errorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "web.response": {
             "type": "object",
             "properties": {
@@ -995,7 +1299,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "",
+	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "MELI Bootcamp API - Sprint 1 - Grupo 2",

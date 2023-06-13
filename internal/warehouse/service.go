@@ -13,7 +13,7 @@ var (
 	ErrNotFound = errors.New("warehouse not found")
 )
 
-type Service interface{
+type Service interface {
 	Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
 	GetAll(c context.Context) (*[]domain.Warehouse, error)
 	GetOne(c context.Context, id int) (*domain.Warehouse, error)
@@ -21,7 +21,7 @@ type Service interface{
 	Delete(c context.Context, id int) error
 }
 
-type service struct{
+type service struct {
 	repository Repository
 }
 
@@ -31,12 +31,12 @@ func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*doma
 		return nil, errors.New("a warehouse with this warehouse_code already exists")
 	}
 
-	var formatter domain.Warehouse = domain.Warehouse{ 
-		ID: 0,
-		Address: dto.Address,
-		Telephone: dto.Telephone,
-		WarehouseCode: dto.WarehouseCode,
-		MinimumCapacity: dto.MinimumCapacity,
+	var formatter domain.Warehouse = domain.Warehouse{
+		ID:                 0,
+		Address:            dto.Address,
+		Telephone:          dto.Telephone,
+		WarehouseCode:      dto.WarehouseCode,
+		MinimumCapacity:    dto.MinimumCapacity,
 		MinimumTemperature: dto.MinimumTemperature,
 	}
 
@@ -52,7 +52,7 @@ func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*doma
 }
 
 func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
-	warehouses, err  := s.repository.GetAll(c)
+	warehouses, err := s.repository.GetAll(c)
 
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (s *service) Update(c context.Context, id int, dto dtos.WarehouseRequestDTO
 		return nil, ErrNotFound
 	}
 
-	newWarehouse = updateFormatter(dto, *newWarehouse)	
+	newWarehouse = updateFormatter(dto, *newWarehouse)
 
 	err := s.repository.Update(c, *newWarehouse)
 
@@ -99,7 +99,7 @@ func (s *service) Delete(c context.Context, id int) error {
 }
 
 func NewService(r Repository) Service {
-	return &service{ repository: r }
+	return &service{repository: r}
 }
 
 func updateFormatter(dto dtos.WarehouseRequestDTO, newWarehouse domain.Warehouse) *domain.Warehouse {

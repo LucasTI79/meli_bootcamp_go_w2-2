@@ -1,4 +1,19 @@
 definitions:
+  domain.Buyer:
+    properties:
+      card_number_id:
+        type: string
+        x-order: "1"
+      first_name:
+        type: string
+        x-order: "2"
+      id:
+        type: integer
+        x-order: "0"
+      last_name:
+        type: string
+        x-order: "3"
+    type: object
   domain.RequestCreateEmployee:
     properties:
       card_number_id:
@@ -36,6 +51,19 @@ definitions:
       warehouse_code:
         type: string
     type: object
+  dtos.CreateBuyerRequestDTO:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+    required:
+    - card_number_id
+    - first_name
+    - last_name
+    type: object
   dtos.CreateSellerRequestDTO:
     properties:
       address:
@@ -52,6 +80,18 @@ definitions:
     - company_name
     - telephone
     type: object
+  dtos.UpdateBuyerRequestDTO:
+    properties:
+      card_number_id:
+        type: string
+        x-order: "0"
+      first_name:
+        type: string
+        x-order: "1"
+      last_name:
+        type: string
+        x-order: "2"
+    type: object
   dtos.UpdateSellerRequestDTO:
     properties:
       address:
@@ -66,7 +106,6 @@ definitions:
   dtos.WarehouseRequestDTO:
     properties:
       address:
-        example: test
         type: string
       minimum_capacity:
         type: integer
@@ -121,10 +160,18 @@ definitions:
       warehouse_id:
         type: integer
     type: object
+  web.errorResponse:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
   web.response:
     properties:
       data: {}
     type: object
+host: localhost:8080
 info:
   contact:
     name: API Support
@@ -184,6 +231,160 @@ paths:
       summary: Update Product
       tags:
       - Products
+  /api/v1/buyers:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of all buyers on the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Buyer'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: List Buyers
+      tags:
+      - Buyers
+    post:
+      consumes:
+      - application/json
+      description: Save a buyer on the database.
+      parameters:
+      - description: Buyer to Create
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateBuyerRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Buyer'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Create Buyer
+      tags:
+      - Buyers
+  /api/v1/buyers/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Buyers
+      parameters:
+      - description: ID of a Buyer to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Delete Buyer
+      tags:
+      - Buyers
+    get:
+      description: Get the details of a Buyer
+      parameters:
+      - description: ID of Buyer to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Buyer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Get Buyer
+      tags:
+      - Buyers
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Buyer
+      parameters:
+      - description: ID of Buyer to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Buyer details
+        in: body
+        name: Buyer
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateBuyerRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Buyer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Update Buyer
+      tags:
+      - Buyers
   /api/v1/employee:
     post:
       consumes:

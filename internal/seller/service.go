@@ -34,7 +34,7 @@ func NewService(r Repository) Service {
 
 func (s *service) GetAll(ctx context.Context) (*[]domain.Seller, error) {
 	sellers := make([]domain.Seller, 0)
-	
+
 	sellers, err := s.sellerRepository.GetAll(ctx)
 	if err != nil {
 		return nil, err

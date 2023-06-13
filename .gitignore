@@ -1,0 +1,11 @@
+#IDE's
+.vscode/
+.idea/
+.run/
+
+#temp
+tmp/
+.DS_Store
+
+#dev
+.air.toml
