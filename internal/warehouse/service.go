@@ -58,10 +58,6 @@ func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
 		return nil, err
 	}
 
-	if len(warehouses) < 1 {
-		return nil, ErrNotFound
-	}
-
 	return &warehouses, nil
 }
 
