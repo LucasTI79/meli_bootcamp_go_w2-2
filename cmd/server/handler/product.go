@@ -34,6 +34,15 @@ func NewProduct(p product.Service) *Product {
 	}
 }
 
+// Method GetAll
+// ListProducts godoc
+// @Summary List products
+// @Tags Products
+// @Description getAll products
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} web.response
+// @Router /api/v1/products [get]
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		products, err := p.productService.GetAll(c)
@@ -45,6 +54,16 @@ func (p *Product) GetAll() gin.HandlerFunc {
 	}
 }
 
+// Method Get
+// GetProducts godoc
+// @Summary Get Product
+// @Tags Products
+// @Description Get the details of a Products
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of Product to be searched"
+// @Success 200 {object} web.response
+// @Router /api/v1/products/{id} [get]
 func (p *Product) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -66,6 +85,16 @@ func (p *Product) Get() gin.HandlerFunc {
 	}
 }
 
+// Method Create
+// CreateProducts godoc
+// @Summary Create Product
+// @Tags Products
+// @Description Create Product
+// @Accept  json
+// @Produce  json
+// @Param Product body requestProduct true "Product to Create"
+// @Success 201 {object} web.response
+// @Router /api/v1/products [post]
 func (p *Product) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req requestProduct
@@ -144,6 +173,17 @@ func (p *Product) Create() gin.HandlerFunc {
 	}
 }
 
+// Method Update
+// UpdateProducts godoc
+// @Summary Update Product
+// @Tags Products
+// @Description Update the details of a Product
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of Products to be updated"
+// @Param Products body requestProduct true "Updated Product details"
+// @Success 200 {object} web.response
+// @Router /api/v1/Products/{id} [patch]
 func (p *Product) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -171,6 +211,16 @@ func (p *Product) Update() gin.HandlerFunc {
 	}
 }
 
+// Method Delete
+// DeleteSections godoc
+// @Summary Delete Product
+// @Tags Products
+// @Description Delete Product
+// @Accept  json
+// @Produce  json
+// @Param id path string true "ID of a Product to be excluded"
+// @Success 204 {object} web.response
+// @Router /api/v1/Products/{id} [delete]
 func (p *Product) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))

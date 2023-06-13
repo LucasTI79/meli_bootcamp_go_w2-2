@@ -26,6 +26,50 @@ definitions:
       telephone:
         type: string
     type: object
+  handler.request:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
+  handler.requestProduct:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: integer
+      freezing_rate:
+        type: integer
+      height:
+        type: number
+      length:
+        type: number
+      netweight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
+    type: object
   web.response:
     properties:
       data: {}
@@ -42,6 +86,213 @@ info:
   title: MELI Bootcamp API - Sprint 1 - Grupo 2
   version: "1.0"
 paths:
+  /api/v1/Products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: ID of a Product to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Product
+      tags:
+      - Products
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Product
+      parameters:
+      - description: ID of Products to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Product details
+        in: body
+        name: Products
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Product
+      tags:
+      - Products
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      description: getAll products
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: Create Product
+      parameters:
+      - description: Product to Create
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestProduct'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Product
+      tags:
+      - Products
+  /api/v1/products/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Products
+      parameters:
+      - description: ID of Product to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Product
+      tags:
+      - Products
+  /api/v1/sections:
+    get:
+      consumes:
+      - application/json
+      description: getAll sections
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List sections
+      tags:
+      - Sections
+    post:
+      consumes:
+      - application/json
+      description: Create sections
+      parameters:
+      - description: Section to Create
+        in: body
+        name: Section
+        required: true
+        schema:
+          $ref: '#/definitions/handler.request'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Section
+      tags:
+      - Sections
+  /api/v1/sections/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Section
+      parameters:
+      - description: ID of a Section to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Section
+      tags:
+      - Sections
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Section
+      parameters:
+      - description: ID of Section to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Section
+      tags:
+      - Sections
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Section
+      parameters:
+      - description: ID of Section to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Section details
+        in: body
+        name: Sections
+        required: true
+        schema:
+          $ref: '#/definitions/handler.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Section
+      tags:
+      - Sections
   /api/v1/sellers:
     get:
       consumes:
