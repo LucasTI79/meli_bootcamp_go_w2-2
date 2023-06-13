@@ -100,7 +100,7 @@ func (e *Employee) Save() gin.HandlerFunc {
 			WarehouseID:  createEmployee.WarehouseID,
 		}
 
-		if employee.CardNumberID <= "" {
+		if employee.CardNumberID == "" {
 			web.Error(c, http.StatusBadRequest, "Field Card Number ID is required: %s", "")
 			return
 		}
