@@ -27,7 +27,7 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 // @Produce  json
 // @Param        id   path      int  true  "Warehouse ID"
 // @Success 200 {object} domain.Warehouse
-// @Router /warehouses/:id [get]
+// @Router /api/v1/warehouses/:id [get]
 func (w *Warehouse) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
@@ -54,7 +54,7 @@ func (w *Warehouse) Get() gin.HandlerFunc {
 // @Description get warehouses
 // @Produce  json
 // @Success 200 {object} []domain.Warehouse
-// @Router /warehouses [get]
+// @Router /api/v1/warehouses [get]
 func (w *Warehouse) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		result, err := w.warehouseService.GetAll(c)
@@ -75,9 +75,9 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 // @Description Create warehouse
 // @Accept  json
 // @Produce  json
-// @Param dtos.WarehouseRequestDTO body request true "warehouse to create"
+// @Param Warehouse body dtos.WarehouseRequestDTO true "warehouse to create"
 // @Success 200 {object} domain.Warehouse
-// @Router /warehouses [post]
+// @Router /api/v1/warehouses [post]
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
@@ -108,9 +108,9 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 // @Accept json
 // @Produce json
 // @Param        id   path      int  true  "Warehouse ID"
-// @Param dtos.WarehouseRequestDTO body request true "Warehouse to update"
-// @Success 200 {object} web.Response
-// @Router /warehouses/:id [put]
+// @Param Warehouse body dtos.WarehouseRequestDTO true "Warehouse to update"
+// @Success 200 {object} domain.Warehouse
+// @Router /api/v1/warehouses/:id [put]
 func (w *Warehouse) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
@@ -142,7 +142,7 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 // @Description delete warehouse by id
 // @Param        id   path      int  true  "Warehouse ID"
 // @Success 204
-// @Router /warehouses/:id [delete]
+// @Router /api/v1/warehouses/:id [delete]
 func (w *Warehouse) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 			warehouseId, e := strconv.Atoi(c.Param("id"))	
