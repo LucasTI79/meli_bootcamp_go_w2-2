@@ -1,4 +1,41 @@
 definitions:
+  domain.RequestCreateEmployee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  domain.RequestUpdateEmployee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  domain.Warehouse:
+    properties:
+      address:
+        type: string
+      id:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
+    type: object
   dtos.CreateSellerRequestDTO:
     properties:
       address:
@@ -26,24 +63,19 @@ definitions:
       telephone:
         type: string
     type: object
-  handler.request:
+  dtos.WarehouseRequestDTO:
     properties:
-      current_capacity:
-        type: integer
-      current_temperature:
-        type: integer
-      maximum_capacity:
-        type: integer
+      address:
+        example: test
+        type: string
       minimum_capacity:
         type: integer
       minimum_temperature:
         type: integer
-      product_type_id:
-        type: integer
-      section_number:
-        type: integer
-      warehouse_id:
-        type: integer
+      telephone:
+        type: string
+      warehouse_code:
+        type: string
     type: object
   handler.requestProduct:
     properties:
@@ -69,6 +101,25 @@ definitions:
         type: integer
       width:
         type: number
+    type: object
+  handler.requestSection:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
     type: object
   web.response:
     properties:
@@ -133,6 +184,110 @@ paths:
       summary: Update Product
       tags:
       - Products
+  /api/v1/employee:
+    post:
+      consumes:
+      - application/json
+      description: Create employees
+      parameters:
+      - description: Employee to Create
+        in: body
+        name: Employees
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RequestCreateEmployee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create Employees
+      tags:
+      - Employees
+  /api/v1/employees:
+    get:
+      consumes:
+      - application/json
+      description: getAll employees
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List Employees
+      tags:
+      - Employees
+  /api/v1/employees/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Employees
+      parameters:
+      - description: ID of a Employees to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Employees
+      tags:
+      - Employees
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a Employees
+      parameters:
+      - description: ID of Employees to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get Employees
+      tags:
+      - Employees
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Employees
+      parameters:
+      - description: ID of Employees to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Employeesers details
+        in: body
+        name: Employees
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RequestUpdateEmployee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Employees
+      tags:
+      - Employees
   /api/v1/products:
     get:
       consumes:
@@ -215,7 +370,7 @@ paths:
         name: Section
         required: true
         schema:
-          $ref: '#/definitions/handler.request'
+          $ref: '#/definitions/handler.requestSection'
       produces:
       - application/json
       responses:
@@ -282,7 +437,7 @@ paths:
         name: Sections
         required: true
         schema:
-          $ref: '#/definitions/handler.request'
+          $ref: '#/definitions/handler.requestSection'
       produces:
       - application/json
       responses:
@@ -322,8 +477,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/web.response'
       summary: Create Sellers
@@ -343,8 +498,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             $ref: '#/definitions/web.response'
       summary: Delete Sellers
@@ -396,4 +551,99 @@ paths:
       summary: Update Sellers
       tags:
       - Sellers
+  /api/v1/warehouses:
+    get:
+      description: get warehouses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Warehouse'
+            type: array
+      summary: List warehouses
+      tags:
+      - Warehouses
+    post:
+      consumes:
+      - application/json
+      description: Create warehouse
+      parameters:
+      - description: warehouse to create
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.WarehouseRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Warehouse'
+      summary: Create warehouse
+      tags:
+      - Warehouses
+  /api/v1/warehouses/:id:
+    delete:
+      description: delete warehouse by id
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+      summary: Delete warehouse
+      tags:
+      - Warehouses
+    get:
+      description: get one warehouse by id
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Warehouse'
+      summary: Get warehouse
+      tags:
+      - Warehouses
+    put:
+      consumes:
+      - application/json
+      description: update warehouses
+      parameters:
+      - description: Warehouse ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Warehouse to update
+        in: body
+        name: Warehouse
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.WarehouseRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Warehouse'
+      summary: Update warehouses
+      tags:
+      - Warehouses
 swagger: "2.0"
