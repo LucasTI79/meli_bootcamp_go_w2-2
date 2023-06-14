@@ -11,6 +11,7 @@ import (
 // Errors
 var (
 	ErrNotFound = errors.New("warehouse not found")
+	ErrConflict = errors.New("a warehouse with this warehouse_code already exists")
 )
 
 type Service interface {
@@ -28,7 +29,7 @@ type service struct {
 func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
 	exists := s.repository.Exists(c, dto.WarehouseCode)
 	if exists {
-		return nil, errors.New("a warehouse with this warehouse_code already exists")
+		return nil, ErrConflict
 	}
 
 	var formatter domain.Warehouse = domain.Warehouse{
