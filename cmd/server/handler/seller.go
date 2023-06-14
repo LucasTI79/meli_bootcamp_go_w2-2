@@ -99,7 +99,7 @@ func (s *Seller) Create() gin.HandlerFunc {
 		if err != nil {
 			switch err {
 			case seller.ErrConflict:
-				web.Error(c, http.StatusConflict, "Seller with CID already exists: %s", err.Error())
+				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
 				web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
