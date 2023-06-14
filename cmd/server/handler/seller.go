@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
@@ -68,40 +68,46 @@ func (s *Seller) Create() gin.HandlerFunc {
 			return
 		}
 
-		seller := &domain.Seller{
+		sellerDomain := &domain.Seller{
 			CID:         createSellerRequestDTO.CID,
 			CompanyName: createSellerRequestDTO.CompanyName,
 			Address:     createSellerRequestDTO.Address,
 			Telephone:   createSellerRequestDTO.Telephone,
 		}
 
-		if seller.CID <= 0.0 {
+		if sellerDomain.CID <= 0.0 {
 			web.Error(c, http.StatusBadRequest, "Field CID is required: %s", "")
 			return
 		}
 
-		if seller.CompanyName == "" {
+		if sellerDomain.CompanyName == "" {
 			web.Error(c, http.StatusBadRequest, "Field CompanyName is required: %s", "")
 			return
 		}
 
-		if seller.Address == "" {
+		if sellerDomain.Address == "" {
 			web.Error(c, http.StatusBadRequest, "Field Address is required: %s", "")
 			return
 		}
 
-		if seller.Telephone == "" {
+		if sellerDomain.Telephone == "" {
 			web.Error(c, http.StatusBadRequest, "Field Telephone is required: %s", "")
 			return
 		}
 
-		seller, err := s.sellerService.Save(c, *seller)
+		sellerDomain, err := s.sellerService.Save(c, *sellerDomain)
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
-			return
+			switch err {
+			case seller.ErrConflict:
+				web.Error(c, http.StatusConflict, err.Error())
+				return
+			default:
+				web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
+				return
+			}
 		}
 
-		web.Success(c, http.StatusCreated, *seller)
+		web.Success(c, http.StatusCreated, *sellerDomain)
 	}
 }
 
