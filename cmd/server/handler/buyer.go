@@ -104,8 +104,14 @@ func (handler *BuyerHandler) Create() gin.HandlerFunc {
 		}
 
 		if createdBuyer, err := handler.buyerService.Create(c, createBuyerRequest); err != nil {
-			web.Error(c, http.StatusInternalServerError, err.Error())
-			return
+			switch err {
+			case buyer.ErrCardNumberDuplicated:
+				web.Error(c, http.StatusConflict, err.Error())
+				return
+			default:
+				web.Error(c, http.StatusInternalServerError, err.Error())
+				return
+			}
 		} else {
 			web.Response(c, http.StatusCreated, createdBuyer)
 			return
@@ -146,6 +152,8 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
+			case buyer.ErrCardNumberDuplicated:
+				web.Error(c, http.StatusConflict, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
 			}
