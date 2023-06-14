@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type requestProduct struct {
+type requestCreateProduct struct {
 	Description    string  `json:"description"`
 	ExpirationRate int     `json:"expiration_rate"`
 	FreezingRate   int     `json:"freezing_rate"`
@@ -22,6 +22,20 @@ type requestProduct struct {
 	Width          float32 `json:"width"`
 	ProductTypeID  int     `json:"product_type_id"`
 	SellerID       int     `json:"seller_id"`
+}
+
+type requestUpdateProduct struct {
+	Description    *string  `json:"description"`
+	ExpirationRate *int     `json:"expiration_rate"`
+	FreezingRate   *int     `json:"freezing_rate"`
+	Height         *float32 `json:"height"`
+	Length         *float32 `json:"length"`
+	Netweight      *float32 `json:"netweight"`
+	ProductCode    *string  `json:"product_code"`
+	RecomFreezTemp *float32 `json:"recommended_freezing_temperature"`
+	Width          *float32 `json:"width"`
+	ProductTypeID  *int     `json:"product_type_id"`
+	SellerID       *int     `json:"seller_id"`
 }
 
 type Product struct {
@@ -95,12 +109,12 @@ func (p *Product) Get() gin.HandlerFunc {
 //	@Description	Create Product
 //	@Accept			json
 //	@Produce		json
-//	@Param			Product	body		requestProduct	true	"Product to Create"
+//	@Param			Product	body		requestCreateProduct	true	"Product to Create"
 //	@Success		201		{object}	web.response
 //	@Router			/api/v1/products [post]
 func (p *Product) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req requestProduct
+		var req requestCreateProduct
 		if err := c.Bind(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
@@ -185,9 +199,9 @@ func (p *Product) Create() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		string			true	"ID of Products to be updated"
-//	@Param			Products	body		requestProduct	true	"Updated Product details"
+//	@Param			Products	body		requestUpdateProduct	true	"Updated Product details"
 //	@Success		200			{object}	web.response
-//	@Router			/api/v1/Products/{id} [patch]
+//	@Router			/api/v1/products/{id} [patch]
 func (p *Product) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -195,23 +209,25 @@ func (p *Product) Update() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		var req requestProduct
+		var req requestUpdateProduct
 		if err := c.Bind(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-		sectionResponse, err := p.productService.Update(c, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
+		productResponse, err := p.productService.Update(c, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
 			req.Length, req.Netweight, req.ProductCode, req.RecomFreezTemp, req.Width, req.ProductTypeID, req.SellerID, id)
 		if err != nil {
 			switch err {
 			case product.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
+			case product.ErrConflict:
+				web.Error(c, http.StatusConflict, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error updating product %s", err.Error()))
 			}
 			return
 		}
-		web.Success(c, http.StatusOK, sectionResponse)
+		web.Success(c, http.StatusOK, productResponse)
 	}
 }
 
@@ -225,7 +241,7 @@ func (p *Product) Update() gin.HandlerFunc {
 //	@Produce		json
 //	@Param			id	path		string	true	"ID of a Product to be excluded"
 //	@Success		204	{object}	web.response
-//	@Router			/api/v1/Products/{id} [delete]
+//	@Router			/api/v1/products/{id} [delete]
 func (p *Product) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
