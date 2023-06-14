@@ -21,7 +21,7 @@ type Service interface {
 	Get(ctx context.Context, id int) (*domain.Section, error)
 	Delete(ctx context.Context, id int) error
 	Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
-		warehouseID, productTypeID, id int) (*domain.Section, error)
+		warehouseID, productTypeID *int, id int) (*domain.Section, error)
 }
 
 type service struct {
@@ -104,38 +104,50 @@ func (s *service) Delete(ctx context.Context, id int) error {
 }
 
 func (s *service) Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
-	warehouseID, productTypeID, id int) (*domain.Section, error) {
-
-	updatedSection := domain.Section{
-		ID:                 id,
-		SectionNumber:      sectionNumber,
-		CurrentTemperature: currentTemperature,
-		MinimumTemperature: minimumTemperature,
-		CurrentCapacity:    currentCapacity,
-		MinimumCapacity:    minimumCapacity,
-		MaximumCapacity:    maximumCapacity,
-		WarehouseID:        warehouseID,
-		ProductTypeID:      productTypeID,
-	}
-	err := s.sectionRepository.Update(ctx, updatedSection)
+	warehouseID, productTypeID *int, id int) (*domain.Section, error) {
+	existingSection, err := s.sectionRepository.Get(ctx, id)
 	if err != nil {
-		switch err {
+		return nil, err
+	}
+
+	if sectionNumber != nil {
+		existingSectionSearch := s.sectionRepository.Exists(ctx, *sectionNumber)
+		if existingSectionSearch && *sectionNumber != existingSection.SectionNumber {
+			return nil, ErrConflict
+		}
+		existingSection.SectionNumber = *sectionNumber
+	}
+	if currentTemperature != nil {
+		existingSection.CurrentTemperature = *currentTemperature
+	}
+	if minimumTemperature != nil {
+		existingSection.MinimumTemperature = *minimumTemperature
+	}
+	if currentCapacity != nil {
+		existingSection.CurrentCapacity = *currentCapacity
+	}
+	if minimumCapacity != nil {
+		existingSection.MinimumCapacity = *minimumCapacity
+	}
+	if maximumCapacity != nil {
+		existingSection.MaximumCapacity = *maximumCapacity
+	}
+	if warehouseID != nil {
+		existingSection.WarehouseID = *warehouseID
+	}
+	if productTypeID != nil {
+		existingSection.ProductTypeID = *productTypeID
+	}
+
+	err1 := s.sectionRepository.Update(ctx, existingSection)
+	if err1 != nil {
+		switch err1 {
 		case sql.ErrNoRows:
 			return nil, ErrNotFound
 		default:
-			return nil, err
+			return nil, err1
 		}
 	}
 
-	savedSection, err := s.sectionRepository.Get(ctx, id)
-	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
-	}
-
-	return &savedSection, nil
+	return &existingSection, nil
 }

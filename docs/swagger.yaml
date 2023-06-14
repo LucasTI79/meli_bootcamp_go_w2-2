@@ -116,7 +116,7 @@ definitions:
       warehouse_code:
         type: string
     type: object
-  handler.requestProduct:
+  handler.requestCreateProduct:
     properties:
       description:
         type: string
@@ -141,7 +141,51 @@ definitions:
       width:
         type: number
     type: object
-  handler.requestSection:
+  handler.requestCreateSection:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
+  handler.requestUpdateProduct:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: integer
+      freezing_rate:
+        type: integer
+      height:
+        type: number
+      length:
+        type: number
+      netweight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
+    type: object
+  handler.requestUpdateSection:
     properties:
       current_capacity:
         type: integer
@@ -184,53 +228,6 @@ info:
   title: MELI Bootcamp API - Sprint 1 - Grupo 2
   version: "1.0"
 paths:
-  /api/v1/Products/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete Product
-      parameters:
-      - description: ID of a Product to be excluded
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-          schema:
-            $ref: '#/definitions/web.response'
-      summary: Delete Product
-      tags:
-      - Products
-    patch:
-      consumes:
-      - application/json
-      description: Update the details of a Product
-      parameters:
-      - description: ID of Products to be updated
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated Product details
-        in: body
-        name: Products
-        required: true
-        schema:
-          $ref: '#/definitions/handler.requestProduct'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/web.response'
-      summary: Update Product
-      tags:
-      - Products
   /api/v1/buyers:
     get:
       consumes:
@@ -513,7 +510,7 @@ paths:
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/handler.requestProduct'
+          $ref: '#/definitions/handler.requestCreateProduct'
       produces:
       - application/json
       responses:
@@ -525,6 +522,26 @@ paths:
       tags:
       - Products
   /api/v1/products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product
+      parameters:
+      - description: ID of a Product to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete Product
+      tags:
+      - Products
     get:
       consumes:
       - application/json
@@ -545,6 +562,32 @@ paths:
       summary: Get Product
       tags:
       - Products
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Product
+      parameters:
+      - description: ID of Products to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Product details
+        in: body
+        name: Products
+        required: true
+        schema:
+          $ref: '#/definitions/handler.requestUpdateProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update Product
+      tags:
+      - Products
   /api/v1/sections:
     get:
       consumes:
@@ -563,14 +606,14 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create sections
+      description: Create section
       parameters:
       - description: Section to Create
         in: body
         name: Section
         required: true
         schema:
-          $ref: '#/definitions/handler.requestSection'
+          $ref: '#/definitions/handler.requestCreateSection'
       produces:
       - application/json
       responses:
@@ -637,7 +680,7 @@ paths:
         name: Sections
         required: true
         schema:
-          $ref: '#/definitions/handler.requestSection'
+          $ref: '#/definitions/handler.requestUpdateSection'
       produces:
       - application/json
       responses:

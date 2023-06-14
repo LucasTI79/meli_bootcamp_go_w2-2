@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type requestSection struct {
+type requestCreateSection struct {
 	SectionNumber      int `json:"section_number"`
 	CurrentTemperature int `json:"current_temperature"`
 	MinimumTemperature int `json:"minimum_temperature"`
@@ -19,6 +19,17 @@ type requestSection struct {
 	MaximumCapacity    int `json:"maximum_capacity"`
 	WarehouseID        int `json:"warehouse_id"`
 	ProductTypeID      int `json:"product_type_id"`
+}
+
+type requestUpdateSection struct {
+	SectionNumber      *int `json:"section_number"`
+	CurrentTemperature *int `json:"current_temperature"`
+	MinimumTemperature *int `json:"minimum_temperature"`
+	CurrentCapacity    *int `json:"current_capacity"`
+	MinimumCapacity    *int `json:"minimum_capacity"`
+	MaximumCapacity    *int `json:"maximum_capacity"`
+	WarehouseID        *int `json:"warehouse_id"`
+	ProductTypeID      *int `json:"product_type_id"`
 }
 
 type Section struct {
@@ -89,15 +100,15 @@ func (s *Section) Get() gin.HandlerFunc {
 //
 //	@Summary		Create Section
 //	@Tags			Sections
-//	@Description	Create sections
+//	@Description	Create section
 //	@Accept			json
 //	@Produce		json
-//	@Param			Section	body		requestSection	true	"Section to Create"
+//	@Param			Section	body		requestCreateSection	true	"Section to Create"
 //	@Success		201		{object}	web.response
 //	@Router			/api/v1/sections [post]
 func (s *Section) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req requestSection
+		var req requestCreateSection
 		if err := c.Bind(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
@@ -167,7 +178,7 @@ func (s *Section) Create() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		string			true	"ID of Section to be updated"
-//	@Param			Sections	body		requestSection	true	"Updated Section details"
+//	@Param			Sections	body		requestUpdateSection	true	"Updated Section details"
 //	@Success		200			{object}	web.response
 //	@Router			/api/v1/sections/{id} [patch]
 func (s *Section) Update() gin.HandlerFunc {
@@ -177,17 +188,19 @@ func (s *Section) Update() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		var req requestSection
+		var req requestUpdateSection
 		if err := c.Bind(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 		sectionResponse, err := s.sectionService.Update(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
-			req.MinimumCapacity, req.MaximumCapacity, req.WarehouseID, req.ProductTypeID, int(id))
+			req.MinimumCapacity, req.MaximumCapacity, req.WarehouseID, req.ProductTypeID, id)
 		if err != nil {
 			switch err {
 			case section.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
+			case section.ErrConflict:
+				web.Error(c, http.StatusConflict, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error updating section %s", err.Error()))
 			}
