@@ -97,7 +97,12 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 
 		result, e := w.warehouseService.Create(c, req)
 		if e != nil {
-			web.Error(c, http.StatusBadRequest, e.Error())
+			switch e {
+			case warehouse.ErrConflict:
+				web.Error(c, http.StatusConflict, e.Error())
+			default:
+				web.Error(c, http.StatusBadRequest, e.Error())
+			}
 			return
 		}
 
