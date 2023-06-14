@@ -96,37 +96,43 @@ func (e *Employee) Save() gin.HandlerFunc {
 			return
 		}
 
-		employee := &domain.Employee{
+		employeeDomain := &domain.Employee{
 			CardNumberID: createEmployee.CardNumberID,
 			FirstName:    createEmployee.FirstName,
 			LastName:     createEmployee.LastName,
 			WarehouseID:  createEmployee.WarehouseID,
 		}
 
-		if employee.CardNumberID == "" {
+		if employeeDomain.CardNumberID == "" {
 			web.Error(c, http.StatusBadRequest, "Field Card Number ID is required: %s", "")
 			return
 		}
 
-		if employee.FirstName == "" {
+		if employeeDomain.FirstName == "" {
 			web.Error(c, http.StatusBadRequest, "Field First Name is required: %s", "")
 		}
 
-		if employee.LastName == "" {
+		if employeeDomain.LastName == "" {
 			web.Error(c, http.StatusBadRequest, "Field Last Name is required: %s", "")
 		}
 
-		if employee.WarehouseID == 0 {
+		if employeeDomain.WarehouseID == 0 {
 			web.Error(c, http.StatusBadRequest, "Field Ware House ID is required: %s", "")
 		}
 
-		employee, err := e.service.Save(c, *employee)
+		employeeDomain, err := e.service.Save(c, *employeeDomain)
 		if err != nil {
+			switch err {
+			case employee.ErrConflict:
+				web.Error(c, http.StatusConflict, err.Error())
+				return
+
+			}
 			web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
 			return
 		}
 
-		web.Success(c, http.StatusCreated, *employee)
+		web.Success(c, http.StatusCreated, *employeeDomain)
 	}
 }
 
