@@ -11,7 +11,7 @@ import (
 // Errors
 var (
 	ErrNotFound = errors.New("seller not found")
-	ErrConflict = errors.New("409 Conflict: Seller with CID already exists")
+	ErrConflict = errors.New("Seller with CID already exists")
 )
 
 type Service interface {
