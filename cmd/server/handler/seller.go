@@ -41,7 +41,7 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 		}
 
 		if len(*sellers) == 0 {
-			web.Error(c, http.StatusNoContent, "There are no sellers stored: %s", err.Error())
+			web.Error(c, http.StatusNoContent, "There are no sellers stored")
 			return
 		}
 
@@ -174,7 +174,7 @@ func (s *Seller) Update() gin.HandlerFunc {
 
 		sellerUpdated, err := s.sellerService.Update(c, int(id), updateSellerRequestDTO)
 		if err != nil {
-			web.Error(c, http.StatusNotFound, "Error to update: %s", err.Error())
+			web.Error(c, http.StatusConflict, "Error to update: %s", err.Error())
 			return
 		}
 
