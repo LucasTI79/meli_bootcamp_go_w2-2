@@ -78,6 +78,14 @@ func (s *service) Update(c context.Context, id int, dto dtos.WarehouseRequestDTO
 		return nil, ErrNotFound
 	}
 
+	exists := s.repository.Exists(c, dto.WarehouseCode)
+
+	if exists {
+		if newWarehouse.WarehouseCode != dto.WarehouseCode {
+			return nil, ErrConflict
+		}
+	}		
+
 	newWarehouse = updateFormatter(dto, *newWarehouse)
 
 	err := s.repository.Update(c, *newWarehouse)
