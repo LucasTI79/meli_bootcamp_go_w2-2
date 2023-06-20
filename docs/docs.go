@@ -458,7 +458,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.requestCreateProduct"
+                            "$ref": "#/definitions/handlers.requestCreateProduct"
                         }
                     }
                 ],
@@ -559,7 +559,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.requestUpdateProduct"
+                            "$ref": "#/definitions/handlers.requestUpdateProduct"
                         }
                     }
                 ],
@@ -614,7 +614,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.requestCreateSection"
+                            "$ref": "#/definitions/handlers.requestCreateSection"
                         }
                     }
                 ],
@@ -715,7 +715,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.requestUpdateSection"
+                            "$ref": "#/definitions/handlers.requestUpdateSection"
                         }
                     }
                 ],
@@ -1205,7 +1205,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.requestCreateProduct": {
+        "handlers.requestCreateProduct": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1243,7 +1243,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.requestCreateSection": {
+        "handlers.requestCreateSection": {
             "type": "object",
             "properties": {
                 "current_capacity": {
@@ -1272,7 +1272,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.requestUpdateProduct": {
+        "handlers.requestUpdateProduct": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1310,7 +1310,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handler.requestUpdateSection": {
+        "handlers.requestUpdateSection": {
             "type": "object",
             "properties": {
                 "current_capacity": {
