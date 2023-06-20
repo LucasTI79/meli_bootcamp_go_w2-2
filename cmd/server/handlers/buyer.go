@@ -1,4 +1,4 @@
-package handler
+package handlers
 
 import (
 	"errors"
@@ -16,13 +16,13 @@ type BuyerHandler struct {
 	buyerService buyer.Service
 }
 
-func NewBuyer(buyerService buyer.Service) *BuyerHandler {
+func NewBuyerHandler(buyerService buyer.Service) *BuyerHandler {
 	return &BuyerHandler{
 		buyerService,
 	}
 }
 
-// Get is the handler to search for a buyer and return their details.
+// Get is the handlers to search for a buyer and return their details.
 //
 //	@Summary		Get Buyer
 //	@Tags			Buyers
@@ -59,7 +59,7 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 	}
 }
 
-// GetAll is the handler to search for all buyers.
+// GetAll is the handlers to search for all buyers.
 //
 //	@Summary		List Buyers
 //	@Tags			Buyers
@@ -82,7 +82,7 @@ func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 	}
 }
 
-// Create is the handler to create a buyer.
+// Create is the handlers to create a buyer.
 //
 //	@Summary		Create Buyer
 //	@Tags			Buyers
@@ -119,7 +119,7 @@ func (handler *BuyerHandler) Create() gin.HandlerFunc {
 	}
 }
 
-// Update is the handler to update a buyer details.
+// Update is the handlers to update a buyer details.
 //
 //	@Summary		Update Buyer
 //	@Tags			Buyers
@@ -165,7 +165,7 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 	}
 }
 
-// Delete is the handler to delete a buyer.
+// Delete is the handlers to delete a buyer.
 //
 //	@Summary		Delete Buyer
 //	@Tags			Buyers
