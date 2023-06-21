@@ -12,8 +12,8 @@ type SellerServiceMock struct {
 	mock.Mock
 }
 
-func (service *SellerServiceMock) Get(c *context.Context, id int) (*domain.Seller, error) {
-	args := service.Called(c, id)
+func (service *SellerServiceMock) Get(ctx *context.Context, id int) (*domain.Seller, error) {
+	args := service.Called(ctx, id)
 
 	return args.Get(0).(*domain.Seller), args.Error(1)
 }
@@ -23,9 +23,9 @@ func (service *SellerServiceMock) GetAll(ctx context.Context) (*[]domain.Seller,
 	panic("implement me")
 }
 
-func (service *SellerServiceMock) Save(ctx context.Context, seller domain.Seller) (*domain.Seller, error) {
-	//TODO implement me
-	panic("implement me")
+func (service *SellerServiceMock) Save(ctx *context.Context, seller domain.Seller) (*domain.Seller, error) {
+	args := service.Called(ctx, seller)
+	return args.Get(0).(*domain.Seller), args.Error(1)
 }
 
 func (service *SellerServiceMock) Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {

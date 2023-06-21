@@ -95,7 +95,8 @@ func (s *Seller) Create() gin.HandlerFunc {
 			return
 		}
 
-		sellerDomain, err := s.sellerService.Save(c, *sellerDomain)
+		ctx := c.Request.Context()
+		sellerDomain, err := s.sellerService.Save(&ctx, *sellerDomain)
 		if err != nil {
 			switch err {
 			case seller.ErrConflict:
