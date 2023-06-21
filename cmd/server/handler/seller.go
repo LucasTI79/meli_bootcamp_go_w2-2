@@ -130,7 +130,8 @@ func (s *Seller) Get() gin.HandlerFunc {
 			return
 		}
 
-		sellerResult, err := s.sellerService.Get(c, int(id))
+		ctx := c.Request.Context()
+		sellerResult, err := s.sellerService.Get(&ctx, int(id))
 
 		if err != nil {
 			if errors.Is(err, seller.ErrNotFound) {
