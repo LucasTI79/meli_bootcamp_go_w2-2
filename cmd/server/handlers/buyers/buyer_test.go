@@ -1,10 +1,10 @@
-package handlers_test
+package buyers_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer/mocks"
@@ -71,7 +71,7 @@ func TestGet(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedBuyer, test.expectedGetError)
 
-			buyerHandler := handlers.NewBuyerHandler(buyerServiceMock)
+			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock)
 
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
@@ -105,7 +105,7 @@ func TestGet(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 
-	buyers := &[]domain.Buyer{
+	expectedBuyers := &[]domain.Buyer{
 		{
 			ID:           1,
 			CardNumberID: "123",
@@ -129,11 +129,11 @@ func TestGetAll(t *testing.T) {
 		expectedCode         int
 	}{
 		{
-			name:                 "Successfully get all buyers",
-			expectedGetAllResult: buyers,
+			name:                 "Successfully get all expectedBuyers",
+			expectedGetAllResult: expectedBuyers,
 			expectedGetAllError:  nil,
 			expectedGetAllCalls:  1,
-			expectedResponse:     buyers,
+			expectedResponse:     expectedBuyers,
 			expectedCode:         http.StatusOK,
 		},
 		{
@@ -145,7 +145,7 @@ func TestGetAll(t *testing.T) {
 			expectedCode:         http.StatusNoContent,
 		},
 		{
-			name:                 "Error getting all buyers",
+			name:                 "Error getting all expectedBuyers",
 			expectedGetAllResult: &[]domain.Buyer{},
 			expectedGetAllError:  assert.AnError,
 			expectedGetAllCalls:  1,
@@ -159,15 +159,15 @@ func TestGetAll(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(test.expectedGetAllResult, test.expectedGetAllError)
 
-			buyerHandler := handlers.NewBuyerHandler(buyerServiceMock)
+			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock)
 
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.GET("/api/v1/buyers", buyerHandler.GetAll())
+			r.GET("/api/v1/expectedBuyers", buyerHandler.GetAll())
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s", "/api/v1/buyers"), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s", "/api/v1/expectedBuyers"), nil)
 			res := httptest.NewRecorder()
 
 			//Executar request
@@ -239,7 +239,7 @@ func TestDelete(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedDeleteError)
 
-			buyerHandler := handlers.NewBuyerHandler(buyerServiceMock)
+			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock)
 
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
@@ -321,7 +321,7 @@ func TestCreate(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("*dtos.CreateBuyerRequestDTO")).Return(test.expectedCreateResult, test.expectedCreateError)
 
-			buyerHandler := handlers.NewBuyerHandler(buyerServiceMock)
+			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock)
 
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
@@ -436,7 +436,7 @@ func TestUpdate(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("*dtos.UpdateBuyerRequestDTO")).Return(test.expectedUpdateResult, test.expectedUpdateError)
 
-			buyerHandler := handlers.NewBuyerHandler(buyerServiceMock)
+			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock)
 
 			//Configurar o servidor
 
