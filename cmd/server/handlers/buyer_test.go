@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/gin-gonic/gin"
@@ -43,9 +44,17 @@ func TestGet(t *testing.T) {
 			name:               "Error finding buyer",
 			buyerId:            999,
 			expectedGetCalls:   1,
-			expectedGetError:   assert.AnError,
+			expectedGetError:   buyer.ErrNotFound,
 			expectedGetResult:  &domain.Buyer{},
 			expectedStatusCode: http.StatusNotFound,
+		},
+		{
+			name:               "Error connecting db",
+			buyerId:            1,
+			expectedGetCalls:   1,
+			expectedGetError:   assert.AnError,
+			expectedGetResult:  &domain.Buyer{},
+			expectedStatusCode: http.StatusInternalServerError,
 		},
 	}
 
