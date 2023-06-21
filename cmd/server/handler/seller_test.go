@@ -1,14 +1,17 @@
 package handler_test
 
 import (
+	"bytes"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/seller/mocks"
@@ -132,4 +135,63 @@ func TestGet(t *testing.T) {
 
 	})
 
+}
+
+func TestCreate(t *testing.T) {
+	//"create_ok Quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido.""
+	//"create_bad_request Quando o JSON tiver um campo incorreto, um código 400 será retornado"
+	//"create_fail Se o objeto JSON não contiver os campos necessários, um código 422 será retornado"
+	//"create_conflict Se o cid já existir, ele retornará um erro 409 Conflict."
+	t.Run("Create_Ok", func(t *testing.T) {
+		// Definir resultado da consulta
+		expectedSeller := &domain.Seller{
+			ID:          1,
+			CID:         1,
+			CompanyName: "Test",
+			Address:     "Test",
+			Telephone:   "Test",
+		}
+		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
+			CID:         1,
+			CompanyName: "Test",
+			Address:     "Test",
+			Telephone:   "Test",
+		}
+
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		sellerServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Seller")).Return(expectedSeller, nil)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/sellers", handler.Create())
+
+		requestBody, _ := json.Marshal(createSellerRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/sellers", request)
+		req.GetBody()
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body2, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data domain.Seller `json:"data"`
+		}
+
+		json.Unmarshal(body2, &responseDTO)
+
+		actualSeller := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, http.StatusCreated, res.Code)
+		assert.Equal(t, *expectedSeller, actualSeller)
+	})
 }
