@@ -63,7 +63,7 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		createSellerRequestDTO := new(dtos.CreateSellerRequestDTO)
-		if err := c.Bind(&createSellerRequestDTO); err != nil {
+		if err := c.ShouldBindJSON(createSellerRequestDTO); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, "Error to read request: %s", err.Error())
 			return
 		}

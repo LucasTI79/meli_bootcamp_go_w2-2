@@ -173,7 +173,6 @@ func TestCreate(t *testing.T) {
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/sellers", request)
-		req.GetBody()
 		res := httptest.NewRecorder()
 
 		//Executar request
