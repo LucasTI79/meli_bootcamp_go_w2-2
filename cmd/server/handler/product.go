@@ -87,7 +87,8 @@ func (p *Product) Get() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, err.Error())
 			return
 		}
-		productResponse, err := p.productService.Get(c, int(id))
+		ctx := c.Request.Context()
+		productResponse, err := p.productService.Get(&ctx, int(id))
 		if err != nil {
 			switch err {
 			case product.ErrNotFound:
