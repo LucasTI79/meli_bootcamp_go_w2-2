@@ -15,11 +15,11 @@ var (
 )
 
 type Service interface {
-	Get(ctx context.Context, id int) (*domain.Employee, error)
-	GetAll(ctx context.Context) (*[]domain.Employee, error)
-	Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error)
-	Update(ctx context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error)
-	Delete(ctx context.Context, id int) error
+	Get(ctx *context.Context, id int) (*domain.Employee, error)
+	GetAll(ctx *context.Context) (*[]domain.Employee, error)
+	Save(ctx *context.Context, employee domain.Employee) (*domain.Employee, error)
+	Update(ctx *context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error)
+	Delete(ctx *context.Context, id int) error
 }
 
 type service struct {
@@ -32,8 +32,8 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) Get(ctx context.Context, id int) (*domain.Employee, error) {
-	employees, err := s.repository.Get(ctx, id)
+func (s *service) Get(ctx *context.Context, id int) (*domain.Employee, error) {
+	employees, err := s.repository.Get(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -45,25 +45,25 @@ func (s *service) Get(ctx context.Context, id int) (*domain.Employee, error) {
 	return &employees, nil
 }
 
-func (s *service) GetAll(ctx context.Context) (*[]domain.Employee, error) {
+func (s *service) GetAll(ctx *context.Context) (*[]domain.Employee, error) {
 	employees := []domain.Employee{}
 
-	employees, err := s.repository.GetAll(ctx)
+	employees, err := s.repository.GetAll(*ctx)
 	if err != nil {
 		return nil, err
 	}
 	return &employees, nil
 }
 
-func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.Employee, error) {
+func (s *service) Save(ctx *context.Context, employee domain.Employee) (*domain.Employee, error) {
 
-	existingEmployee := s.repository.Exists(ctx, employee.CardNumberID)
+	existingEmployee := s.repository.Exists(*ctx, employee.CardNumberID)
 
 	if existingEmployee {
 		return nil, ErrConflict
 	}
 
-	id, err := s.repository.Save(ctx, employee)
+	id, err := s.repository.Save(*ctx, employee)
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +73,8 @@ func (s *service) Save(ctx context.Context, employee domain.Employee) (*domain.E
 	return &employee, nil
 }
 
-func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error) {
-	existingEmployee, err := s.repository.Get(ctx, id)
+func (s *service) Update(ctx *context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error) {
+	existingEmployee, err := s.repository.Get(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -85,7 +85,7 @@ func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.
 	}
 
 	if reqUpdateEmployee.CardNumberID != nil {
-		existingEmployeeSearch := s.repository.Exists(ctx, *reqUpdateEmployee.CardNumberID)
+		existingEmployeeSearch := s.repository.Exists(*ctx, *reqUpdateEmployee.CardNumberID)
 		if existingEmployeeSearch && *reqUpdateEmployee.CardNumberID != existingEmployee.CardNumberID {
 			return nil, ErrConflict
 		}
@@ -102,7 +102,7 @@ func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.
 		existingEmployee.WarehouseID = *reqUpdateEmployee.WarehouseID
 	}
 
-	err1 := s.repository.Update(ctx, existingEmployee)
+	err1 := s.repository.Update(*ctx, existingEmployee)
 	if err1 != nil {
 		return nil, err1
 	}
@@ -110,8 +110,8 @@ func (s *service) Update(ctx context.Context, id int, reqUpdateEmployee *domain.
 	return &existingEmployee, nil
 }
 
-func (s *service) Delete(ctx context.Context, id int) error {
-	_, err := s.repository.Get(ctx, id)
+func (s *service) Delete(ctx *context.Context, id int) error {
+	_, err := s.repository.Get(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -121,7 +121,7 @@ func (s *service) Delete(ctx context.Context, id int) error {
 		}
 	}
 
-	err1 := s.repository.Delete(ctx, id)
+	err1 := s.repository.Delete(*ctx, id)
 	if err1 != nil {
 		return err
 	}
