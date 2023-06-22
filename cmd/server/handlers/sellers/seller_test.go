@@ -141,10 +141,10 @@ func TestGet(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	//"create_ok Quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido.""
-	//"create_bad_request Quando o JSON tiver um campo incorreto, um código 400 será retornado"
-	//"create_fail Se o objeto JSON não contiver os campos necessários, um código 422 será retornado"
+
 	//"create_conflict Se o cid já existir, ele retornará um erro 409 Conflict."
+
+	//"create_ok Quando a entrada de dados for bem-sucedida, um código 201 será retornado junto com o objeto inserido.""
 	t.Run("Create_Ok", func(t *testing.T) {
 		// Definir resultado da consulta
 		expectedSeller := &domain.Seller{
@@ -195,5 +195,59 @@ func TestCreate(t *testing.T) {
 		//Validar resultado
 		assert.Equal(t, http.StatusCreated, res.Code)
 		assert.Equal(t, *expectedSeller, actualSeller)
+	})
+
+	//"create_bad_request Quando o JSON tiver um campo incorreto, um código 400 será retornado"
+	t.Run("Create BadRequest", func(t *testing.T) {
+		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
+			CID:         0,
+			CompanyName: "Test",
+			Address:     "Test",
+			Telephone:   "Test",
+		}
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		// sellerServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Seller")).Return(expectedSeller, nil)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/sellers", handler.Create())
+
+		requestBody, _ := json.Marshal(createSellerRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/sellers", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		type expectedMensageResponseDTO struct {
+			Code    string `json:"code"`
+			Message string `json:"message"`
+		}
+		expectedMensageResponse := expectedMensageResponseDTO{
+			Code: "bad_request",
+			Message: "Field CID is required: ",
+		}
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		
+		var actualMessageResponse expectedMensageResponseDTO
+		json.Unmarshal(body, &actualMessageResponse)
+		
+		//Validar resultado
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, expectedMensageResponse, actualMessageResponse) //  "Field CID is required: %s", ""
+	})
+	// TODO: Finalizar cobertura para os outros campos da struct relacionada a struct.
+
+	//"create_fail Se o objeto JSON não contiver os campos necessários, um código 422 será retornado"
+	t.Run("Conflicts errors", func(t *testing.T) {
+		
 	})
 }

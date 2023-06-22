@@ -103,7 +103,7 @@ func (s *Seller) Create() gin.HandlerFunc {
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
-				web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
+				web.Error(c, http.StatusInternalServerError, "Error to save request: %s", err.Error())
 				return
 			}
 		}
