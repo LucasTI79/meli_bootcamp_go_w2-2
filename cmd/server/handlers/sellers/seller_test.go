@@ -229,17 +229,16 @@ func TestCreate(t *testing.T) {
 			Message string `json:"message"`
 		}
 		expectedMensageResponse := expectedMensageResponseDTO{
-			Code: "bad_request",
+			Code:    "bad_request",
 			Message: "Field CID is required: ",
 		}
 
 		//Parsear response
 		body, _ := ioutil.ReadAll(res.Body)
 
-		
 		var actualMessageResponse expectedMensageResponseDTO
 		json.Unmarshal(body, &actualMessageResponse)
-		
+
 		//Validar resultado
 		assert.Equal(t, http.StatusBadRequest, res.Code)
 		assert.Equal(t, expectedMensageResponse, actualMessageResponse) //  "Field CID is required: %s", ""
@@ -248,6 +247,105 @@ func TestCreate(t *testing.T) {
 
 	//"create_fail Se o objeto JSON não contiver os campos necessários, um código 422 será retornado"
 	t.Run("Conflicts errors", func(t *testing.T) {
-		
+
+	})
+}
+
+func TestGetAll(t *testing.T) {
+
+	/*find_all Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os vendedores existentes - 200*/
+	t.Run("Get All", func(t *testing.T) {
+		sellersFounds := &[]domain.Seller{
+			{
+				ID:          1,
+				CID:         1,
+				CompanyName: "Test",
+				Address:     "Test",
+				Telephone:   "Test",
+			},
+			{
+				ID:          1,
+				CID:         1,
+				CompanyName: "Test",
+				Address:     "Test",
+				Telephone:   "Test",
+			},
+		}
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		sellerServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(sellersFounds, nil)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/sellers", handler.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/sellers", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []domain.Seller `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+		responseSellers := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, *sellersFounds, responseSellers)
+	})
+
+	t.Run("empty database", func(t *testing.T) {
+		sellersFounds := &[]domain.Seller{}
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		sellerServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(sellersFounds, nil)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/sellers", handler.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/sellers", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNoContent, res.Code)
+	})
+
+	t.Run("internal error", func(t *testing.T) {
+		sellersFounds := &[]domain.Seller{}
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		sellerServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(sellersFounds, assert.AnError)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/sellers", handler.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/sellers", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
 	})
 }

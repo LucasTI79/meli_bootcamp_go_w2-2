@@ -34,7 +34,9 @@ func NewSeller(s seller.Service) *Seller {
 //	@Router			/api/v1/sellers [get]
 func (s *Seller) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sellers, err := s.sellerService.GetAll(c)
+		ctx := c.Request.Context()
+
+		sellers, err := s.sellerService.GetAll(&ctx)
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, "Failed to get sellers: %s", err.Error())
 			return

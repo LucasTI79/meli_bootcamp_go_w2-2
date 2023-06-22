@@ -18,9 +18,10 @@ func (service *SellerServiceMock) Get(ctx *context.Context, id int) (*domain.Sel
 	return args.Get(0).(*domain.Seller), args.Error(1)
 }
 
-func (service *SellerServiceMock) GetAll(ctx context.Context) (*[]domain.Seller, error) {
-	//TODO implement me
-	panic("implement me")
+func (service *SellerServiceMock) GetAll(ctx *context.Context) (*[]domain.Seller, error) {
+	args := service.Called(ctx)
+
+	return args.Get(0).(*[]domain.Seller), args.Error(1)
 }
 
 func (service *SellerServiceMock) Save(ctx *context.Context, seller domain.Seller) (*domain.Seller, error) {

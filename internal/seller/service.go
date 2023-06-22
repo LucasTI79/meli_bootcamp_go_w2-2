@@ -15,7 +15,7 @@ var (
 )
 
 type Service interface {
-	GetAll(ctx context.Context) (*[]domain.Seller, error)
+	GetAll(ctx *context.Context) (*[]domain.Seller, error)
 	Get(ctx *context.Context, id int) (*domain.Seller, error)
 	Save(ctx *context.Context, seller domain.Seller) (*domain.Seller, error)
 	Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error)
@@ -32,10 +32,10 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) GetAll(ctx context.Context) (*[]domain.Seller, error) {
+func (s *service) GetAll(ctx *context.Context) (*[]domain.Seller, error) {
 	sellers := make([]domain.Seller, 0)
 
-	sellers, err := s.sellerRepository.GetAll(ctx)
+	sellers, err := s.sellerRepository.GetAll(*ctx)
 
 	if err != nil {
 		return nil, err
