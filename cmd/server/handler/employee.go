@@ -39,7 +39,9 @@ func (e *Employee) Get() gin.HandlerFunc {
 			return
 		}
 
-		employee, err := e.service.Get(c, id)
+		ctx := c.Request.Context()
+		employee, err := e.service.Get(&ctx, id)
+
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, "Failed to get employee: %s", err.Error())
 			return
@@ -61,7 +63,9 @@ func (e *Employee) Get() gin.HandlerFunc {
 //	@Router			/api/v1/employees [get]
 func (e *Employee) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		employee, err := e.service.GetAll(c)
+		ctx := c.Request.Context()
+		employee, err := e.service.GetAll(&ctx)
+
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, "Failed to get employee: %s", err.Error())
 			return
@@ -120,7 +124,8 @@ func (e *Employee) Save() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Field Ware House ID is required: %s", "")
 		}
 
-		employeeDomain, err := e.service.Save(c, *employeeDomain)
+		ctx := c.Request.Context()
+		employeeDomain, err := e.service.Save(&ctx, *employeeDomain)
 		if err != nil {
 			switch err {
 			case employee.ErrConflict:
@@ -163,7 +168,8 @@ func (e *Employee) Update() gin.HandlerFunc {
 			return
 		}
 
-		employeeUpdate, err := e.service.Update(c, id, ReqUpdateEmployee)
+		ctx := c.Request.Context()
+		employeeUpdate, err := e.service.Update(&ctx, id, ReqUpdateEmployee)
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to update: %s", err.Error())
 			return
@@ -191,8 +197,8 @@ func (e *Employee) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-
-		err = e.service.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = e.service.Delete(&ctx, int(id))
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to delete: %s", err.Error())
 			return
