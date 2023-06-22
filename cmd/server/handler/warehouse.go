@@ -33,13 +33,13 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 func (w *Warehouse) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
-
+		ctx := c.Request.Context()
 		if e != nil {
 			web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 			return
 		}
 
-		result, err := w.warehouseService.GetOne(c, warehouseId)
+		result, err := w.warehouseService.GetOne(&ctx, warehouseId)
 
 		if err != nil {
 			web.Error(c, http.StatusNotFound, err.Error())
@@ -60,15 +60,19 @@ func (w *Warehouse) Get() gin.HandlerFunc {
 //	@Router			/api/v1/warehouses [get]
 func (w *Warehouse) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		result, err := w.warehouseService.GetAll(c)
-
+		ctx := c.Request.Context()
+		warehouses, err := w.warehouseService.GetAll(&ctx)
 		if err != nil {
-			web.Error(c, http.StatusNotFound, err.Error())
+			web.Error(c, http.StatusInternalServerError, "Failed to get warehouses: %s", err.Error())
 			return
 		}
 
-		web.Success(c, http.StatusOK, result)
-		return
+		if len(*warehouses) == 0 {
+			web.Error(c, http.StatusNoContent, "There are no warehouses stored")
+			return
+		}
+
+		web.Success(c, http.StatusOK, *warehouses)
 	}
 }
 
@@ -85,6 +89,7 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
+		ctx := c.Request.Context()
 		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusBadRequest, "JSON format may be wrong")
 			return
@@ -95,7 +100,7 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 			return
 		}
 
-		result, e := w.warehouseService.Create(c, req)
+		result, e := w.warehouseService.Create(&ctx, req)
 		if e != nil {
 			switch e {
 			case warehouse.ErrConflict:
@@ -123,22 +128,23 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 func (w *Warehouse) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
+		ctx := c.Request.Context()
 		var req dtos.WarehouseRequestDTO
 
 		if e != nil {
-			web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
+			web.Error(c, http.StatusNotFound, "parameter id must be a integer")
 			return
 		}
 
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusBadRequest, "JSON format may be wrong")
+			web.Error(c, http.StatusNotFound, "JSON format may be wrong")
 			return
 		}
 
-		result, err := w.warehouseService.Update(c, warehouseId, req)
+		result, err := w.warehouseService.Update(&ctx, warehouseId, req)
 
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, e.Error())
+			web.Error(c, http.StatusNotFound, e.Error())
 			return
 		}
 
@@ -155,12 +161,13 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 func (w *Warehouse) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
+		ctx := c.Request.Context()
 		if e != nil {
 			web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 			return
 		}
 
-		err := w.warehouseService.Delete(c, warehouseId)
+		err := w.warehouseService.Delete(&ctx, warehouseId)
 
 		if err != nil {
 			web.Error(c, http.StatusNotFound, err.Error())
