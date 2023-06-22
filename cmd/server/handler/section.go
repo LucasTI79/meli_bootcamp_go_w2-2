@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
@@ -76,19 +78,19 @@ func (s *Section) GetAll() gin.HandlerFunc {
 //	@Router			/api/v1/sections/{id} [get]
 func (s *Section) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, err.Error())
+			web.Error(c, http.StatusBadRequest, domain.ErrTryAgain.Error())
 			return
 		}
-		sectionResponse, err := s.sectionService.Get(c, int(id))
+		sectionResponse, err := s.sectionService.Get(c, id)
 		if err != nil {
-			switch err {
-			case section.ErrNotFound:
-				web.Error(c, http.StatusNotFound, err.Error())
-			default:
-				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error getting section %s", err.Error()))
+			if errors.Is(err, domain.ErrNotFound) {
+				web.Error(c, http.StatusNotFound, domain.ErrNotFound.Error())
+				return
 			}
+
+			web.Error(c, http.StatusInternalServerError, domain.ErrGettingUserById.Error())
 			return
 		}
 		web.Success(c, http.StatusOK, sectionResponse)

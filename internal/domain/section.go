@@ -1,5 +1,17 @@
 package domain
 
+import "errors"
+
+var (
+	ErrNotFound        = errors.New("section not found")
+	ErrInvalidId       = errors.New("invalid id")
+	ErrTryAgain        = errors.New("error, try again %s")
+	ErrAlreadyExists   = errors.New("section already exists")
+	ErrModifySection   = errors.New("cannot modify Section")
+	ErrGettingUserById = errors.New("error getting user by id")
+	ErrNoRows = errors.New("sql: no rows in result set")
+)
+
 type Section struct {
 	ID                 int `json:"id"`
 	SectionNumber      int `json:"section_number"`

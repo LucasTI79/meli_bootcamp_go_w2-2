@@ -18,7 +18,7 @@ type Service interface {
 	Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
 		warehouseID, productTypeID int) (*domain.Section, error)
 	GetAll(ctx context.Context) ([]domain.Section, error)
-	Get(ctx context.Context, id int) (*domain.Section, error)
+	Get(ctx context.Context, id int) (domain.Section, error)
 	Delete(ctx context.Context, id int) error
 	Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
 		warehouseID, productTypeID *int, id int) (*domain.Section, error)
@@ -76,18 +76,8 @@ func (s *service) GetAll(ctx context.Context) ([]domain.Section, error) {
 	return sections, nil
 }
 
-func (s *service) Get(ctx context.Context, id int) (*domain.Section, error) {
-	section, err := s.sectionRepository.Get(ctx, id)
-	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
-	}
-
-	return &section, nil
+func (s *service) Get(ctx context.Context, id int) (domain.Section, error) {
+	return s.sectionRepository.Get(ctx, id)
 }
 
 func (s *service) Delete(ctx context.Context, id int) error {
