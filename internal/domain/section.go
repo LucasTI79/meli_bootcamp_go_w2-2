@@ -8,7 +8,8 @@ var (
 	ErrTryAgain        = errors.New("error, try again %s")
 	ErrAlreadyExists   = errors.New("section already exists")
 	ErrModifySection   = errors.New("cannot modify Section")
-	ErrGettingUserById = errors.New("error getting user by id")
+	ErrGettingSectionById = errors.New("error getting Section by id")
+	ErrDeletingSection = errors.New("error deleting section")
 	ErrNoRows = errors.New("sql: no rows in result set")
 )
 

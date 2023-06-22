@@ -80,17 +80,17 @@ func (s *Section) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, domain.ErrTryAgain.Error())
+			web.Error(c, http.StatusBadRequest, domain.ErrInvalidId.Error())
 			return
 		}
 		sectionResponse, err := s.sectionService.Get(c, id)
 		if err != nil {
-			if errors.Is(err, domain.ErrNotFound) {
+			if errors.Is(err, domain.ErrNoRows) {
 				web.Error(c, http.StatusNotFound, domain.ErrNotFound.Error())
 				return
 			}
 
-			web.Error(c, http.StatusInternalServerError, domain.ErrGettingUserById.Error())
+			web.Error(c, http.StatusInternalServerError, domain.ErrGettingSectionById.Error())
 			return
 		}
 		web.Success(c, http.StatusOK, sectionResponse)
@@ -111,8 +111,8 @@ func (s *Section) Get() gin.HandlerFunc {
 func (s *Section) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req requestCreateSection
-		if err := c.Bind(&req); err != nil {
-			web.Error(c, http.StatusUnprocessableEntity, err.Error())
+		if err := c.ShouldBindJSON(&req); err != nil {
+			web.Error(c, http.StatusUnprocessableEntity, domain.ErrTryAgain.Error())
 			return
 		}
 
@@ -187,12 +187,12 @@ func (s *Section) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			web.Error(c, http.StatusBadRequest, domain.ErrInvalidId.Error())
 			return
 		}
 		var req requestUpdateSection
-		if err := c.Bind(&req); err != nil {
-			web.Error(c, http.StatusUnprocessableEntity, err.Error())
+		if err := c.ShouldBindJSON(&req); err != nil {
+			web.Error(c, http.StatusUnprocessableEntity, domain.ErrTryAgain.Error())
 			return
 		}
 		sectionResponse, err := s.sectionService.Update(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
@@ -227,17 +227,16 @@ func (s *Section) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			web.Error(c, http.StatusBadRequest, domain.ErrInvalidId.Error())
 			return
 		}
 		err = s.sectionService.Delete(c, int(id))
 		if err != nil {
-			switch err {
-			case section.ErrNotFound:
-				web.Error(c, http.StatusNotFound, err.Error())
-			default:
-				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error deleting section %s", err.Error()))
+			if errors.Is(err, section.ErrNotFound) {
+				web.Error(c, http.StatusNotFound, domain.ErrNotFound.Error())
+				return
 			}
+			web.Error(c, http.StatusInternalServerError, domain.ErrDeletingSection.Error())
 			return
 		}
 

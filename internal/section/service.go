@@ -36,10 +36,10 @@ func NewService(r Repository) Service {
 
 func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity,
 	maximumCapacity, warehouseID, productTypeID int) (*domain.Section, error) {
-	existingSection := s.sectionRepository.Exists(ctx, sectionNumber)
 
-	if existingSection {
-		return nil, ErrConflict
+	sectionExist := s.sectionRepository.Exists(ctx, sectionNumber)
+	if sectionExist {
+		return nil, domain.ErrAlreadyExists
 	}
 
 	newSection := domain.Section{
@@ -56,7 +56,6 @@ func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, m
 	sectionId, err := s.sectionRepository.Save(ctx, newSection)
 	if err != nil {
 		return nil, err
-
 	}
 
 	savedSection, err := s.sectionRepository.Get(ctx, sectionId)
@@ -68,12 +67,8 @@ func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, m
 }
 
 func (s *service) GetAll(ctx context.Context) ([]domain.Section, error) {
-	sections, err := s.sectionRepository.GetAll(ctx)
-	if err != nil {
-		return nil, err
-	}
+	return s.sectionRepository.GetAll(ctx)
 
-	return sections, nil
 }
 
 func (s *service) Get(ctx context.Context, id int) (domain.Section, error) {
@@ -81,16 +76,7 @@ func (s *service) Get(ctx context.Context, id int) (domain.Section, error) {
 }
 
 func (s *service) Delete(ctx context.Context, id int) error {
-	err := s.sectionRepository.Delete(ctx, id)
-	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return ErrNotFound
-		default:
-			return err
-		}
-	}
-	return nil
+	return s.sectionRepository.Delete(ctx, id)
 }
 
 func (s *service) Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
