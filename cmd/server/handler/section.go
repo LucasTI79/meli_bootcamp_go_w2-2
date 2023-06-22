@@ -58,7 +58,7 @@ func (s *Section) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sections, err := s.sectionService.GetAll(c)
 		if err != nil {
-			web.Error(c, http.StatusInternalServerError, err.Error())
+			web.ErrorString(c, http.StatusInternalServerError, err.ErrorString())
 			return
 		}
 		web.Success(c, http.StatusOK, sections)
@@ -80,17 +80,17 @@ func (s *Section) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, domain.ErrInvalidId.Error())
+			web.Error(c, http.StatusBadRequest, errors.ErrInvalidId)
 			return
 		}
 		sectionResponse, err := s.sectionService.Get(c, id)
 		if err != nil {
 			if errors.Is(err, domain.ErrNoRows) {
-				web.Error(c, http.StatusNotFound, domain.ErrNotFound.Error())
+				web.Error(c, http.StatusNotFound, errors.ErrNotFound)
 				return
 			}
 
-			web.Error(c, http.StatusInternalServerError, domain.ErrGettingSectionById.Error())
+			web.Error(c, http.StatusInternalServerError, errors.ErrGettingSectionById)
 			return
 		}
 		web.Success(c, http.StatusOK, sectionResponse)
@@ -112,47 +112,47 @@ func (s *Section) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req requestCreateSection
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusUnprocessableEntity, domain.ErrTryAgain.Error())
+			web.Error(c, http.StatusUnprocessableEntity, errors.ErrTryAgain)
 			return
 		}
 
 		if req.SectionNumber == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field SectionNumber is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field SectionNumber is required.")
 			return
 		}
 
 		if req.CurrentTemperature == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field CurrentTemperature is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field CurrentTemperature is required.")
 			return
 		}
 
 		if req.MinimumTemperature == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field MinimumTemperature is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field MinimumTemperature is required.")
 			return
 		}
 
 		if req.CurrentCapacity == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field CurrentCapacity is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field CurrentCapacity is required.")
 			return
 		}
 
 		if req.MaximumCapacity == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field MaximumCapacity is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field MaximumCapacity is required.")
 			return
 		}
 
 		if req.MinimumCapacity == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field MinimumCapacity is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field MinimumCapacity is required.")
 			return
 		}
 
 		if req.WarehouseID == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field WarehouseID is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field WarehouseID is required.")
 			return
 		}
 
 		if req.ProductTypeID == 0 {
-			web.Error(c, http.StatusUnprocessableEntity, "The field ProductTypeID is required.")
+			web.ErrorString(c, http.StatusUnprocessableEntity, "The field ProductTypeID is required.")
 			return
 		}
 
@@ -161,9 +161,9 @@ func (s *Section) Create() gin.HandlerFunc {
 		if err != nil {
 			switch err {
 			case section.ErrConflict:
-				web.Error(c, http.StatusConflict, err.Error())
+				web.ErrorString(c, http.StatusConflict, err)
 			default:
-				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error saving request %s", err.Error()))
+				web.ErrorString(c, http.StatusInternalServerError, fmt.Sprintf("error saving request %s", err.ErrorString()))
 			}
 			return
 		}
@@ -187,12 +187,12 @@ func (s *Section) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, domain.ErrInvalidId.Error())
+			web.Error(c, http.StatusBadRequest, errors.ErrInvalidId)
 			return
 		}
 		var req requestUpdateSection
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusUnprocessableEntity, domain.ErrTryAgain.Error())
+			web.Error(c, http.StatusUnprocessableEntity, errors.ErrTryAgain)
 			return
 		}
 		sectionResponse, err := s.sectionService.Update(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
@@ -200,11 +200,11 @@ func (s *Section) Update() gin.HandlerFunc {
 		if err != nil {
 			switch err {
 			case section.ErrNotFound:
-				web.Error(c, http.StatusNotFound, err.Error())
+				web.Error(c, http.StatusNotFound, err)
 			case section.ErrConflict:
-				web.Error(c, http.StatusConflict, err.Error())
+				web.Error(c, http.StatusConflict, err)
 			default:
-				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error updating section %s", err.Error()))
+				web.ErrorString(c, http.StatusInternalServerError, fmt.Sprintf("error updating section %s", err.Error()))
 			}
 			return
 		}
@@ -227,16 +227,16 @@ func (s *Section) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, domain.ErrInvalidId.Error())
+			web.Error(c, http.StatusBadRequest, errors.ErrInvalidId)
 			return
 		}
 		err = s.sectionService.Delete(c, int(id))
 		if err != nil {
 			if errors.Is(err, section.ErrNotFound) {
-				web.Error(c, http.StatusNotFound, domain.ErrNotFound.Error())
+				web.Error(c, http.StatusNotFound, errors.ErrNotFound)
 				return
 			}
-			web.Error(c, http.StatusInternalServerError, domain.ErrDeletingSection.Error())
+			web.Error(c, http.StatusInternalServerError, errors.ErrDeletingSection)
 			return
 		}
 

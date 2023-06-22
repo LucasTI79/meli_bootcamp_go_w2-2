@@ -37,3 +37,13 @@ func Error(c *gin.Context, status int, format string, args ...interface{}) {
 
 	Response(c, status, err)
 }
+
+func Error2(c *gin.Context, status int, err error) {
+	err := errorResponse{
+		Code:    strings.ReplaceAll(strings.ToLower(http.StatusText(status)), " ", "_"),
+		Message: err.Error(),
+		Status:  status,
+	}
+
+	Response(c, status, err)
+}

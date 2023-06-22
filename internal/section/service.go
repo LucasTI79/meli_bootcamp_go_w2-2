@@ -39,7 +39,7 @@ func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, m
 
 	sectionExist := s.sectionRepository.Exists(ctx, sectionNumber)
 	if sectionExist {
-		return nil, domain.ErrAlreadyExists
+		return nil, errors.ErrAlreadyExists
 	}
 
 	newSection := domain.Section{

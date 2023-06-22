@@ -51,7 +51,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Section, error) {
 	s := domain.Section{}
 	err := row.Scan(&s.ID, &s.SectionNumber, &s.CurrentTemperature, &s.MinimumTemperature, &s.CurrentCapacity, &s.MinimumCapacity, &s.MaximumCapacity, &s.WarehouseID, &s.ProductTypeID)
 	if err != nil {
-		return domain.Section{}, domain.ErrNoRows
+		return domain.Section{}, errors.ErrNoRows
 	}
 	return s, nil
 }

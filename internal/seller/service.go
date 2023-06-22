@@ -16,8 +16,8 @@ var (
 
 type Service interface {
 	GetAll(ctx context.Context) (*[]domain.Seller, error)
-	Get(ctx *context.Context, id int) (*domain.Seller, error)
-	Save(ctx *context.Context, seller domain.Seller) (*domain.Seller, error)
+	Get(ctx context.Context, id int) (*domain.Seller, error)
+	Save(ctx context.Context, seller domain.Seller) (*domain.Seller, error)
 	Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error)
 	Delete(ctx context.Context, id int) error
 }
@@ -43,7 +43,7 @@ func (s *service) GetAll(ctx context.Context) (*[]domain.Seller, error) {
 	return &sellers, nil
 }
 
-func (s *service) Get(ctx *context.Context, id int) (*domain.Seller, error) {
+func (s *service) Get(ctx context.Context, id int) (*domain.Seller, error) {
 	seller, err := s.sellerRepository.Get(*ctx, id)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (s *service) Get(ctx *context.Context, id int) (*domain.Seller, error) {
 	return seller, nil
 }
 
-func (s *service) Save(ctx *context.Context, seller domain.Seller) (*domain.Seller, error) {
+func (s *service) Save(ctx context.Context, seller domain.Seller) (*domain.Seller, error) {
 	existingSeller := s.sellerRepository.Exists(*ctx, seller.CID)
 	if existingSeller {
 		return nil, ErrConflict
