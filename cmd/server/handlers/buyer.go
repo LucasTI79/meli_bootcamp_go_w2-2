@@ -43,7 +43,9 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 			return
 		}
 
-		if buyerResponse, err := handler.buyerService.Get(c, id); err != nil {
+		ctx := c.Request.Context()
+
+		if buyerResponse, err := handler.buyerService.Get(&ctx, id); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
