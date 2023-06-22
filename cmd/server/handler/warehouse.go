@@ -90,29 +90,17 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
 		ctx := c.Request.Context()
-		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusBadRequest, "JSON format may be wrong")
-			return
-		}
 
 		if err := WarehouseFullRequestValidator(c, req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-
 		result, e := w.warehouseService.Create(&ctx, req)
 		if e != nil {
-			switch e {
-			case warehouse.ErrConflict:
-				web.Error(c, http.StatusConflict, e.Error())
-			default:
-				web.Error(c, http.StatusBadRequest, e.Error())
-			}
+			web.Error(c, http.StatusConflict, e.Error())
 			return
 		}
-
 		web.Success(c, http.StatusCreated, result)
-		return
 	}
 }
 

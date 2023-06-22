@@ -10,8 +10,9 @@ import (
 
 // Errors
 var (
-	ErrNotFound = errors.New("warehouse not found")
-	ErrConflict = errors.New("a warehouse with this warehouse_code already exists")
+	ErrNotFound            = errors.New("warehouse not found")
+	ErrConflict            = errors.New("a warehouse with this warehouse_code already exists")
+	ErrUnprocessableEntity = errors.New("all fields are required")
 )
 
 type Service interface {

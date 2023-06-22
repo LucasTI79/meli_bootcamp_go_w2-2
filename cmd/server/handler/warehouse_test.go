@@ -20,7 +20,6 @@ import (
 
 func TestGet(t *testing.T) {
 	t.Run("find_by_id_existent", func(t *testing.T) {
-		// Definir resultado da consulta
 		warehouseFound := &domain.Warehouse{
 			Address:            "Rua Teste",
 			Telephone:          "11938473125",
@@ -28,24 +27,18 @@ func TestGet(t *testing.T) {
 			MinimumCapacity:    12,
 			MinimumTemperature: 18,
 		}
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetOne", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouseFound, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses/:id", handler.Get())
 
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses/1", nil)
 		res := httptest.NewRecorder()
 
-		//Executar request
 		r.ServeHTTP(res, req)
-
-		//Parsear response
 		body, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
@@ -56,59 +49,46 @@ func TestGet(t *testing.T) {
 
 		responseWarehouse := responseDTO.Data
 
-		//Validar resultado
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, *&warehouseFound, responseWarehouse)
-
+		assert.Equal(t, warehouseFound, responseWarehouse)
 	})
 
 	t.Run("find_by_id_non_existent", func(t *testing.T) {
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetOne", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Warehouse{}, warehouse.ErrNotFound)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses/:id", handler.Get())
 
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses/1", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Validar resultado
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 
 	t.Run("internal_server_error", func(t *testing.T) {
-		//Configurar o mock do service
+
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetOne", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Warehouse{}, assert.PanicMatches)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses/:id", handler.Get())
 
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses/1", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Validar resultado
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
 	})
 }
 
 func TestCreate(t *testing.T) {
-	t.Run("Create_Ok", func(t *testing.T) {
+	t.Run("create_ok", func(t *testing.T) {
 		expectedWarehouse := &domain.Warehouse{
 			ID:                 1,
 			Address:            "Rua Teste",
@@ -124,29 +104,21 @@ func TestCreate(t *testing.T) {
 			MinimumCapacity:    12,
 			MinimumTemperature: 18,
 		}
-
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Warehouse")).Return(expectedWarehouse, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.POST("/api/v1/warehouses", handler.Create())
 
 		requestBody, _ := json.Marshal(createWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
 		req.GetBody()
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Parsear response
 		bodyReturn, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
@@ -154,62 +126,55 @@ func TestCreate(t *testing.T) {
 		}
 
 		json.Unmarshal(bodyReturn, &responseDTO)
-
 		actualWarehouse := responseDTO.Data
 
-		//Validar resultado
 		assert.Equal(t, http.StatusCreated, res.Code)
 		assert.Equal(t, *expectedWarehouse, actualWarehouse)
 	})
-	t.Run("Create BadRequest", func(t *testing.T) {
+	t.Run("create_fail", func(t *testing.T) {
 		createWarehouseRequestDTO := dtos.WarehouseRequestDTO{
 			Address:            "Rua Teste",
 			Telephone:          "11938473125",
-			WarehouseCode:      "CX-2281-TCD",
 			MinimumCapacity:    12,
 			MinimumTemperature: 18,
 		}
-		//Configurar o mock do service
-		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		handler := handler.NewWarehouse(warehouseServiceMock)
 
-		//Configurar o servidor
+		warehouseServiceMock := new(mocks.WarehouseServiceMock)
+		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createWarehouseRequestDTO, warehouse.ErrUnprocessableEntity)
+		handler := handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.POST("/api/v1/warehouses", handler.Create())
-
-		requestBody, _ := json.Marshal(createWarehouseRequestDTO)
-		request := bytes.NewReader(requestBody)
-
-		//Definir request e response
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
-		type expectedMensageResponseDTO struct {
-			Code    string `json:"code"`
-			Message string `json:"message"`
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("create_conflit", func(t *testing.T) {
+		createWarehouseRequestDTO := dtos.WarehouseRequestDTO{
+			Address:            "Rua Teste",
+			Telephone:          "11938473125",
+			WarehouseCode:      "202-KCC-1",
+			MinimumCapacity:    12,
+			MinimumTemperature: 18,
 		}
-		expectedMensageResponse := expectedMensageResponseDTO{
-			Code:    "bad_request",
-			Message: "Field Warehouse Code is required: ",
-		}
+		warehouseServiceMock := new(mocks.WarehouseServiceMock)
+		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createWarehouseRequestDTO, warehouse.ErrConflict)
+		handler := handler.NewWarehouse(warehouseServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/warehouses", handler.Create())
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", nil)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
 
-		//Parsear response
-		body, _ := ioutil.ReadAll(res.Body)
-
-		var actualMessageResponse expectedMensageResponseDTO
-		json.Unmarshal(body, &actualMessageResponse)
-
-		//Validar resultado
-		assert.Equal(t, http.StatusBadRequest, res.Code)
-		assert.Equal(t, expectedMensageResponse, actualMessageResponse)
+		assert.Equal(t, http.StatusConflict, res.Code)
 	})
 }
 
 func TestGetAll(t *testing.T) {
-	t.Run("Get All", func(t *testing.T) {
+	t.Run("find_all", func(t *testing.T) {
 		warehousesFounds := &[]domain.Warehouse{
 			{
 				ID:                 1,
@@ -228,24 +193,16 @@ func TestGetAll(t *testing.T) {
 				MinimumTemperature: 18,
 			},
 		}
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(warehousesFounds, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses", handler.GetAll())
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
-
-		//Parsear response
 		body, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
@@ -255,84 +212,58 @@ func TestGetAll(t *testing.T) {
 		json.Unmarshal(body, &responseDTO)
 		respondeWarehouses := responseDTO.Data
 
-		//Validar resultado
 		assert.Equal(t, http.StatusOK, res.Code)
 		assert.Equal(t, warehousesFounds, respondeWarehouses)
 	})
 
-	t.Run("empty database", func(t *testing.T) {
+	t.Run("empty_database", func(t *testing.T) {
 		warehousesFounds := &[]domain.Warehouse{}
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(warehousesFounds, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
-
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses", handler.GetAll())
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Validar resultado
 		assert.Equal(t, http.StatusNoContent, res.Code)
 	})
 }
 
 func TestDelete(t *testing.T) {
-	t.Run("Deleted_sucess", func(t *testing.T) {
+	t.Run("delete_ok", func(t *testing.T) {
 		warehouseFound := &domain.Warehouse{}
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouseFound, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
-
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.DELETE("/api/v1/warehouses/:id", handler.Delete())
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses/1", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Validar resultado
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 
-	t.Run("Deleted_error", func(t *testing.T) {
-
-		//Configurar o mock do service
+	t.Run("delete_non_existent", func(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouse.ErrNotFound, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
-
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.DELETE("/api/v1/warehouses/:id", handler.Delete())
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses/1", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Validar resultado
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 }
 func TestUpdate(t *testing.T) {
-	t.Run("Update_Ok", func(t *testing.T) {
+	t.Run("update_ok", func(t *testing.T) {
 		expectedWarehouse := &domain.Warehouse{
 			ID:                 1,
 			Address:            "Rua Teste",
@@ -346,61 +277,41 @@ func TestUpdate(t *testing.T) {
 			WarehouseCode: "CX-1206-TCD",
 		}
 
-		//Configurar o mock do service
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(expectedWarehouse, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
-
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.PATCH("/api/v1/warehouses/:id", handler.Update())
-
 		requestBody, _ := json.Marshal(updateWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/warehouses/1", request)
 		req.GetBody()
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
-
-		//Parsear response
 		bodyReturn, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
 			Data domain.Warehouse `json:"data"`
 		}
-
 		json.Unmarshal(bodyReturn, &responseDTO)
-
 		actualWarehouse := responseDTO.Data
 
-		//Validar resultado
 		assert.Equal(t, http.StatusOK, res.Code)
 		assert.Equal(t, *expectedWarehouse, actualWarehouse)
 	})
 
-	t.Run("Update_Error", func(t *testing.T) {
-
+	t.Run("update_non_existent", func(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouse.ErrNotFound, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
-		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.PATCH("/api/v1/warehouses/:id", handler.Update())
-
-		//Definir request e response
 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/warehouses/1", nil)
 		res := httptest.NewRecorder()
-
-		//Executar request
 		r.ServeHTTP(res, req)
 
-		//Validar resultado
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 }
