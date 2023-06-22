@@ -15,9 +15,9 @@ var (
 )
 
 type Service interface {
-	Save(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
+	Save(ctx *context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
 		recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error)
-	GetAll(ctx context.Context) ([]domain.Product, error)
+	GetAll(ctx *context.Context) (*[]domain.Product, error)
 	Get(ctx *context.Context, id int) (*domain.Product, error)
 	Delete(ctx context.Context, id int) error
 	Update(ctx context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
@@ -34,9 +34,9 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) Save(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
+func (s *service) Save(ctx *context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
 	recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error) {
-	existingProduct := s.productRepository.Exists(ctx, product_code)
+	existingProduct := s.productRepository.Exists(*ctx, product_code)
 
 	if existingProduct {
 		return nil, ErrConflict
@@ -56,13 +56,13 @@ func (s *service) Save(ctx context.Context, description string, expiration_rate,
 		SellerID:       seller_id,
 	}
 
-	productId, err := s.productRepository.Save(ctx, newProduct)
+	productId, err := s.productRepository.Save(*ctx, newProduct)
 	if err != nil {
 		return nil, err
 
 	}
 
-	savedProduct, err := s.productRepository.Get(ctx, productId)
+	savedProduct, err := s.productRepository.Get(*ctx, productId)
 	if err != nil {
 		return nil, err
 	}
@@ -70,13 +70,13 @@ func (s *service) Save(ctx context.Context, description string, expiration_rate,
 	return &savedProduct, nil
 }
 
-func (s *service) GetAll(ctx context.Context) ([]domain.Product, error) {
-	products, err := s.productRepository.GetAll(ctx)
+func (s *service) GetAll(ctx *context.Context) (*[]domain.Product, error) {
+	products, err := s.productRepository.GetAll(*ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return products, nil
+	return &products, nil
 }
 
 func (s *service) Get(ctx *context.Context, id int) (*domain.Product, error) {
