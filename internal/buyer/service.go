@@ -38,9 +38,9 @@ func (service *service) Get(ctx *context.Context, id int) (*domain.Buyer, error)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return nil, ErrNotFound
+			return &domain.Buyer{}, ErrNotFound
 		default:
-			return nil, err
+			return &domain.Buyer{}, err
 		}
 	}
 

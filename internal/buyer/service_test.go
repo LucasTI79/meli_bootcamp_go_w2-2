@@ -62,15 +62,15 @@ func TestGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			ctx := context.Background()
+			ctx := context.TODO()
 
 			buyerRepositoryMock := mocks.NewBuyerRepositoryMock()
-			buyerRepositoryMock.On("Get", mock.AnythingOfType("context.Context"), mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
+			buyerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
 
 			service := buyer.NewService(buyerRepositoryMock)
 			buyerReceived, err := service.Get(&ctx, test.id)
 
-			assert.Equal(t, test.expectedBuyer, *buyerReceived)
+			assert.Equal(t, *test.expectedBuyer, *buyerReceived)
 			assert.Equal(t, test.expectedError, err)
 
 			buyerRepositoryMock.AssertNumberOfCalls(t, "Get", test.expectedGetCalls)

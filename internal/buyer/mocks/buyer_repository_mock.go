@@ -20,7 +20,7 @@ func (repository *BuyerRepositoryMock) GetAll(ctx context.Context) ([]domain.Buy
 }
 
 func (repository *BuyerRepositoryMock) Get(ctx context.Context, id int) (domain.Buyer, error) {
-	args := repository.Called(ctx)
+	args := repository.Called(ctx, id)
 
 	return args.Get(0).(domain.Buyer), args.Error(1)
 }

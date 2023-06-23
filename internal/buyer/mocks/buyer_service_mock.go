@@ -15,7 +15,7 @@ func NewBuyerServiceMock() *BuyerServiceMock {
 	return &BuyerServiceMock{}
 }
 
-func (service *BuyerServiceMock) Get(ctx context.Context, id int) (*domain.Buyer, error) {
+func (service *BuyerServiceMock) Get(ctx *context.Context, id int) (*domain.Buyer, error) {
 	args := service.Called(ctx, id)
 
 	return args.Get(0).(*domain.Buyer), args.Error(1)
