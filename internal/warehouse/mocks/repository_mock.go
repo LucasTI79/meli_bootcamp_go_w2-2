@@ -3,6 +3,7 @@ package mocks
 import (
 	"context"
 
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/warehousesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/stretchr/testify/mock"
 )
@@ -16,8 +17,9 @@ func NewWarehouseRepositoryMock() *WarehouseRepositoryMock {
 }
 
 func (repository *WarehouseRepositoryMock) GetAll(ctx context.Context) ([]domain.Warehouse, error) {
-	//TODO implement me
-	panic("implement me")
+	args := repository.Called(ctx)
+
+	return args.Get(0).([]domain.Warehouse), args.Error(1)
 }
 
 func (repository *WarehouseRepositoryMock) Get(ctx context.Context, id int) (domain.Warehouse, error) {
@@ -31,18 +33,21 @@ func (repository *WarehouseRepositoryMock) Exists(ctx context.Context, warehouse
 	panic("implement me")
 }
 
-func (repository *WarehouseRepositoryMock) Save(ctx context.Context, b domain.Warehouse) (int, error) {
-	//TODO implement me
-	panic("implement me")
+func (repository *WarehouseRepositoryMock) Save(ctx context.Context, warehouse dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+	args := repository.Called(ctx, warehouse)
+
+	return args.Get(0).(*domain.Warehouse), args.Error(1)
 }
 
-func (repository *WarehouseRepositoryMock) Update(ctx context.Context, b domain.Warehouse) error {
-	//TODO implement me
-	panic("implement me")
+func (repository *WarehouseRepositoryMock) Update(ctx context.Context, updateWarehouseRequest dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+	args := repository.Called(ctx, updateWarehouseRequest)
+
+	return args.Get(0).(*domain.Warehouse), args.Error(1)
 }
 
 func (repository *WarehouseRepositoryMock) Delete(ctx context.Context, id int) error {
-	//TODO implement me
-	panic("implement me")
+	args := repository.Called(ctx, id)
+
+	return args.Error(1)
 
 }

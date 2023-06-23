@@ -1,83 +1,78 @@
 package warehouse_test
 
 import (
-	"database/sql"
-	"net/http/httptest"
+	"context"
 	"testing"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse/mocks"
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
-func TestGet(t *testing.T) {
+func TestGetAll(t *testing.T) {
 
-	warehouseFound := domain.Warehouse{
-		Address:            "Rua Teste",
-		Telephone:          "11938473125",
-		WarehouseCode:      "CX-2281-TCD",
-		MinimumCapacity:    12,
-		MinimumTemperature: 18,
+	expectedWarehouses := []domain.Warehouse{
+		{
+			ID:                 1,
+			Address:            "Rua Teste",
+			Telephone:          "11938473125",
+			WarehouseCode:      "CX-2281-TCD",
+			MinimumCapacity:    12,
+			MinimumTemperature: 18,
+		},
+		{
+			ID:                 1,
+			Address:            "Rua Teste",
+			Telephone:          "11938473125",
+			WarehouseCode:      "CX-2281-TCD",
+			MinimumCapacity:    12,
+			MinimumTemperature: 18,
+		},
 	}
+
 	tests := []struct {
 		name string
-		id   int
-		//Mocking repository.Get
-		expectedGetResult domain.Warehouse
-		expectedGetError  error
-		expectedGetCalls  int
+		//Mocking repository.GetAll
+		expectedGetAllResult []domain.Warehouse
+		expectedGetAllError  error
+		expectedGetAllCalls  int
 		//Asserting function
-		warehouseFound *domain.Warehouse
-		expectedError  error
+		expectedWarehouses *[]domain.Warehouse
+		expectedError      error
 	}{
 		{
-			name:              "Successfully get warehouse from db",
-			id:                1,
-			expectedGetResult: warehouseFound,
-			expectedGetError:  nil,
-			expectedGetCalls:  1,
-			warehouseFound:    &warehouseFound,
-			expectedError:     nil,
+			name:                 "Successfully get all Warehouses from db",
+			expectedGetAllResult: expectedWarehouses,
+			expectedGetAllError:  nil,
+			expectedGetAllCalls:  1,
+			expectedWarehouses:   &expectedWarehouses,
+			expectedError:        nil,
 		},
 		{
-			name:              "Warehouse not found in db",
-			id:                1,
-			expectedGetResult: domain.Warehouse{},
-			expectedGetError:  sql.ErrNoRows,
-			expectedGetCalls:  1,
-			warehouseFound:    &domain.Warehouse{},
-			expectedError:     warehouse.ErrNotFound,
-		},
-		{
-			name:              "Error connecting db",
-			id:                1,
-			expectedGetResult: domain.Warehouse{},
-			expectedGetError:  assert.AnError,
-			expectedGetCalls:  1,
-			warehouseFound:    &domain.Warehouse{},
-			expectedError:     assert.AnError,
+			name:                 "Error connecting db",
+			expectedGetAllResult: []domain.Warehouse{},
+			expectedGetAllError:  assert.AnError,
+			expectedGetAllCalls:  1,
+			expectedWarehouses:   &[]domain.Warehouse{},
+			expectedError:        assert.AnError,
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
-			ctx := c.Request.Context()
+			ctx := context.TODO()
 
 			warehouseRepositoryMock := mocks.NewWarehouseRepositoryMock()
-			warehouseRepositoryMock.On("Get", mock.AnythingOfType("context.Context"), mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
+			warehouseRepositoryMock.On("GetAll", ctx).Return(test.expectedGetAllResult, test.expectedGetAllError)
 
 			service := warehouse.NewService(warehouseRepositoryMock)
-			warehouseReceived, err := service.GetOne(&ctx, test.id)
+			WarehouseReceived, err := service.GetAll(&ctx)
 
-			assert.Equal(t, test.warehouseFound, *warehouseReceived)
+			assert.Equal(t, *test.expectedWarehouses, *WarehouseReceived)
 			assert.Equal(t, test.expectedError, err)
 
-			warehouseRepositoryMock.AssertNumberOfCalls(t, "Get", test.expectedGetCalls)
+			warehouseRepositoryMock.AssertNumberOfCalls(t, "GetAll", test.expectedGetAllCalls)
 		})
 	}
 }

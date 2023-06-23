@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -90,13 +89,15 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
-		fmt.Println(req)
-		ctx := c.Request.Context()
-		if err := WarehouseFullRequestValidator(c, req); err != nil {
-			web.Error(c, http.StatusUnprocessableEntity, err.Error())
+		if err := c.ShouldBindJSON(&req); err != nil {
+			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
-		fmt.Println(req)
+		ctx := c.Request.Context()
+		if err := WarehouseFullRequestValidator(c, req); err != nil {
+			web.Error(c, http.StatusBadRequest, err.Error())
+			return
+		}
 		result, e := w.warehouseService.Create(&ctx, req)
 
 		if e != nil {

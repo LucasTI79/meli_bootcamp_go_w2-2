@@ -3,7 +3,6 @@ package handler_test
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -106,7 +105,7 @@ func TestCreate(t *testing.T) {
 			MinimumTemperature: 18,
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Warehouse")).Return(expectedWarehouse, nil)
+		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
@@ -117,20 +116,19 @@ func TestCreate(t *testing.T) {
 		request := bytes.NewReader(requestBody)
 
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
-		req.GetBody()
 		res := httptest.NewRecorder()
 
 		r.ServeHTTP(res, req)
 
 		bodyReturn, _ := ioutil.ReadAll(res.Body)
 		var responseDTO struct {
-			Data domain.Warehouse `json:"data"`
+			Data *domain.Warehouse `json:"data"`
 		}
 		json.Unmarshal(bodyReturn, &responseDTO)
 		actualWarehouse := responseDTO.Data
 
 		assert.Equal(t, http.StatusCreated, res.Code)
-		assert.Equal(t, *expectedWarehouse, actualWarehouse)
+		assert.Equal(t, *expectedWarehouse, *actualWarehouse)
 	})
 	t.Run("create_fail", func(t *testing.T) {
 		createWarehouseRequestDTO := dtos.WarehouseRequestDTO{
@@ -151,17 +149,17 @@ func TestCreate(t *testing.T) {
 		r.ServeHTTP(res, req)
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
-
 	t.Run("create_conflit", func(t *testing.T) {
+		expectedWarehouse := &domain.Warehouse{}
 		createWarehouseRequestDTO := dtos.WarehouseRequestDTO{
 			Address:            "Rua Teste",
 			Telephone:          "11938473125",
-			WarehouseCode:      "202-KCC-1",
+			WarehouseCode:      "CX-2281-TCD",
 			MinimumCapacity:    12,
 			MinimumTemperature: 18,
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(nil, warehouse.ErrConflict)
+		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, warehouse.ErrConflict)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
@@ -170,14 +168,11 @@ func TestCreate(t *testing.T) {
 
 		requestBody, _ := json.Marshal(createWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
 
-		req.GetBody()
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
 		res := httptest.NewRecorder()
-		fmt.Println(res)
 
 		r.ServeHTTP(res, req)
-
 		assert.Equal(t, http.StatusConflict, res.Code)
 	})
 }
@@ -287,7 +282,7 @@ func TestUpdate(t *testing.T) {
 		}
 
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(expectedWarehouse, nil)
+		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -295,19 +290,19 @@ func TestUpdate(t *testing.T) {
 		requestBody, _ := json.Marshal(updateWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/warehouses/1", request)
-		req.GetBody()
+		// req.GetBody()
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 		bodyReturn, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
-			Data domain.Warehouse `json:"data"`
+			Data *domain.Warehouse `json:"data"`
 		}
 		json.Unmarshal(bodyReturn, &responseDTO)
 		actualWarehouse := responseDTO.Data
 
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, *expectedWarehouse, actualWarehouse)
+		assert.Equal(t, *expectedWarehouse, *actualWarehouse)
 	})
 
 	t.Run("update_non_existent", func(t *testing.T) {
