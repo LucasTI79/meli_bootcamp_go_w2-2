@@ -82,7 +82,7 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 		}
 
 		if len(*employee) == 0 {
-			web.Error(c, http.StatusNotFound, "There are no employee stored: %s", err.Error())
+			web.Error(c, http.StatusNoContent, "There are no employee stored: %s", err.Error())
 			return
 		}
 
