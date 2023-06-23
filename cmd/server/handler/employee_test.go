@@ -129,3 +129,101 @@ func TestGet(t *testing.T) {
 	})
 
 }
+
+func TestGetAll(t *testing.T) {
+	t.Run("find_all", func(t *testing.T) {
+		// Definir resultado da consulta
+		expectedEmployee := &[]domain.Employee{
+			{
+				ID:           1,
+				CardNumberID: "123",
+				FirstName:    "Maria",
+				LastName:     "Silva",
+				WarehouseID:  1,
+			},
+			{
+				ID:           2,
+				CardNumberID: "234",
+				FirstName:    "Joao",
+				LastName:     "Silva",
+				WarehouseID:  2,
+			},
+		}
+
+		//Configurar o mock do service
+		employeeServiceMock := new(mocks.EmployeeServiceMock)
+		employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(expectedEmployee, nil)
+		handler := handler.NewEmployee(employeeServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/employees", handler.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []domain.Employee `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		responseEmployee := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, *expectedEmployee, responseEmployee)
+		assert.Equal(t, http.StatusOK, res.Code)
+	})
+
+	t.Run("internal_server_error", func(t *testing.T) {
+		//Configurar o mock do service
+		employeeServiceMock := new(mocks.EmployeeServiceMock)
+		employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Employee{}, assert.AnError)
+		handler := handler.NewEmployee(employeeServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/employees", handler.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+
+	// t.Run("find_no_content", func(t *testing.T) {
+	// 	//Configurar o mock do service
+	// 	employeeServiceMock := new(mocks.EmployeeServiceMock)
+	// 	employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Employee{}, nil)
+	// 	handler := handler.NewEmployee(employeeServiceMock)
+
+	// 	//Configurar o servidor
+	// 	gin.SetMode(gin.TestMode)
+	// 	r := gin.Default()
+	// 	r.GET("/api/v1/employees", handler.GetAll())
+
+	// 	//Definir request e response
+	// 	req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
+	// 	res := httptest.NewRecorder()
+
+	// 	//Executar request
+	// 	r.ServeHTTP(res, req)
+
+	// 	//Validar resultado
+	// 	assert.Equal(t, http.StatusNoContent, res.Code)
+	// })
+}
