@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -89,12 +90,13 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
-
+		fmt.Println(req)
 		ctx := c.Request.Context()
 		if err := WarehouseFullRequestValidator(c, req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
+		fmt.Println(req)
 		result, e := w.warehouseService.Create(&ctx, req)
 
 		if e != nil {

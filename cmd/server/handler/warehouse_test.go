@@ -115,9 +115,11 @@ func TestCreate(t *testing.T) {
 
 		requestBody, _ := json.Marshal(createWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
+
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
 		req.GetBody()
 		res := httptest.NewRecorder()
+
 		r.ServeHTTP(res, req)
 
 		bodyReturn, _ := ioutil.ReadAll(res.Body)
@@ -159,7 +161,7 @@ func TestCreate(t *testing.T) {
 			MinimumTemperature: 18,
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createWarehouseRequestDTO, warehouse.ErrConflict)
+		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(nil, warehouse.ErrConflict)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
