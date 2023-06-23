@@ -95,6 +95,7 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
+
 		result, e := w.warehouseService.Create(&ctx, req)
 		if e != nil {
 			web.Error(c, http.StatusConflict, e.Error())

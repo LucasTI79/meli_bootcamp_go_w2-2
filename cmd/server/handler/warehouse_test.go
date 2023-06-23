@@ -120,11 +120,9 @@ func TestCreate(t *testing.T) {
 		r.ServeHTTP(res, req)
 
 		bodyReturn, _ := ioutil.ReadAll(res.Body)
-
 		var responseDTO struct {
 			Data domain.Warehouse `json:"data"`
 		}
-
 		json.Unmarshal(bodyReturn, &responseDTO)
 		actualWarehouse := responseDTO.Data
 
@@ -165,7 +163,10 @@ func TestCreate(t *testing.T) {
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.POST("/api/v1/warehouses", handler.Create())
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", nil)
+		requestBody, _ := json.Marshal(createWarehouseRequestDTO)
+		request := bytes.NewReader(requestBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
+		req.GetBody()
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 

@@ -32,6 +32,7 @@ func NewService(r Repository) Service {
 }
 
 func (s *service) Create(c *context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+
 	exists := s.repository.Exists(*c, dto.WarehouseCode)
 	if exists {
 		return nil, ErrConflict
