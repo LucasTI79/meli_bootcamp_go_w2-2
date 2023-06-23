@@ -64,12 +64,12 @@ func (service *service) Create(ctx context.Context, createBuyerRequest *dtos.Cre
 
 	cardNumberAlreadyExists := service.repository.Exists(ctx, createBuyerRequest.CardNumberID)
 	if cardNumberAlreadyExists {
-		return nil, ErrCardNumberDuplicated
+		return &domain.Buyer{}, ErrCardNumberDuplicated
 	}
 
 	id, err := service.repository.Save(ctx, *buyer)
 	if err != nil {
-		return nil, err
+		return &domain.Buyer{}, err
 	}
 
 	buyer.ID = id
@@ -81,14 +81,14 @@ func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *
 	// Busca o buyer pelo ID
 	buyer, err := service.Get(&ctx, id)
 	if err != nil {
-		return nil, err
+		return &domain.Buyer{}, err
 	}
 
 	// Sobrescreve os dados do buyer, se houver alteração no request
 	if updateBuyerRequest.CardNumberID != nil {
 		cardNumberAlreadyExists := service.repository.Exists(ctx, *updateBuyerRequest.CardNumberID)
 		if cardNumberAlreadyExists {
-			return nil, ErrCardNumberDuplicated
+			return &domain.Buyer{}, ErrCardNumberDuplicated
 		}
 
 		buyer.CardNumberID = *updateBuyerRequest.CardNumberID
@@ -103,7 +103,7 @@ func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *
 	}
 
 	if err := service.repository.Update(ctx, *buyer); err != nil {
-		return nil, err
+		return &domain.Buyer{}, err
 	}
 
 	return buyer, nil

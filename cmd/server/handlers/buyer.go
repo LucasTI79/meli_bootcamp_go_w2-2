@@ -74,7 +74,8 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if buyers, err := handler.buyerService.GetAll(c); err != nil {
+		ctx := c.Request.Context()
+		if buyers, err := handler.buyerService.GetAll(&ctx); err != nil {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
 		} else {

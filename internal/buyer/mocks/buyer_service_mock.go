@@ -21,7 +21,7 @@ func (service *BuyerServiceMock) Get(ctx *context.Context, id int) (*domain.Buye
 	return args.Get(0).(*domain.Buyer), args.Error(1)
 }
 
-func (service *BuyerServiceMock) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
+func (service *BuyerServiceMock) GetAll(ctx *context.Context) (*[]domain.Buyer, error) {
 	//TODO implement me
 	panic("implement me")
 }
