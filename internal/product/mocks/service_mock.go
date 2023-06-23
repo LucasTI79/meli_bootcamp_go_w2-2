@@ -35,7 +35,8 @@ func (service *ProductServiceMock) Update(ctx context.Context, description *stri
 	panic("implement me")
 }
 
-func (service *ProductServiceMock) Delete(ctx context.Context, id int) error {
-	//TODO implement me
-	panic("implement me")
+func (service *ProductServiceMock) Delete(ctx *context.Context, id int) error {
+	args := service.Called(ctx, id)
+
+	return args.Error(0)
 }

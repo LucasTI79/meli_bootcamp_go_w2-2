@@ -254,7 +254,8 @@ func (p *Product) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		err = p.productService.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = p.productService.Delete(&ctx, int(id))
 		if err != nil {
 			switch err {
 			case product.ErrNotFound:

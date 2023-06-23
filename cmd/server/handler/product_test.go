@@ -211,7 +211,7 @@ func TestCreate(t *testing.T) {
 func TestGetAll(t *testing.T) {
 
 	/*find_all Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os vendedores existentes - 200*/
-	t.Run("Get All", func(t *testing.T) {
+	t.Run("find_all", func(t *testing.T) {
 		productsFounds := &[]domain.Product{
 			{
 				ID:             1,
@@ -310,6 +310,101 @@ func TestGetAll(t *testing.T) {
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/products", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+}
+
+func TestDelete(t *testing.T) {
+
+	t.Run("delete_non_existent", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product.ErrNotFound)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/products/:id", handler.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNotFound, res.Code)
+	})
+
+	t.Run("delete_ok", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/products/:id", handler.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNoContent, res.Code)
+	})
+
+	t.Run("error_parsing_id", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/products/:id", handler.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/products/xyz", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("error_deleting_product", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/products/:id", handler.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
 		res := httptest.NewRecorder()
 
 		//Executar request
