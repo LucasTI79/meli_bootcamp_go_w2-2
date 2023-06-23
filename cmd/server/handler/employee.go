@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -8,6 +9,11 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	ErrNotFound = errors.New("employee not found")
+	ErrConflict = errors.New("409 Conflict: Employee with CardNumberID already exists")
 )
 
 type Employee struct {
@@ -43,6 +49,10 @@ func (e *Employee) Get() gin.HandlerFunc {
 		employee, err := e.service.Get(&ctx, id)
 
 		if err != nil {
+			if errors.Is(err, ErrNotFound) {
+				web.Error(c, http.StatusNotFound, "Employee not found: %s", err.Error())
+				return
+			}
 			web.Error(c, http.StatusInternalServerError, "Failed to get employee: %s", err.Error())
 			return
 		}
