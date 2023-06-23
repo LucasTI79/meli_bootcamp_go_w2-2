@@ -61,3 +61,30 @@ func TestGet(t *testing.T) {
 
 	})
 }
+
+func getTestSections() []domain.Section{
+	return []domain.Section{
+		{
+			ID:                 1,
+			SectionNumber:      65473,
+			CurrentTemperature: 15,
+			MinimumTemperature: 5,
+			CurrentCapacity:    10,
+			MinimumCapacity:    12,
+			MaximumCapacity:    20,
+			WarehouseID:        1234,
+			ProductTypeID:      874893,
+		},
+		{
+			ID:                 2,
+			SectionNumber:      4653,
+			CurrentTemperature: 20,
+			MinimumTemperature: 50,
+			CurrentCapacity:    1000,
+			MinimumCapacity:    120,
+			MaximumCapacity:    200,
+			WarehouseID:        9878,
+			ProductTypeID:      87489223,
+		},
+	}
+}
