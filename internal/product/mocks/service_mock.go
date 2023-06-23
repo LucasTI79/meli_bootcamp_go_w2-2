@@ -29,10 +29,10 @@ func (service *ProductServiceMock) Save(ctx *context.Context, description string
 	return args.Get(0).(*domain.Product), args.Error(1)
 }
 
-func (service *ProductServiceMock) Update(ctx context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
+func (service *ProductServiceMock) Update(ctx *context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
 	recommended_freezing_temperature, width *float32, product_type_id, seller_id *int, id int) (*domain.Product, error) {
-	//TODO implement me
-	panic("implement me")
+	args := service.Called(ctx, description, expiration_rate, freezing_rate, height, length, netweight, product_code, recommended_freezing_temperature, width, product_type_id, seller_id)
+	return args.Get(0).(*domain.Product), args.Error(1)
 }
 
 func (service *ProductServiceMock) Delete(ctx *context.Context, id int) error {

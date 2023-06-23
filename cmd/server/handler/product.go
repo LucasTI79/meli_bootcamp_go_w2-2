@@ -219,7 +219,8 @@ func (p *Product) Update() gin.HandlerFunc {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-		productResponse, err := p.productService.Update(c, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
+		ctx := c.Request.Context()
+		productResponse, err := p.productService.Update(&ctx, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
 			req.Length, req.Netweight, req.ProductCode, req.RecomFreezTemp, req.Width, req.ProductTypeID, req.SellerID, id)
 		if err != nil {
 			switch err {

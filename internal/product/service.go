@@ -20,7 +20,7 @@ type Service interface {
 	GetAll(ctx *context.Context) (*[]domain.Product, error)
 	Get(ctx *context.Context, id int) (*domain.Product, error)
 	Delete(ctx *context.Context, id int) error
-	Update(ctx context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
+	Update(ctx *context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
 		recommended_freezing_temperature, width *float32, product_type_id, seller_id *int, id int) (*domain.Product, error)
 }
 
@@ -106,9 +106,9 @@ func (s *service) Delete(ctx *context.Context, id int) error {
 	return nil
 }
 
-func (s *service) Update(ctx context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
+func (s *service) Update(ctx *context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
 	recommended_freezing_temperature, width *float32, product_type_id, seller_id *int, id int) (*domain.Product, error) {
-	existingProduct, err := s.productRepository.Get(ctx, id)
+	existingProduct, err := s.productRepository.Get(*ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (s *service) Update(ctx context.Context, description *string, expiration_ra
 		existingProduct.Netweight = *netweight
 	}
 	if product_code != nil {
-		existingProductSearch := s.productRepository.Exists(ctx, *product_code)
+		existingProductSearch := s.productRepository.Exists(*ctx, *product_code)
 		if existingProductSearch && *product_code != existingProduct.ProductCode {
 			return nil, ErrConflict
 		}
@@ -148,7 +148,7 @@ func (s *service) Update(ctx context.Context, description *string, expiration_ra
 		existingProduct.SellerID = *seller_id
 	}
 
-	err1 := s.productRepository.Update(ctx, existingProduct)
+	err1 := s.productRepository.Update(*ctx, existingProduct)
 	if err1 != nil {
 		switch err1 {
 		case sql.ErrNoRows:

@@ -152,20 +152,20 @@ func TestCreate(t *testing.T) {
 			Height:         1.1,
 			Length:         1.1,
 			Netweight:      1.1,
-			ProductCode:    "Teste",
+			ProductCode:    "Test",
 			RecomFreezTemp: 1.1,
 			Width:          1.1,
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
 		createProductRequestDTO := handler.RequestCreateProduct{
-			Description:    "Teste",
+			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
 			Height:         1.1,
 			Length:         1.1,
 			Netweight:      1.1,
-			ProductCode:    "Teste",
+			ProductCode:    "Test",
 			RecomFreezTemp: 1.1,
 			Width:          1.1,
 			ProductTypeID:  1,
@@ -412,6 +412,120 @@ func TestDelete(t *testing.T) {
 
 		//Validar resultado
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+
+	t.Run("update_non_existent", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Patch", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product.ErrNotFound)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/products/:id", handler.Update())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/1", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNotFound, res.Code)
+	})
+
+	t.Run("update_ok", func(t *testing.T) {
+
+		//productID := 1
+
+		description := "teste2"
+		expirationRate := 2
+		freezingRate := 2
+		var height float32 = 2.2
+		var length float32 = 2.2
+		var netweight float32 = 2.2
+		productCode := "teste2"
+		var recomFreezTemp float32 = 2.2
+		var width float32 = 2.2
+		productTypeID := 2
+		sellerID := 2
+
+		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
+		updateProductRequest := handler.RequestUpdateProduct{
+			Description:    &description,
+			ExpirationRate: &expirationRate,
+			FreezingRate:   &freezingRate,
+			Height:         &height,
+			Length:         &length,
+			Netweight:      &netweight,
+			ProductCode:    &productCode,
+			RecomFreezTemp: &recomFreezTemp,
+			Width:          &width,
+			ProductTypeID:  &productTypeID,
+			SellerID:       &sellerID,
+		}
+		updatedProduct := &domain.Product{
+			ID:             1,
+			Description:    "Teste2",
+			ExpirationRate: 2,
+			FreezingRate:   2,
+			Height:         2.2,
+			Length:         2.2,
+			Netweight:      2.2,
+			ProductCode:    "Teste2",
+			RecomFreezTemp: 2.2,
+			Width:          2.2,
+			ProductTypeID:  2,
+			SellerID:       2,
+		}
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On(
+			"Update",
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(
+			updatedProduct, nil,
+		)
+		//productServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(updatedProduct, nil)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/products/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(updateProductRequest)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/1", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data *domain.Product `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		responseProduct := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, *updatedProduct, *responseProduct)
+
 	})
 
 }
