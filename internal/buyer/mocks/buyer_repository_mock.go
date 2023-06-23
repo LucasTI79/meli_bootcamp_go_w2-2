@@ -15,8 +15,9 @@ func NewBuyerRepositoryMock() *BuyerRepositoryMock {
 }
 
 func (repository *BuyerRepositoryMock) GetAll(ctx context.Context) ([]domain.Buyer, error) {
-	//TODO implement me
-	panic("implement me")
+	args := repository.Called(ctx)
+
+	return args.Get(0).([]domain.Buyer), args.Error(1)
 }
 
 func (repository *BuyerRepositoryMock) Get(ctx context.Context, id int) (domain.Buyer, error) {

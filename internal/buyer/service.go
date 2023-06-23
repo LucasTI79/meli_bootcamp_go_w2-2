@@ -17,7 +17,7 @@ var (
 
 type Service interface {
 	Get(ctx *context.Context, id int) (*domain.Buyer, error)
-	GetAll(ctx context.Context) (*[]domain.Buyer, error)
+	GetAll(ctx *context.Context) (*[]domain.Buyer, error)
 	Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error)
 	Update(ctx context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error)
 	Delete(ctx context.Context, id int) error
@@ -47,12 +47,12 @@ func (service *service) Get(ctx *context.Context, id int) (*domain.Buyer, error)
 	return &buyer, nil
 }
 
-func (service *service) GetAll(ctx context.Context) (*[]domain.Buyer, error) {
+func (service *service) GetAll(ctx *context.Context) (*[]domain.Buyer, error) {
 	buyers := make([]domain.Buyer, 0)
 
-	buyers, err := service.repository.GetAll(ctx)
+	buyers, err := service.repository.GetAll(*ctx)
 	if err != nil {
-		return nil, err
+		return &buyers, err
 	}
 
 	return &buyers, nil

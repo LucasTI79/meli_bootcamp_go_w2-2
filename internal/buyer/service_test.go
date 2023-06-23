@@ -77,3 +77,66 @@ func TestGet(t *testing.T) {
 		})
 	}
 }
+
+func TestGetAll(t *testing.T) {
+
+	expectedBuyers := []domain.Buyer{
+		{
+			ID:           1,
+			CardNumberID: "123",
+			FirstName:    "Test",
+			LastName:     "Test",
+		},
+		{
+			ID:           2,
+			CardNumberID: "456",
+			FirstName:    "Test2",
+			LastName:     "Test2",
+		},
+	}
+
+	tests := []struct {
+		name string
+		//Mocking repository.GetAll
+		expectedGetAllResult []domain.Buyer
+		expectedGetAllError  error
+		expectedGetAllCalls  int
+		//Asserting function
+		expectedBuyers *[]domain.Buyer
+		expectedError  error
+	}{
+		{
+			name:                 "Successfully get all buyers from db",
+			expectedGetAllResult: expectedBuyers,
+			expectedGetAllError:  nil,
+			expectedGetAllCalls:  1,
+			expectedBuyers:       &expectedBuyers,
+			expectedError:        nil,
+		},
+		{
+			name:                 "Error connecting db",
+			expectedGetAllResult: []domain.Buyer{},
+			expectedGetAllError:  assert.AnError,
+			expectedGetAllCalls:  1,
+			expectedBuyers:       &[]domain.Buyer{},
+			expectedError:        assert.AnError,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx := context.TODO()
+
+			buyerRepositoryMock := mocks.NewBuyerRepositoryMock()
+			buyerRepositoryMock.On("GetAll", ctx).Return(test.expectedGetAllResult, test.expectedGetAllError)
+
+			service := buyer.NewService(buyerRepositoryMock)
+			buyerReceived, err := service.GetAll(&ctx)
+
+			assert.Equal(t, *test.expectedBuyers, *buyerReceived)
+			assert.Equal(t, test.expectedError, err)
+
+			buyerRepositoryMock.AssertNumberOfCalls(t, "GetAll", test.expectedGetAllCalls)
+		})
+	}
+}
