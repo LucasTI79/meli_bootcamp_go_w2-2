@@ -1,14 +1,13 @@
 package buyer_test
 
 import (
+	"context"
 	"database/sql"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"net/http/httptest"
 	"testing"
 )
 
@@ -63,9 +62,7 @@ func TestGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
-			ctx := c.Request.Context()
+			ctx := context.Background()
 
 			buyerRepositoryMock := mocks.NewBuyerRepositoryMock()
 			buyerRepositoryMock.On("Get", mock.AnythingOfType("context.Context"), mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
