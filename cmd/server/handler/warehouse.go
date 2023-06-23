@@ -89,14 +89,14 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
-		ctx := c.Request.Context()
 
+		ctx := c.Request.Context()
 		if err := WarehouseFullRequestValidator(c, req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-
 		result, e := w.warehouseService.Create(&ctx, req)
+
 		if e != nil {
 			web.Error(c, http.StatusConflict, e.Error())
 			return

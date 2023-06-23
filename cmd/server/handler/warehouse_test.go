@@ -3,6 +3,7 @@ package handler_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -160,14 +161,19 @@ func TestCreate(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createWarehouseRequestDTO, warehouse.ErrConflict)
 		handler := handler.NewWarehouse(warehouseServiceMock)
+
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.POST("/api/v1/warehouses", handler.Create())
+
 		requestBody, _ := json.Marshal(createWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/warehouses", request)
+
 		req.GetBody()
 		res := httptest.NewRecorder()
+		fmt.Println(res)
+
 		r.ServeHTTP(res, req)
 
 		assert.Equal(t, http.StatusConflict, res.Code)
