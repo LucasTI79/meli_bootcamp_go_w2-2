@@ -3,6 +3,7 @@ package handler_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -19,7 +20,7 @@ import (
 
 func TestGet(t *testing.T) {
 
-	t.Run("find_by_id_existent", func(t *testing.T) {
+	t.Run("get_find_by_id_existent", func(t *testing.T) {
 		// Definir resultado da consulta
 		productFound := &domain.Product{
 			ID:             1,
@@ -69,7 +70,7 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, *productFound, responseProduct)
 	})
 
-	t.Run("find_by_id_non_existent", func(t *testing.T) {
+	t.Run("get_find_by_id_non_existent", func(t *testing.T) {
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -92,7 +93,7 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 
-	t.Run("invalid_id", func(t *testing.T) {
+	t.Run("get_invalid_id", func(t *testing.T) {
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -115,11 +116,12 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, res.Code)
 	})
 
-	t.Run("internal_server_error", func(t *testing.T) {
+	t.Run("get_internal_server_error", func(t *testing.T) {
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
-		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Product{}, assert.AnError)
+		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, assert.AnError)
 		handler := handler.NewProduct(productServiceMock)
 
 		//Configurar o servidor
@@ -142,7 +144,7 @@ func TestGet(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 
-	t.Run("Create_Ok", func(t *testing.T) {
+	t.Run("create_create_ok", func(t *testing.T) {
 		// Definir resultado da consulta
 		expectedProduct := &domain.Product{
 			ID:             1,
@@ -208,9 +210,9 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, *expectedProduct, *actualProduct)
 	})
 
-	t.Run("Create_fail_description_empty", func(t *testing.T) {
+	t.Run("create_fail_description_empty", func(t *testing.T) {
 		// Definir resultado da consulta
-		createProductRequestDTO := buildProductRequestDTO("", 2, 2, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
+		createProductRequestDTO := buildProductRequestDTO("", 2, 2, 2.2, 2.2, 2.2, "2222", 2.2, 2.2, 2, 2)
 
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
@@ -237,7 +239,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_ExpirationRate_nil", func(t *testing.T) {
+	t.Run("create_fail_expirationRate_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 0, 2, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
 
@@ -266,7 +268,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_FreezinRate_nil", func(t *testing.T) {
+	t.Run("create_fail_freezinRate_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 0, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
 
@@ -295,7 +297,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_Height_nil", func(t *testing.T) {
+	t.Run("create_fail_height_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 0, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
 
@@ -324,7 +326,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_Length_nil", func(t *testing.T) {
+	t.Run("create_fail_length_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 0, 2.2, "22222", 2.2, 2.2, 2, 2)
 
@@ -353,7 +355,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_Netweight_nil", func(t *testing.T) {
+	t.Run("create_fail_netweight_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 0, "22222", 2.2, 2.2, 2, 2)
 
@@ -382,7 +384,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_ProductCode_nil", func(t *testing.T) {
+	t.Run("create_fail_productCode_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "", 2.2, 2.2, 2, 2)
 
@@ -411,7 +413,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_RecomFreezTemp_nil", func(t *testing.T) {
+	t.Run("create_fail_recomFreezTemp_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 0, 2.2, 2, 2)
 
@@ -440,7 +442,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_Width_nil", func(t *testing.T) {
+	t.Run("create_fail_width_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 0, 2, 2)
 
@@ -469,7 +471,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_ProductTypeID_nil", func(t *testing.T) {
+	t.Run("create_fail_productTypeID_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 2.2, 0, 2)
 
@@ -498,7 +500,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_fail_SellerId_nil", func(t *testing.T) {
+	t.Run("create_fail_sellerId_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 2.2, 2, 0)
 
@@ -527,7 +529,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("Create_conflict", func(t *testing.T) {
+	t.Run("create_conflict", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := handler.RequestCreateProduct{
 			Description:    "Test",
@@ -569,11 +571,52 @@ func TestCreate(t *testing.T) {
 
 	})
 
+	t.Run("create_internal_server_error", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := handler.RequestCreateProduct{
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, errors.New("error"))
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+
+	})
 }
 func TestGetAll(t *testing.T) {
 
 	/*find_all Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os vendedores existentes - 200*/
-	t.Run("find_all", func(t *testing.T) {
+	t.Run("getAll_find_all", func(t *testing.T) {
 		productsFounds := &[]domain.Product{
 			{
 				ID:             1,
@@ -635,7 +678,7 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, *productsFounds, responseProducts)
 	})
 
-	t.Run("empty database", func(t *testing.T) {
+	t.Run("getAll_empty_database", func(t *testing.T) {
 		productsFounds := &[]domain.Product{}
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -658,7 +701,7 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, http.StatusNoContent, res.Code)
 	})
 
-	t.Run("internal error", func(t *testing.T) {
+	t.Run("getAll_internal_error", func(t *testing.T) {
 		productsFounds := &[]domain.Product{}
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -707,7 +750,7 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 
-	t.Run("delete_ok", func(t *testing.T) {
+	t.Run("delete_delete_ok", func(t *testing.T) {
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -730,7 +773,7 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, http.StatusNoContent, res.Code)
 	})
 
-	t.Run("error_parsing_id", func(t *testing.T) {
+	t.Run("delete_error_parsing_id", func(t *testing.T) {
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -753,7 +796,7 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, res.Code)
 	})
 
-	t.Run("error_deleting_product", func(t *testing.T) {
+	t.Run("delete_error_deleting_product", func(t *testing.T) {
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
@@ -780,29 +823,277 @@ func TestDelete(t *testing.T) {
 func TestUpdate(t *testing.T) {
 
 	t.Run("update_non_existent", func(t *testing.T) {
+		description := "teste2"
+		expirationRate := 2
+		freezingRate := 2
+		var height float32 = 2.2
+		var length float32 = 2.2
+		var netweight float32 = 2.2
+		productCode := "teste2"
+		var recomFreezTemp float32 = 2.2
+		var width float32 = 2.2
+		productTypeID := 2
+		sellerID := 2
+
+		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
+		updateProductRequest := handler.RequestUpdateProduct{
+			Description:    &description,
+			ExpirationRate: &expirationRate,
+			FreezingRate:   &freezingRate,
+			Height:         &height,
+			Length:         &length,
+			Netweight:      &netweight,
+			ProductCode:    &productCode,
+			RecomFreezTemp: &recomFreezTemp,
+			Width:          &width,
+			ProductTypeID:  &productTypeID,
+			SellerID:       &sellerID,
+		}
 
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
-		productServiceMock.On("Patch", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product.ErrNotFound)
+		productServiceMock.On(
+			"Update",
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(
+			&domain.Product{}, product.ErrNotFound,
+		)
 		handler := handler.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/products/:id", handler.Update())
+		r.PATCH("/api/v1/products/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(updateProductRequest)
+		request := bytes.NewReader(requestBody)
 
 		//Definir request e response
-		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/1", nil)
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/1", request)
 		res := httptest.NewRecorder()
 
 		//Executar request
 		r.ServeHTTP(res, req)
 
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data *domain.Product `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
 		//Validar resultado
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 
-	t.Run("update_ok", func(t *testing.T) {
+	t.Run("update_conflict", func(t *testing.T) {
+
+		description := "teste2"
+		expirationRate := 2
+		freezingRate := 2
+		var height float32 = 2.2
+		var length float32 = 2.2
+		var netweight float32 = 2.2
+		productCode := "teste2"
+		var recomFreezTemp float32 = 2.2
+		var width float32 = 2.2
+		productTypeID := 2
+		sellerID := 2
+
+		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
+		updateProductRequest := handler.RequestUpdateProduct{
+			Description:    &description,
+			ExpirationRate: &expirationRate,
+			FreezingRate:   &freezingRate,
+			Height:         &height,
+			Length:         &length,
+			Netweight:      &netweight,
+			ProductCode:    &productCode,
+			RecomFreezTemp: &recomFreezTemp,
+			Width:          &width,
+			ProductTypeID:  &productTypeID,
+			SellerID:       &sellerID,
+		}
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On(
+			"Update",
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(
+			&domain.Product{}, product.ErrConflict,
+		)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/products/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(updateProductRequest)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/1", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data *domain.Product `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusConflict, res.Code)
+	})
+
+	t.Run("update_internal_server_error", func(t *testing.T) {
+
+		description := "teste2"
+		expirationRate := 2
+		freezingRate := 2
+		var height float32 = 2.2
+		var length float32 = 2.2
+		var netweight float32 = 2.2
+		productCode := "teste2"
+		var recomFreezTemp float32 = 2.2
+		var width float32 = 2.2
+		productTypeID := 2
+		sellerID := 2
+
+		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
+		updateProductRequest := handler.RequestUpdateProduct{
+			Description:    &description,
+			ExpirationRate: &expirationRate,
+			FreezingRate:   &freezingRate,
+			Height:         &height,
+			Length:         &length,
+			Netweight:      &netweight,
+			ProductCode:    &productCode,
+			RecomFreezTemp: &recomFreezTemp,
+			Width:          &width,
+			ProductTypeID:  &productTypeID,
+			SellerID:       &sellerID,
+		}
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On(
+			"Update",
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(
+			&domain.Product{}, errors.New("error"),
+		)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/products/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(updateProductRequest)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/1", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data *domain.Product `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+
+	t.Run("id_conversion_error", func(t *testing.T) {
+
+		description := "teste2"
+		expirationRate := 2
+		freezingRate := 2
+		var height float32 = 2.2
+		var length float32 = 2.2
+		var netweight float32 = 2.2
+		productCode := "teste2"
+		var recomFreezTemp float32 = 2.2
+		var width float32 = 2.2
+		productTypeID := 2
+		sellerID := 2
+
+		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
+		updateProductRequest := handler.RequestUpdateProduct{
+			Description:    &description,
+			ExpirationRate: &expirationRate,
+			FreezingRate:   &freezingRate,
+			Height:         &height,
+			Length:         &length,
+			Netweight:      &netweight,
+			ProductCode:    &productCode,
+			RecomFreezTemp: &recomFreezTemp,
+			Width:          &width,
+			ProductTypeID:  &productTypeID,
+			SellerID:       &sellerID,
+		}
+
+		//Configurar o mock do service
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On(
+			"Update",
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(
+			&domain.Product{}, errors.New("error"),
+		)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/products/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(updateProductRequest)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/products/a", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data *domain.Product `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("update_update_ok", func(t *testing.T) {
 
 		//productID := 1
 
@@ -851,11 +1142,11 @@ func TestUpdate(t *testing.T) {
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On(
 			"Update",
-			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
 		).Return(
 			updatedProduct, nil,
 		)
-		//productServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(updatedProduct, nil)
 		handler := handler.NewProduct(productServiceMock)
 
 		//Configurar o servidor
