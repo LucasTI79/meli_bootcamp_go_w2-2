@@ -203,6 +203,65 @@ func TestGet(t *testing.T) {
 	})
 }
 
+func TestDelete(t *testing.T){
+	t.Run("DELETE - OK - When the deletion is successful, a 204 code is returned.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+
+		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+
+		server.DELETE("/api/v1/sections/:id", handler.Delete())
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/sections/1", nil)
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, request)
+
+		assert.Equal(t, http.StatusNoContent, response.Code)
+	})
+	t.Run("DELETE - Delete_non_existent - Should return status 404 when deleting a section that does not exist.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+
+		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(section.ErrNotFound)
+
+		server.DELETE("/api/v1/sections/:id", handler.Delete())
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/sections/1", nil)
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, request)
+
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+	t.Run("DELETE - ID invalid - Should return error 400 when trying to delete a section with invalid ID.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+
+		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+
+		server.DELETE("/api/v1/sections/:id", handler.Delete())
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/sections/x", nil)
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, request)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+
+	t.Run("DELETE - Server Internal Error - Should return error 500 when an internal server error occurs while deleting a section.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+
+		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
+
+		server.DELETE("/api/v1/sections/:id", handler.Delete())
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodDelete, "/api/v1/sections/1", nil)
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, request)
+
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+}
 
 func InitServerWithGetSections(t *testing.T) (*gin.Engine, *mocks.SectionServiceMock, *handler.Section) {
 	t.Helper()

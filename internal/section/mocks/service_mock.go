@@ -35,7 +35,7 @@ func (s *SectionServiceMock) Update(ctx context.Context, sectionNumber, currentT
 	return args.Get(0).(*domain.Section), args.Error(1)
 }
 
-func (s *SectionServiceMock) Delete(ctx context.Context, id int) error {
+func (s *SectionServiceMock) Delete(ctx *context.Context, id int) error {
 	args := s.Called(ctx, id)
-	return args.Error(1)
+	return args.Error(0)
 }

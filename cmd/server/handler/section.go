@@ -222,7 +222,8 @@ func (s *Section) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		err = s.sectionService.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = s.sectionService.Delete(&ctx, int(id))
 		if err != nil {
 			switch err {
 			case section.ErrNotFound:

@@ -19,7 +19,7 @@ type Service interface {
 	warehouseID, productTypeID int) (*domain.Section, error)
 	GetAll(ctx *context.Context) (*[]domain.Section, error)
 	Get(ctx *context.Context, id int) (*domain.Section, error)
-	Delete(ctx context.Context, id int) error
+	Delete(ctx *context.Context, id int) error
 	Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
 	warehouseID, productTypeID *int, id int) (*domain.Section, error)
 }
@@ -90,8 +90,8 @@ func (s *service) Get(ctx *context.Context, id int) (*domain.Section, error) {
 	return &section, nil
 }
 
-func (s *service) Delete(ctx context.Context, id int) error {
-	err := s.sectionRepository.Delete(ctx, id)
+func (s *service) Delete(ctx *context.Context, id int) error {
+	err := s.sectionRepository.Delete(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
