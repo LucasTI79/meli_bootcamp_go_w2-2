@@ -207,6 +207,368 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, res.Code)
 		assert.Equal(t, *expectedProduct, *actualProduct)
 	})
+
+	t.Run("Create_fail_description_empty", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("", 2, 2, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_ExpirationRate_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 0, 2, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_FreezinRate_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 0, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_Height_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 0, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_Length_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 0, 2.2, "22222", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_Netweight_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 0, "22222", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_ProductCode_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "", 2.2, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_RecomFreezTemp_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 0, 2.2, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_Width_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 0, 2, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_ProductTypeID_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 2.2, 0, 2)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_fail_SellerId_nil", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 2.2, 2, 0)
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("Create_conflict", func(t *testing.T) {
+		// Definir resultado da consulta
+		createProductRequestDTO := handler.RequestCreateProduct{
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
+			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
+		handler := handler.NewProduct(productServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/products", handler.Create())
+
+		requestBody, _ := json.Marshal(createProductRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/products", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+		//Validar resultado
+		assert.Equal(t, http.StatusConflict, res.Code)
+
+	})
+
 }
 func TestGetAll(t *testing.T) {
 
@@ -528,4 +890,21 @@ func TestUpdate(t *testing.T) {
 
 	})
 
+}
+
+func buildProductRequestDTO(description string, expirationRate int, freezinRate int, height float32, length float32, netweight float32, productCode string,
+	recomFreezTemp float32, width float32, productTypeID int, sellerId int) handler.RequestCreateProduct {
+	return handler.RequestCreateProduct{
+		Description:    description,
+		ExpirationRate: expirationRate,
+		FreezingRate:   freezinRate,
+		Height:         height,
+		Length:         length,
+		Netweight:      netweight,
+		ProductCode:    productCode,
+		RecomFreezTemp: recomFreezTemp,
+		Width:          width,
+		ProductTypeID:  productTypeID,
+		SellerID:       sellerId,
+	}
 }
