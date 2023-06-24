@@ -11,17 +11,17 @@ type SectionServiceMock struct {
 	mock.Mock
 }
 
-func (s *SectionServiceMock) Get(ctx context.Context, id int) (*domain.Section, error) {
+func (s *SectionServiceMock) Get(ctx *context.Context, id int) (*domain.Section, error) {
 	args := s.Called(ctx, id)
 	return args.Get(0).(*domain.Section), args.Error(1)
 }
 
-func (s *SectionServiceMock) GetAll(ctx context.Context) ([]domain.Section, error) {
+func (s *SectionServiceMock) GetAll(ctx *context.Context) (*[]domain.Section, error) {
 	args := s.Called(ctx)
-	return args.Get(0).([]domain.Section), args.Error(1)
+	return args.Get(0).(*[]domain.Section), args.Error(1)
 }
 
-func (s *SectionServiceMock) Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity,
+func (s *SectionServiceMock) Save(ctx *context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity,
 	maximumCapacity, warehouseID, productTypeID int) (*domain.Section, error) {
 	args := s.Called(ctx, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity,
 		maximumCapacity, warehouseID, productTypeID)

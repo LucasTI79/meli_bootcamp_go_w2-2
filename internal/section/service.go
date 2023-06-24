@@ -15,13 +15,13 @@ var (
 )
 
 type Service interface {
-	Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
-		warehouseID, productTypeID int) (*domain.Section, error)
-	GetAll(ctx context.Context) ([]domain.Section, error)
-	Get(ctx context.Context, id int) (*domain.Section, error)
+	Save(ctx *context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
+	warehouseID, productTypeID int) (*domain.Section, error)
+	GetAll(ctx *context.Context) (*[]domain.Section, error)
+	Get(ctx *context.Context, id int) (*domain.Section, error)
 	Delete(ctx context.Context, id int) error
 	Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
-		warehouseID, productTypeID *int, id int) (*domain.Section, error)
+	warehouseID, productTypeID *int, id int) (*domain.Section, error)
 }
 
 type service struct {
@@ -34,9 +34,9 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity,
+func (s *service) Save(ctx *context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity,
 	maximumCapacity, warehouseID, productTypeID int) (*domain.Section, error) {
-	existingSection := s.sectionRepository.Exists(ctx, sectionNumber)
+	existingSection := s.sectionRepository.Exists(*ctx, sectionNumber)
 
 	if existingSection {
 		return nil, ErrConflict
@@ -53,13 +53,13 @@ func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, m
 		ProductTypeID:      productTypeID,
 	}
 
-	sectionId, err := s.sectionRepository.Save(ctx, newSection)
+	sectionId, err := s.sectionRepository.Save(*ctx, newSection)
 	if err != nil {
 		return nil, err
 
 	}
 
-	savedSection, err := s.sectionRepository.Get(ctx, sectionId)
+	savedSection, err := s.sectionRepository.Get(*ctx, sectionId)
 	if err != nil {
 		return nil, err
 	}
@@ -67,17 +67,17 @@ func (s *service) Save(ctx context.Context, sectionNumber, currentTemperature, m
 	return &savedSection, nil
 }
 
-func (s *service) GetAll(ctx context.Context) ([]domain.Section, error) {
-	sections, err := s.sectionRepository.GetAll(ctx)
+func (s *service) GetAll(ctx *context.Context) (*[]domain.Section, error) {
+	sections, err := s.sectionRepository.GetAll(*ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return sections, nil
+	return &sections, nil
 }
 
-func (s *service) Get(ctx context.Context, id int) (*domain.Section, error) {
-	section, err := s.sectionRepository.Get(ctx, id)
+func (s *service) Get(ctx *context.Context, id int) (*domain.Section, error) {
+	section, err := s.sectionRepository.Get(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:

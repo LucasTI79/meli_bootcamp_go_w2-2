@@ -5,21 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
 )
-
-type requestCreateSection struct {
-	SectionNumber      int `json:"section_number"`
-	CurrentTemperature int `json:"current_temperature"`
-	MinimumTemperature int `json:"minimum_temperature"`
-	CurrentCapacity    int `json:"current_capacity"`
-	MinimumCapacity    int `json:"minimum_capacity"`
-	MaximumCapacity    int `json:"maximum_capacity"`
-	WarehouseID        int `json:"warehouse_id"`
-	ProductTypeID      int `json:"product_type_id"`
-}
 
 type requestUpdateSection struct {
 	SectionNumber      *int `json:"section_number"`
@@ -54,7 +44,8 @@ func NewSection(s section.Service) *Section {
 //	@Router			/api/v1/sections [get]
 func (s *Section) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sections, err := s.sectionService.GetAll(c)
+		ctx := c.Request.Context()
+		sections, err := s.sectionService.GetAll(&ctx)
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
@@ -81,7 +72,9 @@ func (s *Section) Get() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, err.Error())
 			return
 		}
-		sectionResponse, err := s.sectionService.Get(c, int(id))
+
+		ctx := c.Request.Context()
+		sectionResponse, err := s.sectionService.Get(&ctx, int(id))
 		if err != nil {
 			switch err {
 			case section.ErrNotFound:
@@ -108,7 +101,7 @@ func (s *Section) Get() gin.HandlerFunc {
 //	@Router			/api/v1/sections [post]
 func (s *Section) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req requestCreateSection
+		var req domain.SectionRequest
 		if err := c.Bind(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
@@ -154,7 +147,8 @@ func (s *Section) Create() gin.HandlerFunc {
 			return
 		}
 
-		sectionResponse, err := s.sectionService.Save(c, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
+		ctx := c.Request.Context()
+		sectionResponse, err := s.sectionService.Save(&ctx, req.SectionNumber, req.CurrentTemperature, req.MinimumTemperature, req.CurrentCapacity,
 			req.MinimumCapacity, req.MaximumCapacity, req.WarehouseID, req.ProductTypeID)
 		if err != nil {
 			switch err {
