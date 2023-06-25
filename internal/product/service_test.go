@@ -6,6 +6,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
@@ -170,5 +171,149 @@ func TestDelete(t *testing.T) {
 		err := service.Delete(&ctx, 1)
 
 		assert.Equal(t, errors.New("error"), err)
+	})
+}
+
+func TestCreate(t *testing.T) {
+	t.Run("create_conflict", func(t *testing.T) {
+
+		createProductRequestDTO := handler.RequestCreateProduct{
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
+
+		service := product.NewService(productRepositoryMock)
+		productSaved, err := service.Save(&ctx, createProductRequestDTO.Description, createProductRequestDTO.ExpirationRate, createProductRequestDTO.FreezingRate,
+			createProductRequestDTO.Height, createProductRequestDTO.Length, createProductRequestDTO.Netweight, createProductRequestDTO.ProductCode,
+			createProductRequestDTO.RecomFreezTemp, createProductRequestDTO.Width, createProductRequestDTO.ProductTypeID, createProductRequestDTO.SellerID)
+
+		assert.Equal(t, product.ErrConflict, err)
+		assert.Nil(t, productSaved)
+
+	})
+
+	t.Run("create_error", func(t *testing.T) {
+
+		createProductRequestDTO := handler.RequestCreateProduct{
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		productRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Product")).Return(0, errors.New("error"))
+
+		service := product.NewService(productRepositoryMock)
+		productSaved, err := service.Save(&ctx, createProductRequestDTO.Description, createProductRequestDTO.ExpirationRate, createProductRequestDTO.FreezingRate,
+			createProductRequestDTO.Height, createProductRequestDTO.Length, createProductRequestDTO.Netweight, createProductRequestDTO.ProductCode,
+			createProductRequestDTO.RecomFreezTemp, createProductRequestDTO.Width, createProductRequestDTO.ProductTypeID, createProductRequestDTO.SellerID)
+
+		assert.Equal(t, errors.New("error"), err)
+		assert.Nil(t, productSaved)
+
+	})
+
+	t.Run("create_error_get_product", func(t *testing.T) {
+
+		createProductRequestDTO := handler.RequestCreateProduct{
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		productRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Product")).Return(1, nil)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Product{}, errors.New("error"))
+
+		service := product.NewService(productRepositoryMock)
+		productSaved, err := service.Save(&ctx, createProductRequestDTO.Description, createProductRequestDTO.ExpirationRate, createProductRequestDTO.FreezingRate,
+			createProductRequestDTO.Height, createProductRequestDTO.Length, createProductRequestDTO.Netweight, createProductRequestDTO.ProductCode,
+			createProductRequestDTO.RecomFreezTemp, createProductRequestDTO.Width, createProductRequestDTO.ProductTypeID, createProductRequestDTO.SellerID)
+
+		assert.Equal(t, errors.New("error"), err)
+		assert.Nil(t, productSaved)
+
+	})
+
+	t.Run("create_ok", func(t *testing.T) {
+		expectedProduct := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		createProductRequestDTO := handler.RequestCreateProduct{
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		productRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Product")).Return(1, nil)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedProduct, nil)
+
+		service := product.NewService(productRepositoryMock)
+		productSaved, err := service.Save(&ctx, createProductRequestDTO.Description, createProductRequestDTO.ExpirationRate, createProductRequestDTO.FreezingRate,
+			createProductRequestDTO.Height, createProductRequestDTO.Length, createProductRequestDTO.Netweight, createProductRequestDTO.ProductCode,
+			createProductRequestDTO.RecomFreezTemp, createProductRequestDTO.Width, createProductRequestDTO.ProductTypeID, createProductRequestDTO.SellerID)
+
+		assert.Equal(t, productSaved, expectedProduct)
+		assert.Nil(t, err)
+
 	})
 }
