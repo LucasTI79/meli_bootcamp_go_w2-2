@@ -15,7 +15,7 @@ import (
 
 func TestGet(t *testing.T) {
 
-	t.Run("find_by_id_existent", func(t *testing.T) {
+	t.Run("get_find_by_id_existent", func(t *testing.T) {
 		expectedProduct := &domain.Product{
 			ID:             1,
 			Description:    "Test",
@@ -43,7 +43,7 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, nil, err)
 	})
 
-	t.Run("find_by_id_non_existent", func(t *testing.T) {
+	t.Run("get_find_by_id_non_existent", func(t *testing.T) {
 
 		ctx := context.TODO()
 
@@ -57,7 +57,7 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, product.ErrNotFound, err)
 	})
 
-	t.Run("unexpected_error", func(t *testing.T) {
+	t.Run("get_unexpected_error", func(t *testing.T) {
 
 		ctx := context.TODO()
 
@@ -73,7 +73,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetAll(t *testing.T) {
-	t.Run("find_all", func(t *testing.T) {
+	t.Run("getAll_find_all", func(t *testing.T) {
 		expectedProducts := &[]domain.Product{
 			{
 				ID:             1,
@@ -116,7 +116,7 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, nil, err)
 	})
 
-	t.Run("unexpected_error", func(t *testing.T) {
+	t.Run("getAll_unexpected_error", func(t *testing.T) {
 
 		ctx := context.TODO()
 
@@ -130,4 +130,45 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, errors.New("error"), err)
 	})
 
+}
+
+func TestDelete(t *testing.T) {
+	t.Run("delete_ok", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(nil)
+
+		service := product.NewService(productRepositoryMock)
+		err := service.Delete(&ctx, 1)
+
+		assert.Nil(t, err)
+	})
+
+	t.Run("delete_non_existent", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(sql.ErrNoRows)
+
+		service := product.NewService(productRepositoryMock)
+		err := service.Delete(&ctx, 1)
+
+		assert.Equal(t, product.ErrNotFound, err)
+	})
+
+	t.Run("delete_unexpected_error", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(errors.New("error"))
+
+		service := product.NewService(productRepositoryMock)
+		err := service.Delete(&ctx, 1)
+
+		assert.Equal(t, errors.New("error"), err)
+	})
 }
