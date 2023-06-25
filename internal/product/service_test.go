@@ -317,3 +317,228 @@ func TestCreate(t *testing.T) {
 
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	t.Run("update_existent", func(t *testing.T) {
+		originalProduct := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		updateProductRequestDTO := handler.RequestUpdateProduct{
+			Description:    &originalProduct.Description,
+			ExpirationRate: &originalProduct.ExpirationRate,
+			FreezingRate:   &originalProduct.FreezingRate,
+			Height:         &originalProduct.Height,
+			Length:         &originalProduct.Length,
+			Netweight:      &originalProduct.Netweight,
+			ProductCode:    &originalProduct.ProductCode,
+			RecomFreezTemp: &originalProduct.RecomFreezTemp,
+			Width:          &originalProduct.Width,
+			ProductTypeID:  &originalProduct.ProductTypeID,
+			SellerID:       &originalProduct.SellerID,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		productRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Product")).Return(nil)
+
+		service := product.NewService(productRepositoryMock)
+		productUpdate, err := service.Update(&ctx, updateProductRequestDTO.Description, updateProductRequestDTO.ExpirationRate, updateProductRequestDTO.FreezingRate,
+			updateProductRequestDTO.Height, updateProductRequestDTO.Length, updateProductRequestDTO.Netweight, updateProductRequestDTO.ProductCode,
+			updateProductRequestDTO.RecomFreezTemp, updateProductRequestDTO.Width, updateProductRequestDTO.ProductTypeID, updateProductRequestDTO.SellerID, 1)
+
+		assert.Equal(t, productUpdate, originalProduct)
+		assert.Nil(t, err)
+	})
+
+	t.Run("update_non_existent", func(t *testing.T) {
+		originalProduct := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		updateProductRequestDTO := handler.RequestUpdateProduct{
+			Description:    &originalProduct.Description,
+			ExpirationRate: &originalProduct.ExpirationRate,
+			FreezingRate:   &originalProduct.FreezingRate,
+			Height:         &originalProduct.Height,
+			Length:         &originalProduct.Length,
+			Netweight:      &originalProduct.Netweight,
+			ProductCode:    &originalProduct.ProductCode,
+			RecomFreezTemp: &originalProduct.RecomFreezTemp,
+			Width:          &originalProduct.Width,
+			ProductTypeID:  &originalProduct.ProductTypeID,
+			SellerID:       &originalProduct.SellerID,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		productRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Product")).Return(sql.ErrNoRows)
+
+		service := product.NewService(productRepositoryMock)
+		productUpdate, err := service.Update(&ctx, updateProductRequestDTO.Description, updateProductRequestDTO.ExpirationRate, updateProductRequestDTO.FreezingRate,
+			updateProductRequestDTO.Height, updateProductRequestDTO.Length, updateProductRequestDTO.Netweight, updateProductRequestDTO.ProductCode,
+			updateProductRequestDTO.RecomFreezTemp, updateProductRequestDTO.Width, updateProductRequestDTO.ProductTypeID, updateProductRequestDTO.SellerID, 1)
+
+		assert.Equal(t, product.ErrNotFound, err)
+		assert.Nil(t, productUpdate)
+	})
+
+	t.Run("update_unexpected_error", func(t *testing.T) {
+		originalProduct := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		updateProductRequestDTO := handler.RequestUpdateProduct{
+			Description:    &originalProduct.Description,
+			ExpirationRate: &originalProduct.ExpirationRate,
+			FreezingRate:   &originalProduct.FreezingRate,
+			Height:         &originalProduct.Height,
+			Length:         &originalProduct.Length,
+			Netweight:      &originalProduct.Netweight,
+			ProductCode:    &originalProduct.ProductCode,
+			RecomFreezTemp: &originalProduct.RecomFreezTemp,
+			Width:          &originalProduct.Width,
+			ProductTypeID:  &originalProduct.ProductTypeID,
+			SellerID:       &originalProduct.SellerID,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		productRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Product")).Return(errors.New("error"))
+
+		service := product.NewService(productRepositoryMock)
+		productUpdate, err := service.Update(&ctx, updateProductRequestDTO.Description, updateProductRequestDTO.ExpirationRate, updateProductRequestDTO.FreezingRate,
+			updateProductRequestDTO.Height, updateProductRequestDTO.Length, updateProductRequestDTO.Netweight, updateProductRequestDTO.ProductCode,
+			updateProductRequestDTO.RecomFreezTemp, updateProductRequestDTO.Width, updateProductRequestDTO.ProductTypeID, updateProductRequestDTO.SellerID, 1)
+
+		assert.Equal(t, errors.New("error"), err)
+		assert.Nil(t, productUpdate)
+	})
+
+	t.Run("update_get_error", func(t *testing.T) {
+		originalProduct := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		updateProductRequestDTO := handler.RequestUpdateProduct{
+			Description:    &originalProduct.Description,
+			ExpirationRate: &originalProduct.ExpirationRate,
+			FreezingRate:   &originalProduct.FreezingRate,
+			Height:         &originalProduct.Height,
+			Length:         &originalProduct.Length,
+			Netweight:      &originalProduct.Netweight,
+			ProductCode:    &originalProduct.ProductCode,
+			RecomFreezTemp: &originalProduct.RecomFreezTemp,
+			Width:          &originalProduct.Width,
+			ProductTypeID:  &originalProduct.ProductTypeID,
+			SellerID:       &originalProduct.SellerID,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Product{}, errors.New("error"))
+
+		service := product.NewService(productRepositoryMock)
+		productUpdate, err := service.Update(&ctx, updateProductRequestDTO.Description, updateProductRequestDTO.ExpirationRate, updateProductRequestDTO.FreezingRate,
+			updateProductRequestDTO.Height, updateProductRequestDTO.Length, updateProductRequestDTO.Netweight, updateProductRequestDTO.ProductCode,
+			updateProductRequestDTO.RecomFreezTemp, updateProductRequestDTO.Width, updateProductRequestDTO.ProductTypeID, updateProductRequestDTO.SellerID, 1)
+
+		assert.Equal(t, errors.New("error"), err)
+		assert.Nil(t, productUpdate)
+	})
+
+	t.Run("update_different_product_code", func(t *testing.T) {
+		originalProduct := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		productCode := "Test1"
+		updateProductRequestDTO := handler.RequestUpdateProduct{
+			Description:    &originalProduct.Description,
+			ExpirationRate: &originalProduct.ExpirationRate,
+			FreezingRate:   &originalProduct.FreezingRate,
+			Height:         &originalProduct.Height,
+			Length:         &originalProduct.Length,
+			Netweight:      &originalProduct.Netweight,
+			ProductCode:    &productCode,
+			RecomFreezTemp: &originalProduct.RecomFreezTemp,
+			Width:          &originalProduct.Width,
+			ProductTypeID:  &originalProduct.ProductTypeID,
+			SellerID:       &originalProduct.SellerID,
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
+		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
+
+		service := product.NewService(productRepositoryMock)
+		productUpdate, err := service.Update(&ctx, updateProductRequestDTO.Description, updateProductRequestDTO.ExpirationRate, updateProductRequestDTO.FreezingRate,
+			updateProductRequestDTO.Height, updateProductRequestDTO.Length, updateProductRequestDTO.Netweight, updateProductRequestDTO.ProductCode,
+			updateProductRequestDTO.RecomFreezTemp, updateProductRequestDTO.Width, updateProductRequestDTO.ProductTypeID, updateProductRequestDTO.SellerID, 1)
+
+		assert.Equal(t, product.ErrConflict, err)
+		assert.Nil(t, productUpdate)
+	})
+}
