@@ -70,5 +70,64 @@ func TestGet(t *testing.T) {
 		assert.Nil(t, productReceived)
 		assert.Equal(t, errors.New("error"), err)
 	})
+}
+
+func TestGetAll(t *testing.T) {
+	t.Run("find_all", func(t *testing.T) {
+		expectedProducts := &[]domain.Product{
+			{
+				ID:             1,
+				Description:    "Test",
+				ExpirationRate: 1,
+				FreezingRate:   1,
+				Height:         1.1,
+				Length:         1.1,
+				Netweight:      1.1,
+				ProductCode:    "Teste",
+				RecomFreezTemp: 1.1,
+				Width:          1.1,
+				ProductTypeID:  1,
+				SellerID:       1,
+			},
+			{
+				Description:    "Teste",
+				ExpirationRate: 1,
+				FreezingRate:   1,
+				Height:         1.1,
+				Length:         1.1,
+				Netweight:      1.1,
+				ProductCode:    "Teste",
+				RecomFreezTemp: 1.1,
+				Width:          1.1,
+				ProductTypeID:  1,
+				SellerID:       1,
+			},
+		}
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("GetAll", ctx).Return(*expectedProducts, nil)
+
+		service := product.NewService(productRepositoryMock)
+		productsReceived, err := service.GetAll(&ctx)
+
+		assert.Equal(t, *expectedProducts, *productsReceived)
+		assert.Equal(t, nil, err)
+	})
+
+	t.Run("unexpected_error", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock.On("GetAll", ctx).Return([]domain.Product{}, errors.New("error"))
+
+		service := product.NewService(productRepositoryMock)
+		productsReceived, err := service.GetAll(&ctx)
+
+		assert.Nil(t, productsReceived)
+		assert.Equal(t, errors.New("error"), err)
+	})
 
 }
