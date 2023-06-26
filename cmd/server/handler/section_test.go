@@ -1,7 +1,9 @@
 package handler_test
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,7 +19,31 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetAll(t *testing.T){
+var (
+	expectedSection = &domain.Section{
+		ID:                 1,
+		SectionNumber:      10,
+		CurrentTemperature: 10,
+		MinimumTemperature: 10,
+		CurrentCapacity:    10,
+		MinimumCapacity:    10,
+		MaximumCapacity:    10,
+		WarehouseID:        10,
+		ProductTypeID:      10,
+	}
+	requestSection = domain.SectionRequest{
+		SectionNumber:      10,
+		CurrentTemperature: 10,
+		MinimumTemperature: 10,
+		CurrentCapacity:    10,
+		MinimumCapacity:    10,
+		MaximumCapacity:    10,
+		WarehouseID:        10,
+		ProductTypeID:      10,
+	}
+)
+
+func TestGetAll(t *testing.T) {
 	t.Run("READ - find_all: Should return status 200 with all sections", func(t *testing.T) {
 		// Definir resultado da consulta
 		expectedSections := &[]domain.Section{
@@ -102,7 +128,7 @@ func TestGetAll(t *testing.T){
 		assert.Equal(t, http.StatusNoContent, response.Code)
 	})
 
-	t.Run("READ - ServerInternalError - Should return error 500 when server side error occurs with the database.",func(t *testing.T){
+	t.Run("READ - ServerInternalError - Should return error 500 when server side error occurs with the database.", func(t *testing.T) {
 		//Definir resultado da consulta
 		//expectedSection := &[]domain.Section{} @@@Verificar se esse objeto pode ser substituído pelo nil linha 110
 		//Configurar o mock do service
@@ -125,22 +151,22 @@ func TestGetAll(t *testing.T){
 		//Validar resultado
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
-} 
+}
 
 func TestGet(t *testing.T) {
 	t.Run("READ - find_by_id_existent - Should return status 200 when finding a section by ID", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 
 		expectedSection := &domain.Section{
-				ID: 2,
-				SectionNumber: 2,
-				CurrentTemperature: 2,
-				MinimumTemperature: 2,
-				CurrentCapacity: 2,
-				MinimumCapacity: 2,
-				MaximumCapacity: 2,
-				WarehouseID: 2,
-				ProductTypeID: 2,
+			ID:                 2,
+			SectionNumber:      2,
+			CurrentTemperature: 2,
+			MinimumTemperature: 2,
+			CurrentCapacity:    2,
+			MinimumCapacity:    2,
+			MaximumCapacity:    2,
+			WarehouseID:        2,
+			ProductTypeID:      2,
 		}
 		mockService.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(expectedSection, nil)
 		server.GET("/api/v1/sections/:id", handler.Get())
@@ -203,11 +229,11 @@ func TestGet(t *testing.T) {
 	})
 }
 
-func TestDelete(t *testing.T){
+func TestDelete(t *testing.T) {
 	t.Run("DELETE - OK - When the deletion is successful, a 204 code is returned.", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 
-		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		mockService.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
 
 		server.DELETE("/api/v1/sections/:id", handler.Delete())
 
@@ -221,7 +247,7 @@ func TestDelete(t *testing.T){
 	t.Run("DELETE - Delete_non_existent - Should return status 404 when deleting a section that does not exist.", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 
-		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(section.ErrNotFound)
+		mockService.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(section.ErrNotFound)
 
 		server.DELETE("/api/v1/sections/:id", handler.Delete())
 
@@ -235,7 +261,7 @@ func TestDelete(t *testing.T){
 	t.Run("DELETE - ID invalid - Should return error 400 when trying to delete a section with invalid ID.", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 
-		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		mockService.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
 
 		server.DELETE("/api/v1/sections/:id", handler.Delete())
 
@@ -250,7 +276,7 @@ func TestDelete(t *testing.T){
 	t.Run("DELETE - Server Internal Error - Should return error 500 when an internal server error occurs while deleting a section.", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 
-		mockService.On("Delete",  mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
+		mockService.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
 
 		server.DELETE("/api/v1/sections/:id", handler.Delete())
 
@@ -260,6 +286,284 @@ func TestDelete(t *testing.T){
 		server.ServeHTTP(response, request)
 
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+}
+
+func TestCreate(t *testing.T) {
+	t.Run("CREATE - OK - When data entry is successful, a 201 code will be returned along with the inserted object", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(expectedSection, nil)
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		//Parsear response
+		bodyResponse, _ := ioutil.ReadAll(response.Body)
+
+		var responseSection struct {
+			Data *domain.Section `json:"data"`
+		}
+		json.Unmarshal(bodyResponse, &responseSection)
+		actualSection := responseSection.Data
+		//Validar resultado
+		assert.Equal(t, http.StatusCreated, response.Code)
+		assert.Equal(t, *expectedSection, *actualSection)
+	})
+	t.Run("CREATE - Create_Conflict - If the section_number already exists, it will return a 409 Conflict error.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, section.ErrConflict)
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusConflict, response.Code)
+	})
+
+	t.Run("CREATE - Create_Internal_Server_Error -  return status code 500", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+
+	t.Run("CREATE - Create_Fail_SectionNumber_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{0, 10, 10, 10, 10, 10, 10, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_CurrentTemperature_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 0, 10, 10, 10, 10, 10, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_MinimumTemperature_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 10, 0, 10, 10, 10, 10, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_CurrentCapacity_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 10, 10, 0, 10, 10, 10, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_MinimumCapacity_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 10, 10, 10, 0, 10, 10, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_MaximumCapacity_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 10, 10, 10, 10, 0, 10, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_WarehouseID_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 10, 10, 10, 10, 10, 0, 10}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+	t.Run("CREATE - Create_Fail_ProductTypeID_Nil - Status Code 422", func(t *testing.T) {
+		requestSection := domain.SectionRequest{10, 10, 10, 10, 10, 10, 10, 0}
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 }
 
