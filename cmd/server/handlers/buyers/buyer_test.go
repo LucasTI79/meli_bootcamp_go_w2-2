@@ -21,7 +21,7 @@ import (
 
 func TestGet(t *testing.T) {
 
-	buyerSerialized, _ := os.ReadFile("../../../test/resources/valid_buyer.json")
+	buyerSerialized, _ := os.ReadFile("../../../../test/resources/valid_buyer.json")
 	var validBuyer domain.Buyer
 	if err := json.Unmarshal(buyerSerialized, &validBuyer); err != nil {
 		t.Fatal(err)
