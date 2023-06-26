@@ -204,8 +204,8 @@ func (s *Seller) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-
-		err = s.sellerService.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = s.sellerService.Delete(&ctx, int(id))
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to delete: %s", err.Error())
 			return

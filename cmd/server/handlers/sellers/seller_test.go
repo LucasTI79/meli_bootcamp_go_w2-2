@@ -25,7 +25,7 @@ import (
 
 func TestGet(t *testing.T) {
 
-	t.Run("find_by_id_existent", func(t *testing.T) {
+	t.Run("get_find_by_id_existent", func(t *testing.T) {
 		// Definir resultado da consulta
 		sellerFound := &domain.Seller{
 			ID:          1,
@@ -69,7 +69,7 @@ func TestGet(t *testing.T) {
 
 	})
 
-	t.Run("find_by_id_non_existent", func(t *testing.T) {
+	t.Run("get_find_by_id_non_existent", func(t *testing.T) {
 		//Configurar o mock do service
 		sellerServiceMock := new(mocks.SellerServiceMock)
 		sellerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Seller{}, seller.ErrNotFound)
@@ -92,7 +92,7 @@ func TestGet(t *testing.T) {
 
 	})
 
-	t.Run("invalid_id", func(t *testing.T) {
+	t.Run("get_invalid_id", func(t *testing.T) {
 		//Configurar o mock do service
 		sellerServiceMock := new(mocks.SellerServiceMock)
 		sellerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Seller{}, seller.ErrNotFound)
@@ -115,7 +115,7 @@ func TestGet(t *testing.T) {
 
 	})
 
-	t.Run("internal_server_error", func(t *testing.T) {
+	t.Run("get_internal_server_error", func(t *testing.T) {
 		//Configurar o mock do service
 		sellerServiceMock := new(mocks.SellerServiceMock)
 		sellerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Seller{}, assert.AnError)
@@ -198,7 +198,7 @@ func TestCreate(t *testing.T) {
 	})
 
 	//"create_bad_request Quando o JSON tiver um campo incorreto, um código 400 será retornado"
-	t.Run("Create BadRequest", func(t *testing.T) {
+	t.Run("create_bad_request", func(t *testing.T) {
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
 			CID:         0,
 			CompanyName: "Test",
@@ -254,7 +254,7 @@ func TestCreate(t *testing.T) {
 func TestGetAll(t *testing.T) {
 
 	/*find_all Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os vendedores existentes - 200*/
-	t.Run("Get All", func(t *testing.T) {
+	t.Run("GetAll_find_all", func(t *testing.T) {
 		sellersFounds := &[]domain.Seller{
 			{
 				ID:          1,
@@ -303,7 +303,7 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, *sellersFounds, responseSellers)
 	})
 
-	t.Run("empty database", func(t *testing.T) {
+	t.Run("GetAll_empty_database", func(t *testing.T) {
 		sellersFounds := &[]domain.Seller{}
 		//Configurar o mock do service
 		sellerServiceMock := new(mocks.SellerServiceMock)
@@ -326,7 +326,7 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, http.StatusNoContent, res.Code)
 	})
 
-	t.Run("internal error", func(t *testing.T) {
+	t.Run("GetAll_internal_error", func(t *testing.T) {
 		sellersFounds := &[]domain.Seller{}
 		//Configurar o mock do service
 		sellerServiceMock := new(mocks.SellerServiceMock)
@@ -348,4 +348,53 @@ func TestGetAll(t *testing.T) {
 		//Validar resultado
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
 	})
+}
+
+func TestDelete(t *testing.T) {
+	t.Run("delete_delete_ok", func(t *testing.T) {
+
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		sellerServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/products/:id", handler.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNoContent, res.Code)
+	})
+
+	t.Run("delete_non_existent", func(t *testing.T) {
+
+		//Configurar o mock do service
+		sellerServiceMock := new(mocks.SellerServiceMock)
+		sellerServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(seller.ErrNotFound)
+		handler := handler.NewSeller(sellerServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/products/:id", handler.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNotFound, res.Code)
+	})
+
 }
