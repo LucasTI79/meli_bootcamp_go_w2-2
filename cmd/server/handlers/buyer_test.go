@@ -86,6 +86,7 @@ func TestGet(t *testing.T) {
 			r.ServeHTTP(res, req)
 
 			//Validar resultado
+			buyerServiceMock.AssertNumberOfCalls(t, "Get", test.expectedGetCalls)
 			assert.Equal(t, test.expectedCode, res.Code)
 
 			if test.expectedCode == http.StatusOK {
@@ -136,6 +137,14 @@ func TestGetAll(t *testing.T) {
 			expectedCode:         http.StatusOK,
 		},
 		{
+			name:                 "Success empty database",
+			expectedGetAllResult: &[]domain.Buyer{},
+			expectedGetAllError:  nil,
+			expectedGetAllCalls:  1,
+			expectedResponse:     &[]domain.Buyer{},
+			expectedCode:         http.StatusNoContent,
+		},
+		{
 			name:                 "Error getting all buyers",
 			expectedGetAllResult: &[]domain.Buyer{},
 			expectedGetAllError:  assert.AnError,
@@ -165,6 +174,7 @@ func TestGetAll(t *testing.T) {
 			r.ServeHTTP(res, req)
 
 			//Validar resultado
+			buyerServiceMock.AssertNumberOfCalls(t, "GetAll", test.expectedGetAllCalls)
 			assert.Equal(t, test.expectedCode, res.Code)
 
 			// Só testa o body em caso de sucesso
@@ -219,7 +229,7 @@ func TestDelete(t *testing.T) {
 			name:                "Error invalid id",
 			id:                  "xyz",
 			expectedDeleteError: assert.AnError,
-			expectedDeleteCalls: 1,
+			expectedDeleteCalls: 0,
 			expectedCode:        http.StatusBadRequest,
 		},
 	}
@@ -244,6 +254,7 @@ func TestDelete(t *testing.T) {
 			r.ServeHTTP(res, req)
 
 			//Validar resultado
+			buyerServiceMock.AssertNumberOfCalls(t, "Delete", test.expectedDeleteCalls)
 			assert.Equal(t, test.expectedCode, res.Code)
 
 		})
@@ -328,6 +339,7 @@ func TestCreate(t *testing.T) {
 			r.ServeHTTP(res, req)
 
 			//Validar resultado
+			buyerServiceMock.AssertNumberOfCalls(t, "Create", test.expectedCreateCalls)
 			assert.Equal(t, test.expectedCode, res.Code)
 
 			// Só testa o body em caso de sucesso
@@ -442,6 +454,7 @@ func TestUpdate(t *testing.T) {
 			r.ServeHTTP(res, req)
 
 			//Validar resultado
+			buyerServiceMock.AssertNumberOfCalls(t, "Update", test.expectedUpdateCalls)
 			assert.Equal(t, test.expectedCode, res.Code)
 
 			// Só testa o body em caso de sucesso

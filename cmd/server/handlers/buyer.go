@@ -79,6 +79,10 @@ func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
 		} else {
+			if len(*buyers) == 0 {
+				web.Success(c, http.StatusNoContent, buyers)
+				return
+			}
 			web.Success(c, http.StatusOK, buyers)
 			return
 		}
