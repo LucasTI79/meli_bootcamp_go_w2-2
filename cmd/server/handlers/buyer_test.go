@@ -439,15 +439,21 @@ func TestUpdate(t *testing.T) {
 			buyerHandler := handlers.NewBuyerHandler(buyerServiceMock)
 
 			//Configurar o servidor
+
+			//// Create custom validation
+			//if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+			//	v.RegisterStructValidation(dtos.UpdateBuyerRequestValidation, dtos.UpdateBuyerRequestDTO{})
+			//}
+
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.PUT("/api/v1/buyers/:id", buyerHandler.Update())
+			r.PATCH("/api/v1/buyers/:id", buyerHandler.Update())
 
 			requestBody, _ := json.Marshal(test.updateBuyerRequest)
 			request := bytes.NewReader(requestBody)
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodPut, fmt.Sprintf("%s/%s", "/api/v1/buyers", test.id), request)
+			req := httptest.NewRequest(http.MethodPatch, fmt.Sprintf("%s/%s", "/api/v1/buyers", test.id), request)
 			res := httptest.NewRecorder()
 
 			//Executar request

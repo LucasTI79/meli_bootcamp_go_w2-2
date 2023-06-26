@@ -152,7 +152,7 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 
 		updateBuyerRequest := new(dtos.UpdateBuyerRequestDTO)
 		if err := c.ShouldBind(updateBuyerRequest); err != nil {
-			web.Error(c, http.StatusBadRequest, err.Error())
+			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 
