@@ -3,6 +3,8 @@ package routes
 import (
 	"database/sql"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -48,7 +50,7 @@ func (r *router) setGroup() {
 func (r *router) buildSellerRoutes() {
 	repo := seller.NewRepository(r.db)
 	service := seller.NewService(repo)
-	handler := handlers.NewSeller(service)
+	handler := sellers.NewSeller(service)
 	r.rg.POST("/sellers", handler.Create())
 	r.rg.GET("/sellers", handler.GetAll())
 	r.rg.GET("/sellers/:id", handler.Get())
@@ -105,7 +107,7 @@ func (r *router) buildEmployeeRoutes() {
 func (r *router) buildBuyerRoutes() {
 	buyerRepository := buyer.NewRepository(r.db)
 	buyerService := buyer.NewService(buyerRepository)
-	buyerHandler := handlers.NewBuyerHandler(buyerService)
+	buyerHandler := buyers.NewBuyerHandler(buyerService)
 
 	// Create custom validation
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
