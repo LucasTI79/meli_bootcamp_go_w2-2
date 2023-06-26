@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
@@ -177,7 +177,7 @@ func TestDelete(t *testing.T) {
 func TestCreate(t *testing.T) {
 	t.Run("create_conflict", func(t *testing.T) {
 
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -208,7 +208,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_error", func(t *testing.T) {
 
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -240,7 +240,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_error_get_product", func(t *testing.T) {
 
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -286,7 +286,7 @@ func TestCreate(t *testing.T) {
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -334,7 +334,7 @@ func TestUpdate(t *testing.T) {
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
-		updateProductRequestDTO := handler.RequestUpdateProduct{
+		updateProductRequestDTO := products.RequestUpdateProduct{
 			Description:    &originalProduct.Description,
 			ExpirationRate: &originalProduct.ExpirationRate,
 			FreezingRate:   &originalProduct.FreezingRate,
@@ -379,7 +379,7 @@ func TestUpdate(t *testing.T) {
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
-		updateProductRequestDTO := handler.RequestUpdateProduct{
+		updateProductRequestDTO := products.RequestUpdateProduct{
 			Description:    &originalProduct.Description,
 			ExpirationRate: &originalProduct.ExpirationRate,
 			FreezingRate:   &originalProduct.FreezingRate,
@@ -424,7 +424,7 @@ func TestUpdate(t *testing.T) {
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
-		updateProductRequestDTO := handler.RequestUpdateProduct{
+		updateProductRequestDTO := products.RequestUpdateProduct{
 			Description:    &originalProduct.Description,
 			ExpirationRate: &originalProduct.ExpirationRate,
 			FreezingRate:   &originalProduct.FreezingRate,
@@ -469,7 +469,7 @@ func TestUpdate(t *testing.T) {
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
-		updateProductRequestDTO := handler.RequestUpdateProduct{
+		updateProductRequestDTO := products.RequestUpdateProduct{
 			Description:    &originalProduct.Description,
 			ExpirationRate: &originalProduct.ExpirationRate,
 			FreezingRate:   &originalProduct.FreezingRate,
@@ -513,7 +513,7 @@ func TestUpdate(t *testing.T) {
 			SellerID:       1,
 		}
 		productCode := "Test1"
-		updateProductRequestDTO := handler.RequestUpdateProduct{
+		updateProductRequestDTO := products.RequestUpdateProduct{
 			Description:    &originalProduct.Description,
 			ExpirationRate: &originalProduct.ExpirationRate,
 			FreezingRate:   &originalProduct.FreezingRate,

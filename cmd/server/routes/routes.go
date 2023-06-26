@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/gin-gonic/gin/binding"
@@ -61,7 +62,7 @@ func (r *router) buildSellerRoutes() {
 func (r *router) buildProductRoutes() {
 	repo := product.NewRepository(r.db)
 	service := product.NewService(repo)
-	handler := handlers.NewProduct(service)
+	handler := products.NewProduct(service)
 	r.rg.POST("/products", handler.Create())
 	r.rg.GET("/products", handler.GetAll())
 	r.rg.GET("/products/:id", handler.Get())

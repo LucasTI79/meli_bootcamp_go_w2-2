@@ -1,15 +1,15 @@
-package handler_test
+package products_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
@@ -40,7 +40,7 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(productFound, nil)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -75,7 +75,7 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrNotFound)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -98,7 +98,7 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrNotFound)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -122,7 +122,7 @@ func TestGet(t *testing.T) {
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, assert.AnError)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -160,7 +160,7 @@ func TestCreate(t *testing.T) {
 			ProductTypeID:  1,
 			SellerID:       1,
 		}
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -177,7 +177,7 @@ func TestCreate(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(expectedProduct, nil)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -219,7 +219,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -248,7 +248,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -277,7 +277,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -306,7 +306,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -335,7 +335,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -364,7 +364,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -393,7 +393,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -422,7 +422,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -451,7 +451,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -480,7 +480,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -509,7 +509,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -531,7 +531,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_conflict", func(t *testing.T) {
 		// Definir resultado da consulta
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -550,7 +550,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrConflict)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -573,7 +573,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_internal_server_error", func(t *testing.T) {
 		// Definir resultado da consulta
-		createProductRequestDTO := handler.RequestCreateProduct{
+		createProductRequestDTO := products.RequestCreateProduct{
 			Description:    "Test",
 			ExpirationRate: 1,
 			FreezingRate:   1,
@@ -592,7 +592,7 @@ func TestCreate(t *testing.T) {
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, errors.New("error"))
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -649,7 +649,7 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFounds, nil)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -683,7 +683,7 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFounds, nil)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -706,7 +706,7 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFounds, assert.AnError)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -732,7 +732,7 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product.ErrNotFound)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -755,7 +755,7 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -778,7 +778,7 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -801,7 +801,7 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productServiceMock := new(mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -836,7 +836,7 @@ func TestUpdate(t *testing.T) {
 		sellerID := 2
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
-		updateProductRequest := handler.RequestUpdateProduct{
+		updateProductRequest := products.RequestUpdateProduct{
 			Description:    &description,
 			ExpirationRate: &expirationRate,
 			FreezingRate:   &freezingRate,
@@ -859,7 +859,7 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.Product{}, product.ErrNotFound,
 		)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -904,7 +904,7 @@ func TestUpdate(t *testing.T) {
 		sellerID := 2
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
-		updateProductRequest := handler.RequestUpdateProduct{
+		updateProductRequest := products.RequestUpdateProduct{
 			Description:    &description,
 			ExpirationRate: &expirationRate,
 			FreezingRate:   &freezingRate,
@@ -927,7 +927,7 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.Product{}, product.ErrConflict,
 		)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -972,7 +972,7 @@ func TestUpdate(t *testing.T) {
 		sellerID := 2
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
-		updateProductRequest := handler.RequestUpdateProduct{
+		updateProductRequest := products.RequestUpdateProduct{
 			Description:    &description,
 			ExpirationRate: &expirationRate,
 			FreezingRate:   &freezingRate,
@@ -995,7 +995,7 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.Product{}, errors.New("error"),
 		)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -1040,7 +1040,7 @@ func TestUpdate(t *testing.T) {
 		sellerID := 2
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
-		updateProductRequest := handler.RequestUpdateProduct{
+		updateProductRequest := products.RequestUpdateProduct{
 			Description:    &description,
 			ExpirationRate: &expirationRate,
 			FreezingRate:   &freezingRate,
@@ -1063,7 +1063,7 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.Product{}, errors.New("error"),
 		)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -1110,7 +1110,7 @@ func TestUpdate(t *testing.T) {
 		sellerID := 2
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
-		updateProductRequest := handler.RequestUpdateProduct{
+		updateProductRequest := products.RequestUpdateProduct{
 			Description:    &description,
 			ExpirationRate: &expirationRate,
 			FreezingRate:   &freezingRate,
@@ -1147,7 +1147,7 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			updatedProduct, nil,
 		)
-		handler := handler.NewProduct(productServiceMock)
+		handler := products.NewProduct(productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -1184,8 +1184,8 @@ func TestUpdate(t *testing.T) {
 }
 
 func buildProductRequestDTO(description string, expirationRate int, freezinRate int, height float32, length float32, netweight float32, productCode string,
-	recomFreezTemp float32, width float32, productTypeID int, sellerId int) handler.RequestCreateProduct {
-	return handler.RequestCreateProduct{
+	recomFreezTemp float32, width float32, productTypeID int, sellerId int) products.RequestCreateProduct {
+	return products.RequestCreateProduct{
 		Description:    description,
 		ExpirationRate: expirationRate,
 		FreezingRate:   freezinRate,
