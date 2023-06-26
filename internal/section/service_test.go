@@ -39,7 +39,6 @@ import (
 // )
 
 func TestGet(t *testing.T) {
-
 	t.Run("GET - get_find_by_id_existent", func(t *testing.T) {
 		expectedSection := &domain.Section{
 			ID:                 1,
@@ -283,7 +282,7 @@ func TestCreate(t *testing.T) {
 		ctx := context.TODO()
 
 		sectionRepositoryMock, service := InitMock()
-		sectionRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		sectionRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(false)
 		sectionRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Section")).Return(1, nil)
 		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedSection, nil)
 
