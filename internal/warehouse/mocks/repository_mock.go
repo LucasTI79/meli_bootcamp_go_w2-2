@@ -22,14 +22,15 @@ func (repository *WarehouseRepositoryMock) GetAll(ctx context.Context) ([]domain
 }
 
 func (repository *WarehouseRepositoryMock) Get(ctx context.Context, id int) (domain.Warehouse, error) {
-	args := repository.Called(ctx)
+	args := repository.Called(ctx, id)
 
 	return args.Get(0).(domain.Warehouse), args.Error(1)
 }
 
 func (repository *WarehouseRepositoryMock) Exists(ctx context.Context, warehouseCode string) bool {
-	//TODO implement me
-	panic("implement me")
+	args := repository.Called(ctx, warehouseCode)
+
+	return args.Get(0).(bool)
 }
 
 func (repository *WarehouseRepositoryMock) Save(ctx context.Context, warehouse domain.Warehouse) (int, error) {
@@ -41,12 +42,12 @@ func (repository *WarehouseRepositoryMock) Save(ctx context.Context, warehouse d
 func (repository *WarehouseRepositoryMock) Update(ctx context.Context, updateWarehouseRequest domain.Warehouse) error {
 	args := repository.Called(ctx, updateWarehouseRequest)
 
-	return args.Error(1)
+	return args.Error(0)
 }
 
 func (repository *WarehouseRepositoryMock) Delete(ctx context.Context, id int) error {
 	args := repository.Called(ctx, id)
 
-	return args.Error(1)
+	return args.Error(0)
 
 }

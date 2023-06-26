@@ -18,6 +18,12 @@ func (service *WarehouseServiceMock) GetOne(ctx *context.Context, id int) (*doma
 	return args.Get(0).(*domain.Warehouse), args.Error(1)
 }
 
+func (service *WarehouseServiceMock) Exists(ctx *context.Context, warehouseCode string) bool {
+	args := service.Called(ctx, warehouseCode)
+
+	return args.Get(0).(bool)
+}
+
 func (service *WarehouseServiceMock) GetAll(ctx *context.Context) (*[]domain.Warehouse, error) {
 	args := service.Called(ctx)
 
@@ -39,5 +45,5 @@ func (service *WarehouseServiceMock) Update(ctx *context.Context, id int, update
 func (service *WarehouseServiceMock) Delete(ctx *context.Context, id int) error {
 	args := service.Called(ctx, id)
 
-	return args.Error(1)
+	return args.Error(0)
 }
