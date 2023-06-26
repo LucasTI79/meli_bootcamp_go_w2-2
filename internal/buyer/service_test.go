@@ -229,7 +229,7 @@ func TestCreate(t *testing.T) {
 			)
 
 			service := buyer.NewService(buyerRepositoryMock)
-			createdBuyer, err := service.Create(ctx, test.createBuyerRequest)
+			createdBuyer, err := service.Create(&ctx, test.createBuyerRequest)
 
 			assert.Equal(t, *test.expectedBuyer, *createdBuyer)
 			assert.Equal(t, test.expectedError, err)
@@ -288,7 +288,7 @@ func TestDelete(t *testing.T) {
 			buyerRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(test.expectedDeleteError)
 
 			service := buyer.NewService(buyerRepositoryMock)
-			err := service.Delete(ctx, test.id)
+			err := service.Delete(&ctx, test.id)
 
 			assert.Equal(t, test.expectedError, err)
 			buyerRepositoryMock.On("Get", test.expectedGetCalls)
@@ -401,7 +401,7 @@ func TestUpdate(t *testing.T) {
 			buyerRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(test.expectedExistsResult)
 			buyerRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Buyer")).Return(test.expectedUpdateError)
 
-			newBuyer, err := buyerService.Update(ctx, test.id, test.updateBuyerRequest)
+			newBuyer, err := buyerService.Update(&ctx, test.id, test.updateBuyerRequest)
 
 			assert.Equal(t, test.expectedBuyer, newBuyer)
 			assert.Equal(t, test.expectedError, err)

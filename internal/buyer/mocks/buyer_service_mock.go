@@ -22,21 +22,25 @@ func (service *BuyerServiceMock) Get(ctx *context.Context, id int) (*domain.Buye
 }
 
 func (service *BuyerServiceMock) GetAll(ctx *context.Context) (*[]domain.Buyer, error) {
-	//TODO implement me
-	panic("implement me")
+	args := service.Called(ctx)
+
+	return args.Get(0).(*[]domain.Buyer), args.Error(1)
 }
 
-func (service *BuyerServiceMock) Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
-	//TODO implement me
-	panic("implement me")
+func (service *BuyerServiceMock) Create(ctx *context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
+	args := service.Called(ctx, createBuyerRequest)
+
+	return args.Get(0).(*domain.Buyer), args.Error(1)
 }
 
-func (service *BuyerServiceMock) Update(ctx context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
-	//TODO implement me
-	panic("implement me")
+func (service *BuyerServiceMock) Update(ctx *context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
+	args := service.Called(ctx, updateBuyerRequest)
+
+	return args.Get(0).(*domain.Buyer), args.Error(1)
 }
 
-func (service *BuyerServiceMock) Delete(ctx context.Context, id int) error {
-	//TODO implement me
-	panic("implement me")
+func (service *BuyerServiceMock) Delete(ctx *context.Context, id int) error {
+	args := service.Called(ctx, id)
+
+	return args.Error(0)
 }

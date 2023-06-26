@@ -3,7 +3,7 @@ package dtos
 import "github.com/go-playground/validator/v10"
 
 type UpdateBuyerRequestDTO struct {
-	ID           int     `swaggerignore:"true"`
+	//ID           int     `swaggerignore:"true"`
 	CardNumberID *string `json:"card_number_id" extensions:"x-order=0"`
 	FirstName    *string `json:"first_name" extensions:"x-order=1"`
 	LastName     *string `json:"last_name" extensions:"x-order=2"`

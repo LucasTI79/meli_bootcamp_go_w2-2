@@ -106,7 +106,8 @@ func (handler *BuyerHandler) Create() gin.HandlerFunc {
 			return
 		}
 
-		if createdBuyer, err := handler.buyerService.Create(c, createBuyerRequest); err != nil {
+		ctx := c.Request.Context()
+		if createdBuyer, err := handler.buyerService.Create(&ctx, createBuyerRequest); err != nil {
 			switch err {
 			case buyer.ErrCardNumberDuplicated:
 				web.Error(c, http.StatusConflict, err.Error())
@@ -151,7 +152,8 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 			return
 		}
 
-		if updatedBuyer, err := handler.buyerService.Update(c, id, updateBuyerRequest); err != nil {
+		ctx := c.Request.Context()
+		if updatedBuyer, err := handler.buyerService.Update(&ctx, id, updateBuyerRequest); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -190,7 +192,8 @@ func (handler *BuyerHandler) Delete() gin.HandlerFunc {
 			return
 		}
 
-		if err := handler.buyerService.Delete(c, id); err != nil {
+		ctx := c.Request.Context()
+		if err := handler.buyerService.Delete(&ctx, id); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())

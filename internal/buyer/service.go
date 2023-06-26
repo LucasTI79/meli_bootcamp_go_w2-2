@@ -18,9 +18,9 @@ var (
 type Service interface {
 	Get(ctx *context.Context, id int) (*domain.Buyer, error)
 	GetAll(ctx *context.Context) (*[]domain.Buyer, error)
-	Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error)
-	Update(ctx context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error)
-	Delete(ctx context.Context, id int) error
+	Create(ctx *context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error)
+	Update(ctx *context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error)
+	Delete(ctx *context.Context, id int) error
 }
 
 type service struct {
@@ -59,15 +59,15 @@ func (service *service) GetAll(ctx *context.Context) (*[]domain.Buyer, error) {
 
 }
 
-func (service *service) Create(ctx context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
+func (service *service) Create(ctx *context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
 	buyer := createBuyerRequest.ToDomain()
 
-	cardNumberAlreadyExists := service.repository.Exists(ctx, createBuyerRequest.CardNumberID)
+	cardNumberAlreadyExists := service.repository.Exists(*ctx, createBuyerRequest.CardNumberID)
 	if cardNumberAlreadyExists {
 		return &domain.Buyer{}, ErrCardNumberDuplicated
 	}
 
-	id, err := service.repository.Save(ctx, *buyer)
+	id, err := service.repository.Save(*ctx, *buyer)
 	if err != nil {
 		return &domain.Buyer{}, err
 	}
@@ -77,16 +77,16 @@ func (service *service) Create(ctx context.Context, createBuyerRequest *dtos.Cre
 	return buyer, nil
 }
 
-func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
+func (service *service) Update(ctx *context.Context, id int, updateBuyerRequest *dtos.UpdateBuyerRequestDTO) (*domain.Buyer, error) {
 	// Busca o buyer pelo ID
-	buyer, err := service.Get(&ctx, id)
+	buyer, err := service.Get(ctx, id)
 	if err != nil {
 		return &domain.Buyer{}, err
 	}
 
 	// Sobrescreve os dados do buyer, se houver alteração no request
 	if updateBuyerRequest.CardNumberID != nil {
-		cardNumberAlreadyExists := service.repository.Exists(ctx, *updateBuyerRequest.CardNumberID)
+		cardNumberAlreadyExists := service.repository.Exists(*ctx, *updateBuyerRequest.CardNumberID)
 		if cardNumberAlreadyExists {
 			return &domain.Buyer{}, ErrCardNumberDuplicated
 		}
@@ -102,7 +102,7 @@ func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *
 		buyer.LastName = *updateBuyerRequest.LastName
 	}
 
-	if err := service.repository.Update(ctx, *buyer); err != nil {
+	if err := service.repository.Update(*ctx, *buyer); err != nil {
 		return &domain.Buyer{}, err
 	}
 
@@ -110,11 +110,11 @@ func (service *service) Update(ctx context.Context, id int, updateBuyerRequest *
 
 }
 
-func (service *service) Delete(ctx context.Context, id int) error {
+func (service *service) Delete(ctx *context.Context, id int) error {
 	// Busca o buyer pelo ID
-	if _, err := service.Get(&ctx, id); err != nil {
+	if _, err := service.Get(ctx, id); err != nil {
 		return err
 	}
 
-	return service.repository.Delete(ctx, id)
+	return service.repository.Delete(*ctx, id)
 }
