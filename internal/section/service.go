@@ -12,6 +12,8 @@ import (
 var (
 	ErrNotFound = errors.New("section not found")
 	ErrConflict = errors.New("section with Section Number already exists")
+	ErrUnprocessableEntity = errors.New("error processing entity")
+
 )
 
 type Service interface {

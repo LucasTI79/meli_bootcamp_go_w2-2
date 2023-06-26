@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type requestUpdateSection struct {
+type RequestUpdateSection struct {
 	SectionNumber      *int `json:"section_number"`
 	CurrentTemperature *int `json:"current_temperature"`
 	MinimumTemperature *int `json:"minimum_temperature"`
@@ -182,8 +182,8 @@ func (s *Section) Update() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		var req requestUpdateSection
-		if err := c.Bind(&req); err != nil {
+		var req RequestUpdateSection
+		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}

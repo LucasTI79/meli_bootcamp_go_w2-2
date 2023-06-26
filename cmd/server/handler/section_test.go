@@ -130,10 +130,8 @@ func TestGetAll(t *testing.T) {
 
 	t.Run("READ - ServerInternalError - Should return error 500 when server side error occurs with the database.", func(t *testing.T) {
 		//Definir resultado da consulta
-		//expectedSection := &[]domain.Section{} @@@Verificar se esse objeto pode ser substituído pelo nil linha 110
-		//Configurar o mock do service
 		sectionServiceMock := new(mocks.SectionServiceMock)
-		sectionServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(nil, assert.AnError)
+		sectionServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Section{}, assert.AnError)
 		handler := handler.NewSection(sectionServiceMock)
 
 		//Configurar o servidor
@@ -315,6 +313,28 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusCreated, response.Code)
 		assert.Equal(t, *expectedSection, *actualSection)
 	})
+	t.Run("CREATE - StatusUnprocessableEntity", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Save",
+			mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+			mock.AnythingOfType("int"),
+		).Return(&domain.Section{}, errors.New("error"))
+		server.POST("/api/v1/sections", handler.Create())
+
+		request := httptest.NewRequest(http.MethodPost, "/api/v1/sections", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+
 	t.Run("CREATE - Create_Conflict - If the section_number already exists, it will return a 409 Conflict error.", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
@@ -391,7 +411,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_CurrentTemperature_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 0, 10, 10, 10, 10, 10, 10}
+		requestSection := domain.SectionRequest{SectionNumber: 10, CurrentTemperature: 0, MinimumTemperature: 10, CurrentCapacity: 10, MinimumCapacity: 10, MaximumCapacity: 10, WarehouseID: 10, ProductTypeID: 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -639,6 +659,38 @@ func TestUpdate(t *testing.T){
 		json.Unmarshal(bodyResponse, &responseSection)
 		
 		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+	t.Run("UPDATE - StatusUnprocessableEntity", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Update",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).Return(&domain.Section{}, errors.New("error"))
+		server.PATCH("/api/v1/sections/:id", handler.Update())
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/sections/2", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		//Parsear response
+		bodyResponse, _ := ioutil.ReadAll(response.Body)
+
+		var responseSection struct {
+			Data *domain.Section `json:"data"`
+		}
+		json.Unmarshal(bodyResponse, &responseSection)
+		
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("UPDATE - Conflit - Should return conflict error", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
