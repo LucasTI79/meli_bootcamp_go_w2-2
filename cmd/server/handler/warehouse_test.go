@@ -270,39 +270,41 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_ok", func(t *testing.T) {
 		expectedWarehouse := &domain.Warehouse{
 			ID:                 1,
-			Address:            "Rua Teste",
-			Telephone:          "11938473125",
+			Address:            "Rua Teste2",
+			Telephone:          "11938473322",
 			WarehouseCode:      "CX-2281-TCD",
 			MinimumCapacity:    12,
 			MinimumTemperature: 18,
 		}
 		updateWarehouseRequestDTO := dtos.WarehouseRequestDTO{
-			Telephone:     "11938",
-			WarehouseCode: "CX-1206-TCD",
+			Address:   "Rua Teste2",
+			Telephone: "11938473322",
 		}
-
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
+
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.PATCH("/api/v1/warehouses/:id", handler.Update())
+
 		requestBody, _ := json.Marshal(updateWarehouseRequestDTO)
 		request := bytes.NewReader(requestBody)
 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/warehouses/1", request)
-		// req.GetBody()
 		res := httptest.NewRecorder()
+
 		r.ServeHTTP(res, req)
-		bodyReturn, _ := ioutil.ReadAll(res.Body)
+		body, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
 			Data *domain.Warehouse `json:"data"`
 		}
-		json.Unmarshal(bodyReturn, &responseDTO)
-		actualWarehouse := responseDTO.Data
+
+		json.Unmarshal(body, &responseDTO)
+		responseWarehouse := responseDTO.Data
 
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, *expectedWarehouse, *actualWarehouse)
+		assert.Equal(t, expectedWarehouse, *responseWarehouse)
 	})
 
 	t.Run("update_non_existent", func(t *testing.T) {

@@ -3,7 +3,6 @@ package mocks
 import (
 	"context"
 
-	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/warehousesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/stretchr/testify/mock"
 )
@@ -33,16 +32,16 @@ func (repository *WarehouseRepositoryMock) Exists(ctx context.Context, warehouse
 	panic("implement me")
 }
 
-func (repository *WarehouseRepositoryMock) Save(ctx context.Context, warehouse dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+func (repository *WarehouseRepositoryMock) Save(ctx context.Context, warehouse domain.Warehouse) (int, error) {
 	args := repository.Called(ctx, warehouse)
 
-	return args.Get(0).(*domain.Warehouse), args.Error(1)
+	return args.Get(0).(int), args.Error(1)
 }
 
-func (repository *WarehouseRepositoryMock) Update(ctx context.Context, updateWarehouseRequest dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+func (repository *WarehouseRepositoryMock) Update(ctx context.Context, updateWarehouseRequest domain.Warehouse) error {
 	args := repository.Called(ctx, updateWarehouseRequest)
 
-	return args.Get(0).(*domain.Warehouse), args.Error(1)
+	return args.Error(1)
 }
 
 func (repository *WarehouseRepositoryMock) Delete(ctx context.Context, id int) error {
