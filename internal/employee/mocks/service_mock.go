@@ -29,11 +29,11 @@ func (service *EmployeeServiceMock) Save(ctx *context.Context, employee domain.E
 }
 
 func (service *EmployeeServiceMock) Update(ctx *context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error) {
-	//TODO implement me
-	panic("implement me")
+	args := service.Called(ctx, id, reqUpdateEmployee)
+	return args.Get(0).(*domain.Employee), args.Error(1)
 }
 
 func (service *EmployeeServiceMock) Delete(ctx *context.Context, id int) error {
-	//TODO implement me
-	panic("implement me")
+	args := service.Called(ctx, id)
+	return args.Error(0)
 }

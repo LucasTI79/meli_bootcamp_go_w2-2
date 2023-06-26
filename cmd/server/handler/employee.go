@@ -106,7 +106,7 @@ func (e *Employee) Save() gin.HandlerFunc {
 		// createEmployee := domain.RequestCreateEmployee{}
 		createEmployee := new(domain.RequestCreateEmployee)
 		if err := c.Bind(&createEmployee); err != nil {
-			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
+			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
 

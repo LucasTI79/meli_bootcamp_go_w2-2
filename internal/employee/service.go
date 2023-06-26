@@ -10,8 +10,9 @@ import (
 
 // Errors
 var (
-	ErrNotFound = errors.New("employee not found")
-	ErrConflict = errors.New("409 Conflict: Employee with CardNumberID already exists")
+	ErrNotFound            = errors.New("employee not found")
+	ErrConflict            = errors.New("409 Conflict: Employee with CardNumberID already exists")
+	ErrUnprocessableEntity = errors.New("all fields are required")
 )
 
 type Service interface {
