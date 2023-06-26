@@ -50,6 +50,10 @@ func (s *Section) GetAll() gin.HandlerFunc {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
 		}
+		if len(*sections) == 0 {
+			web.Error(c, http.StatusNoContent, "There are no sellers stored")
+			return
+		}
 		web.Success(c, http.StatusOK, sections)
 	}
 }

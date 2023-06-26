@@ -10,20 +10,19 @@ import (
 
 // Errors
 var (
-	ErrNotFound = errors.New("section not found")
-	ErrConflict = errors.New("section with Section Number already exists")
+	ErrNotFound            = errors.New("section not found")
+	ErrConflict            = errors.New("section with Section Number already exists")
 	ErrUnprocessableEntity = errors.New("error processing entity")
-
 )
 
 type Service interface {
 	Save(ctx *context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
-	warehouseID, productTypeID int) (*domain.Section, error)
+		warehouseID, productTypeID int) (*domain.Section, error)
 	GetAll(ctx *context.Context) (*[]domain.Section, error)
 	Get(ctx *context.Context, id int) (*domain.Section, error)
 	Delete(ctx *context.Context, id int) error
 	Update(ctx context.Context, sectionNumber, currentTemperature, minimumTemperature, currentCapacity, minimumCapacity, maximumCapacity,
-	warehouseID, productTypeID *int, id int) (*domain.Section, error)
+		warehouseID, productTypeID *int, id int) (*domain.Section, error)
 }
 
 type service struct {
@@ -70,6 +69,7 @@ func (s *service) Save(ctx *context.Context, sectionNumber, currentTemperature, 
 }
 
 func (s *service) GetAll(ctx *context.Context) (*[]domain.Section, error) {
+	sections := make([]domain.Section, 0)
 	sections, err := s.sectionRepository.GetAll(*ctx)
 	if err != nil {
 		return nil, err
