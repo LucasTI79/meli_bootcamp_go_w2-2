@@ -268,32 +268,44 @@ func TestDelete(t *testing.T) {
 }
 func TestUpdate(t *testing.T) {
 	t.Run("update_ok", func(t *testing.T) {
-		expectedWarehouse := &domain.Warehouse{
+		address := "teste2"
+		telephone := "232039"
+		warehouseCode := "CX-2281-TCD"
+		minimumCapacity := 12
+		minimumTemperature := 10
+
+		updateWarehouseRequest := dtos.WarehouseRequestDTO{
+			Address:            address,
+			Telephone:          telephone,
+			WarehouseCode:      warehouseCode,
+			MinimumCapacity:    minimumCapacity,
+			MinimumTemperature: minimumTemperature,
+		}
+		updatedWarehouse := &domain.Warehouse{
 			ID:                 1,
-			Address:            "Rua Teste2",
+			Address:            "Rua Teste4",
 			Telephone:          "11938473322",
 			WarehouseCode:      "CX-2281-TCD",
 			MinimumCapacity:    12,
-			MinimumTemperature: 18,
-		}
-		updateWarehouseRequestDTO := dtos.WarehouseRequestDTO{
-			Address:   "Rua Teste2",
-			Telephone: "11938473322",
+			MinimumTemperature: 8,
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, nil)
+		warehouseServiceMock.On(
+			"Update", mock.Anything, mock.Anything, mock.Anything).Return(updatedWarehouse, nil)
 		handler := handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.PATCH("/api/v1/warehouses/:id", handler.Update())
 
-		requestBody, _ := json.Marshal(updateWarehouseRequestDTO)
+		requestBody, _ := json.Marshal(updateWarehouseRequest)
 		request := bytes.NewReader(requestBody)
+
 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/warehouses/1", request)
 		res := httptest.NewRecorder()
 
 		r.ServeHTTP(res, req)
+
 		body, _ := ioutil.ReadAll(res.Body)
 
 		var responseDTO struct {
@@ -301,10 +313,11 @@ func TestUpdate(t *testing.T) {
 		}
 
 		json.Unmarshal(body, &responseDTO)
+
 		responseWarehouse := responseDTO.Data
 
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, expectedWarehouse, *responseWarehouse)
+		assert.Equal(t, *updatedWarehouse, *responseWarehouse)
 	})
 
 	t.Run("update_non_existent", func(t *testing.T) {
