@@ -176,10 +176,18 @@ func (s *Seller) Update() gin.HandlerFunc {
 			return
 		}
 
-		sellerUpdated, err := s.sellerService.Update(c, int(id), updateSellerRequestDTO)
+		ctx := c.Request.Context()
+		sellerUpdated, err := s.sellerService.Update(&ctx, int(id), updateSellerRequestDTO)
 		if err != nil {
-			web.Error(c, http.StatusConflict, "Error to update: %s", err.Error())
-			return
+			switch err {
+			case seller.ErrConflict:
+				web.Error(c, http.StatusConflict, err.Error())
+				return
+			case seller.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+				return
+			}
+
 		}
 
 		web.Success(c, http.StatusOK, sellerUpdated)

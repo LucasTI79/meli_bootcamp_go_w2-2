@@ -29,9 +29,9 @@ func (service *SellerServiceMock) Save(ctx *context.Context, seller domain.Selle
 	return args.Get(0).(*domain.Seller), args.Error(1)
 }
 
-func (service *SellerServiceMock) Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {
-	//TODO implement me
-	panic("implement me")
+func (service *SellerServiceMock) Update(ctx *context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {
+	args := service.Called(ctx, id, updateSellerRequest)
+	return args.Get(0).(*domain.Seller), args.Error(1)
 }
 
 func (service *SellerServiceMock) Delete(ctx *context.Context, id int) error {

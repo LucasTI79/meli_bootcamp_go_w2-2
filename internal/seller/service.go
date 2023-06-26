@@ -18,7 +18,7 @@ type Service interface {
 	GetAll(ctx *context.Context) (*[]domain.Seller, error)
 	Get(ctx *context.Context, id int) (*domain.Seller, error)
 	Save(ctx *context.Context, seller domain.Seller) (*domain.Seller, error)
-	Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error)
+	Update(ctx *context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error)
 	Delete(ctx *context.Context, id int) error
 }
 
@@ -68,14 +68,14 @@ func (s *service) Save(ctx *context.Context, seller domain.Seller) (*domain.Sell
 	return &seller, nil
 }
 
-func (s *service) Update(ctx context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {
-	existingSeller, err := s.sellerRepository.Get(ctx, id)
+func (s *service) Update(ctx *context.Context, id int, updateSellerRequest *dtos.UpdateSellerRequestDTO) (*domain.Seller, error) {
+	existingSeller, err := s.sellerRepository.Get(*ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, ErrNotFound
 	}
 
 	if updateSellerRequest.CID != nil {
-		existingSellerSearch := s.sellerRepository.Exists(ctx, *updateSellerRequest.CID)
+		existingSellerSearch := s.sellerRepository.Exists(*ctx, *updateSellerRequest.CID)
 		if existingSellerSearch && *updateSellerRequest.CID != existingSeller.CID {
 			return nil, ErrConflict
 		}
@@ -91,7 +91,7 @@ func (s *service) Update(ctx context.Context, id int, updateSellerRequest *dtos.
 		existingSeller.Telephone = *updateSellerRequest.Telephone
 	}
 
-	err1 := s.sellerRepository.Update(ctx, *existingSeller)
+	err1 := s.sellerRepository.Update(*ctx, *existingSeller)
 	if err1 != nil {
 		return nil, err1
 	}
