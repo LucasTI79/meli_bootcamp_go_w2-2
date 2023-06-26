@@ -567,6 +567,167 @@ func TestCreate(t *testing.T) {
 	})
 }
 
+func TestUpdate(t *testing.T){
+	t.Run("UPDATE - OK - When the data update is successful, the section with the updated information is returned along with a 200 code.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Update",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).Return(expectedSection, nil)
+		server.PATCH("/api/v1/sections/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/sections/1", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		//Parsear response
+		bodyResponse, _ := ioutil.ReadAll(response.Body)
+
+		var responseSection struct {
+			Data *domain.Section `json:"data"`
+		}
+		json.Unmarshal(bodyResponse, &responseSection)
+		actualSection := responseSection.Data
+		//Validar resultado
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Equal(t, *expectedSection, *actualSection)
+	})
+	t.Run("UPDATE - ID_No_Existent - If the section to be updated does not exist, a 404 code is returned.", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Update",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).Return(&domain.Section{}, section.ErrNotFound)
+		server.PATCH("/api/v1/sections/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/sections/2", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		//Parsear response
+		bodyResponse, _ := ioutil.ReadAll(response.Body)
+
+		var responseSection struct {
+			Data *domain.Section `json:"data"`
+		}
+		json.Unmarshal(bodyResponse, &responseSection)
+		
+		assert.Equal(t, http.StatusNotFound, response.Code)
+	})
+	t.Run("UPDATE - Conflit - Should return conflict error", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Update",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).Return(&domain.Section{}, section.ErrConflict)
+		server.PATCH("/api/v1/sections/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/sections/1", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		//Parsear response
+		bodyResponse, _ := ioutil.ReadAll(response.Body)
+
+		var responseSection struct {
+			Data *domain.Section `json:"data"`
+		}
+		json.Unmarshal(bodyResponse, &responseSection)
+		//Validar resultado
+		assert.Equal(t, http.StatusConflict, response.Code)
+	})
+	t.Run("UPDATE - Invalid ID - Should return bad request error when id is invalid", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Update",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).Return(&domain.Section{}, errors.New("error"))
+		server.PATCH("/api/v1/sections/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/sections/x", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusBadRequest, response.Code)
+	})
+	t.Run("UPDATE - Server_Internal_Error - Should return bad request error when id is invalid", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetSections(t)
+		mockService.On("Update",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).Return(&domain.Section{}, errors.New("error"))
+		server.PATCH("/api/v1/sections/:id", handler.Update())
+
+		requestBody, _ := json.Marshal(requestSection)
+		req := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/sections/1", req)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+		assert.Equal(t, http.StatusInternalServerError, response.Code)
+	})
+}
 func InitServerWithGetSections(t *testing.T) (*gin.Engine, *mocks.SectionServiceMock, *handler.Section) {
 	t.Helper()
 	server := createServer()
