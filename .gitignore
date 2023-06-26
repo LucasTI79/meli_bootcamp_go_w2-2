@@ -9,6 +9,3 @@ tmp/
 
 #dev
 .air.toml
-
-#coverage
-coverage.out
