@@ -1,0 +1,15 @@
+name: Go
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  coverage-badge:
+    name: cov
+    runs-on: ubuntu-latest
+    steps:
+      - name: Go Coverage Badge
+        uses: tj-actions/coverage-badge-go@v2.2
