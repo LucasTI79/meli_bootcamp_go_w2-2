@@ -68,6 +68,7 @@ func (s *service) Save(ctx *context.Context, sectionNumber, currentTemperature, 
 }
 
 func (s *service) GetAll(ctx *context.Context) (*[]domain.Section, error) {
+	sections := make([]domain.Section, 0)
 	sections, err := s.sectionRepository.GetAll(*ctx)
 	if err != nil {
 		return nil, err
