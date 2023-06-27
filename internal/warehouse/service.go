@@ -10,8 +10,8 @@ import (
 
 // Errors
 var (
-	ErrNotFound            = errors.New("warehouse not found")
-	ErrConflict            = errors.New("a warehouse with this warehouse_code already exists")
+	ErrNotFound            = errors.New("warehouses not found")
+	ErrConflict            = errors.New("a warehouses with this warehouse_code already exists")
 	ErrUnprocessableEntity = errors.New("all fields are required")
 )
 

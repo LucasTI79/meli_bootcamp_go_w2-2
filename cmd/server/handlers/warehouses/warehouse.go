@@ -1,4 +1,4 @@
-package handler
+package warehouses
 
 import (
 	"errors"
@@ -23,9 +23,9 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 
 // GetOneWarehouse godoc
 //
-//	@Summary		Get warehouse
+//	@Summary		Get warehouses
 //	@Tags			Warehouses
-//	@Description	get one warehouse by id
+//	@Description	get one warehouses by id
 //	@Produce		json
 //	@Param			id	path		int	true	"Warehouse ID"
 //	@Success		200	{object}	domain.Warehouse
@@ -78,12 +78,12 @@ func (w *Warehouse) GetAll() gin.HandlerFunc {
 
 // createWarehouses godoc
 //
-//	@Summary		Create warehouse
+//	@Summary		Create warehouses
 //	@Tags			Warehouses
-//	@Description	Create warehouse
+//	@Description	Create warehouses
 //	@Accept			json
 //	@Produce		json
-//	@Param			Warehouse	body		dtos.WarehouseRequestDTO	true	"warehouse to create"
+//	@Param			Warehouse	body		dtos.WarehouseRequestDTO	true	"warehouses to create"
 //	@Success		200			{object}	domain.Warehouse
 //	@Router			/api/v1/warehouses [post]
 func (w *Warehouse) Create() gin.HandlerFunc {
@@ -144,9 +144,9 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 	}
 }
 
-// @Summary		Delete warehouse
+// @Summary		Delete warehouses
 // @Tags			Warehouses
-// @Description	delete warehouse by id
+// @Description	delete warehouses by id
 // @Param			id	path	int	true	"Warehouse ID"
 // @Success		204
 // @Router			/api/v1/warehouses/{id} [delete]

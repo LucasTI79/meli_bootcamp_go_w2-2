@@ -15,12 +15,12 @@ var (
 )
 
 type Service interface {
-	Save(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
+	Save(ctx *context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
 		recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error)
-	GetAll(ctx context.Context) ([]domain.Product, error)
-	Get(ctx context.Context, id int) (*domain.Product, error)
-	Delete(ctx context.Context, id int) error
-	Update(ctx context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
+	GetAll(ctx *context.Context) (*[]domain.Product, error)
+	Get(ctx *context.Context, id int) (*domain.Product, error)
+	Delete(ctx *context.Context, id int) error
+	Update(ctx *context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
 		recommended_freezing_temperature, width *float32, product_type_id, seller_id *int, id int) (*domain.Product, error)
 }
 
@@ -34,9 +34,9 @@ func NewService(r Repository) Service {
 	}
 }
 
-func (s *service) Save(ctx context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
+func (s *service) Save(ctx *context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
 	recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error) {
-	existingProduct := s.productRepository.Exists(ctx, product_code)
+	existingProduct := s.productRepository.Exists(*ctx, product_code)
 
 	if existingProduct {
 		return nil, ErrConflict
@@ -56,13 +56,13 @@ func (s *service) Save(ctx context.Context, description string, expiration_rate,
 		SellerID:       seller_id,
 	}
 
-	productId, err := s.productRepository.Save(ctx, newProduct)
+	productId, err := s.productRepository.Save(*ctx, newProduct)
 	if err != nil {
 		return nil, err
 
 	}
 
-	savedProduct, err := s.productRepository.Get(ctx, productId)
+	savedProduct, err := s.productRepository.Get(*ctx, productId)
 	if err != nil {
 		return nil, err
 	}
@@ -70,17 +70,17 @@ func (s *service) Save(ctx context.Context, description string, expiration_rate,
 	return &savedProduct, nil
 }
 
-func (s *service) GetAll(ctx context.Context) ([]domain.Product, error) {
-	products, err := s.productRepository.GetAll(ctx)
+func (s *service) GetAll(ctx *context.Context) (*[]domain.Product, error) {
+	products, err := s.productRepository.GetAll(*ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return products, nil
+	return &products, nil
 }
 
-func (s *service) Get(ctx context.Context, id int) (*domain.Product, error) {
-	product, err := s.productRepository.Get(ctx, id)
+func (s *service) Get(ctx *context.Context, id int) (*domain.Product, error) {
+	product, err := s.productRepository.Get(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -93,8 +93,8 @@ func (s *service) Get(ctx context.Context, id int) (*domain.Product, error) {
 	return &product, nil
 }
 
-func (s *service) Delete(ctx context.Context, id int) error {
-	err := s.productRepository.Delete(ctx, id)
+func (s *service) Delete(ctx *context.Context, id int) error {
+	err := s.productRepository.Delete(*ctx, id)
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
@@ -106,9 +106,9 @@ func (s *service) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (s *service) Update(ctx context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
+func (s *service) Update(ctx *context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
 	recommended_freezing_temperature, width *float32, product_type_id, seller_id *int, id int) (*domain.Product, error) {
-	existingProduct, err := s.productRepository.Get(ctx, id)
+	existingProduct, err := s.productRepository.Get(*ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (s *service) Update(ctx context.Context, description *string, expiration_ra
 		existingProduct.Netweight = *netweight
 	}
 	if product_code != nil {
-		existingProductSearch := s.productRepository.Exists(ctx, *product_code)
+		existingProductSearch := s.productRepository.Exists(*ctx, *product_code)
 		if existingProductSearch && *product_code != existingProduct.ProductCode {
 			return nil, ErrConflict
 		}
@@ -148,7 +148,7 @@ func (s *service) Update(ctx context.Context, description *string, expiration_ra
 		existingProduct.SellerID = *seller_id
 	}
 
-	err1 := s.productRepository.Update(ctx, existingProduct)
+	err1 := s.productRepository.Update(*ctx, existingProduct)
 	if err1 != nil {
 		switch err1 {
 		case sql.ErrNoRows:

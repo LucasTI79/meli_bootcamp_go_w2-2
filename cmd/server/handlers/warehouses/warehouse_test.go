@@ -1,17 +1,17 @@
-package handler_test
+package warehouses_test
 
 import (
 	"bytes"
 	"encoding/json"
+	warehouse_handler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/warehousesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/assert/v2"
@@ -29,8 +29,7 @@ func TestGet(t *testing.T) {
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetOne", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouseFound, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
-
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses/:id", handler.Get())
@@ -56,7 +55,7 @@ func TestGet(t *testing.T) {
 	t.Run("find_by_id_non_existent", func(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetOne", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Warehouse{}, warehouse.ErrNotFound)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -73,7 +72,7 @@ func TestGet(t *testing.T) {
 
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetOne", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Warehouse{}, assert.PanicMatches)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -106,7 +105,7 @@ func TestCreate(t *testing.T) {
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -140,7 +139,7 @@ func TestCreate(t *testing.T) {
 
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createWarehouseRequestDTO, warehouse.ErrUnprocessableEntity)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.POST("/api/v1/warehouses", handler.Create())
@@ -160,7 +159,7 @@ func TestCreate(t *testing.T) {
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("dtos.WarehouseRequestDTO")).Return(expectedWarehouse, warehouse.ErrConflict)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -199,7 +198,7 @@ func TestGetAll(t *testing.T) {
 		}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(warehousesFounds, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -224,7 +223,7 @@ func TestGetAll(t *testing.T) {
 		warehousesFounds := &[]domain.Warehouse{}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(warehousesFounds, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.GET("/api/v1/warehouses", handler.GetAll())
@@ -241,7 +240,7 @@ func TestDelete(t *testing.T) {
 		warehouseFound := &domain.Warehouse{}
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouseFound, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.DELETE("/api/v1/warehouses/:id", handler.Delete())
@@ -255,7 +254,7 @@ func TestDelete(t *testing.T) {
 	t.Run("delete_non_existent", func(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouse.ErrNotFound, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.DELETE("/api/v1/warehouses/:id", handler.Delete())
@@ -292,7 +291,7 @@ func TestUpdate(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On(
 			"Update", mock.Anything, mock.Anything, mock.Anything).Return(updatedWarehouse, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -323,7 +322,7 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_non_existent", func(t *testing.T) {
 		warehouseServiceMock := new(mocks.WarehouseServiceMock)
 		warehouseServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(warehouse.ErrNotFound, nil)
-		handler := handler.NewWarehouse(warehouseServiceMock)
+		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.PATCH("/api/v1/warehouses/:id", handler.Update())
