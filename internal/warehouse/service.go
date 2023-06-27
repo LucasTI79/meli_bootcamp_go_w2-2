@@ -18,7 +18,7 @@ var (
 type Service interface {
 	Create(c *context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
 	GetAll(c *context.Context) (*[]domain.Warehouse, error)
-	GetOne(c *context.Context, d int) (*domain.Warehouse, error)
+	GetOne(c *context.Context, id int) (*domain.Warehouse, error)
 	Update(c *context.Context, id int, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
 	Delete(c *context.Context, id int) error
 }
