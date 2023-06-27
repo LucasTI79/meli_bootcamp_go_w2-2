@@ -1,0 +1,19 @@
+sonar.projectKey=meli-grupo2_meli-bootcamp-go-w2-2
+sonar.organization=meli-grupo2
+
+# This is the name and version displayed in the SonarCloud UI.
+sonar.projectName=meli_bootcamp_go_w2-2
+sonar.projectVersion=1.0
+
+# Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
+sonar.sources=.
+sonar.exclusions=**/*_test.go,**/vendor/**
+
+sonar.tests=.
+sonar.test.inclusions=**/*_test.go
+sonar.test.exclusions=**/vendor/**
+
+# Encoding of the source code. Default is default system encoding
+#sonar.sourceEncoding=UTF-8
+sonar.scm.provider=git
+sonar.go.coverage.reportPaths=coverage.out

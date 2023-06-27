@@ -812,9 +812,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: Create warehouse
+      description: Create warehouses
       parameters:
-      - description: warehouse to create
+      - description: warehouses to create
         in: body
         name: Warehouse
         required: true
@@ -827,12 +827,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Warehouse'
-      summary: Create warehouse
+      summary: Create warehouses
       tags:
       - Warehouses
   /api/v1/warehouses/{id}:
     delete:
-      description: delete warehouse by id
+      description: delete warehouses by id
       parameters:
       - description: Warehouse ID
         in: path
@@ -842,11 +842,11 @@ paths:
       responses:
         "204":
           description: No Content
-      summary: Delete warehouse
+      summary: Delete warehouses
       tags:
       - Warehouses
     get:
-      description: get one warehouse by id
+      description: get one warehouses by id
       parameters:
       - description: Warehouse ID
         in: path
@@ -860,7 +860,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.Warehouse'
-      summary: Get warehouse
+      summary: Get warehouses
       tags:
       - Warehouses
     patch:

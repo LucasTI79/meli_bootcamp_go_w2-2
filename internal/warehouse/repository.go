@@ -7,7 +7,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
-// Repository encapsulates the storage of a warehouse.
+// Repository encapsulates the storage of a warehouses.
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.Warehouse, error)
 	Get(ctx context.Context, id int) (domain.Warehouse, error)

@@ -1,4 +1,4 @@
-package handler
+package warehouses
 
 import (
 	"errors"
@@ -23,9 +23,9 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 
 // GetOneWarehouse godoc
 //
-//	@Summary		Get warehouse
+//	@Summary		Get warehouses
 //	@Tags			Warehouses
-//	@Description	get one warehouse by id
+//	@Description	get one warehouses by id
 //	@Produce		json
 //	@Param			id	path		int	true	"Warehouse ID"
 //	@Success		200	{object}	domain.Warehouse
@@ -33,13 +33,13 @@ func NewWarehouse(s warehouse.Service) *Warehouse {
 func (w *Warehouse) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
-
+		ctx := c.Request.Context()
 		if e != nil {
 			web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 			return
 		}
 
-		result, err := w.warehouseService.GetOne(c, warehouseId)
+		result, err := w.warehouseService.GetOne(&ctx, warehouseId)
 
 		if err != nil {
 			web.Error(c, http.StatusNotFound, err.Error())
@@ -60,54 +60,51 @@ func (w *Warehouse) Get() gin.HandlerFunc {
 //	@Router			/api/v1/warehouses [get]
 func (w *Warehouse) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		result, err := w.warehouseService.GetAll(c)
-
+		ctx := c.Request.Context()
+		warehouses, err := w.warehouseService.GetAll(&ctx)
 		if err != nil {
-			web.Error(c, http.StatusNotFound, err.Error())
+			web.Error(c, http.StatusInternalServerError, "Failed to get warehouses: %s", err.Error())
 			return
 		}
 
-		web.Success(c, http.StatusOK, result)
-		return
+		if len(*warehouses) == 0 {
+			web.Error(c, http.StatusNoContent, "There are no warehouses stored")
+			return
+		}
+
+		web.Success(c, http.StatusOK, *warehouses)
 	}
 }
 
 // createWarehouses godoc
 //
-//	@Summary		Create warehouse
+//	@Summary		Create warehouses
 //	@Tags			Warehouses
-//	@Description	Create warehouse
+//	@Description	Create warehouses
 //	@Accept			json
 //	@Produce		json
-//	@Param			Warehouse	body		dtos.WarehouseRequestDTO	true	"warehouse to create"
+//	@Param			Warehouse	body		dtos.WarehouseRequestDTO	true	"warehouses to create"
 //	@Success		200			{object}	domain.Warehouse
 //	@Router			/api/v1/warehouses [post]
 func (w *Warehouse) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.WarehouseRequestDTO
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusBadRequest, "JSON format may be wrong")
+			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
-
+		ctx := c.Request.Context()
 		if err := WarehouseFullRequestValidator(c, req); err != nil {
-			web.Error(c, http.StatusUnprocessableEntity, err.Error())
+			web.Error(c, http.StatusBadRequest, err.Error())
 			return
 		}
+		result, e := w.warehouseService.Create(&ctx, req)
 
-		result, e := w.warehouseService.Create(c, req)
 		if e != nil {
-			switch e {
-			case warehouse.ErrConflict:
-				web.Error(c, http.StatusConflict, e.Error())
-			default:
-				web.Error(c, http.StatusBadRequest, e.Error())
-			}
+			web.Error(c, http.StatusConflict, e.Error())
 			return
 		}
-
 		web.Success(c, http.StatusCreated, result)
-		return
 	}
 }
 
@@ -123,6 +120,7 @@ func (w *Warehouse) Create() gin.HandlerFunc {
 func (w *Warehouse) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
+		ctx := c.Request.Context()
 		var req dtos.WarehouseRequestDTO
 
 		if e != nil {
@@ -131,14 +129,14 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 		}
 
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusBadRequest, "JSON format may be wrong")
+			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
 
-		result, err := w.warehouseService.Update(c, warehouseId, req)
+		result, err := w.warehouseService.Update(&ctx, warehouseId, req)
 
 		if err != nil {
-			web.Error(c, http.StatusBadRequest, e.Error())
+			web.Error(c, http.StatusNotFound, err.Error())
 			return
 		}
 
@@ -146,21 +144,22 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 	}
 }
 
-// @Summary		Delete warehouse
+// @Summary		Delete warehouses
 // @Tags			Warehouses
-// @Description	delete warehouse by id
+// @Description	delete warehouses by id
 // @Param			id	path	int	true	"Warehouse ID"
 // @Success		204
 // @Router			/api/v1/warehouses/{id} [delete]
 func (w *Warehouse) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		warehouseId, e := strconv.Atoi(c.Param("id"))
+		ctx := c.Request.Context()
 		if e != nil {
 			web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 			return
 		}
 
-		err := w.warehouseService.Delete(c, warehouseId)
+		err := w.warehouseService.Delete(&ctx, warehouseId)
 
 		if err != nil {
 			web.Error(c, http.StatusNotFound, err.Error())
