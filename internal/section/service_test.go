@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/mocks"
@@ -307,7 +307,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := handler.RequestUpdateSection{
+		requestSection := sections.RequestUpdateSection{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -342,7 +342,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := handler.RequestUpdateSection{
+		requestSection := sections.RequestUpdateSection{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -377,7 +377,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := handler.RequestUpdateSection{
+		requestSection := sections.RequestUpdateSection{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -413,7 +413,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := handler.RequestUpdateSection{
+		requestSection := sections.RequestUpdateSection{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -447,7 +447,7 @@ func TestUpdate(t *testing.T) {
 			ProductTypeID:      10,
 		}
 		sectionNumber := 10
-		requestSection := handler.RequestUpdateSection{
+		requestSection := sections.RequestUpdateSection{
 			SectionNumber:      &sectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
