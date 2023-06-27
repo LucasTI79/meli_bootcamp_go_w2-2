@@ -10,24 +10,30 @@ import (
 
 // Errors
 var (
-	ErrNotFound = errors.New("warehouse not found")
-	ErrConflict = errors.New("a warehouse with this warehouse_code already exists")
+	ErrNotFound            = errors.New("warehouses not found")
+	ErrConflict            = errors.New("a warehouses with this warehouse_code already exists")
+	ErrUnprocessableEntity = errors.New("all fields are required")
 )
 
 type Service interface {
-	Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
-	GetAll(c context.Context) (*[]domain.Warehouse, error)
-	GetOne(c context.Context, id int) (*domain.Warehouse, error)
-	Update(c context.Context, id int, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
-	Delete(c context.Context, id int) error
+	Create(c *context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
+	GetAll(c *context.Context) (*[]domain.Warehouse, error)
+	GetOne(c *context.Context, d int) (*domain.Warehouse, error)
+	Update(c *context.Context, id int, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error)
+	Delete(c *context.Context, id int) error
 }
 
 type service struct {
 	repository Repository
 }
 
-func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
-	exists := s.repository.Exists(c, dto.WarehouseCode)
+func NewService(r Repository) Service {
+	return &service{repository: r}
+}
+
+func (s *service) Create(c *context.Context, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+
+	exists := s.repository.Exists(*c, dto.WarehouseCode)
 	if exists {
 		return nil, ErrConflict
 	}
@@ -41,7 +47,7 @@ func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*doma
 		MinimumTemperature: dto.MinimumTemperature,
 	}
 
-	id, err := s.repository.Save(c, formatter)
+	id, err := s.repository.Save(*c, formatter)
 
 	if err != nil {
 		return nil, err
@@ -52,8 +58,8 @@ func (s *service) Create(c context.Context, dto dtos.WarehouseRequestDTO) (*doma
 	return &formatter, nil
 }
 
-func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
-	warehouses, err := s.repository.GetAll(c)
+func (s *service) GetAll(c *context.Context) (*[]domain.Warehouse, error) {
+	warehouses, err := s.repository.GetAll(*c)
 
 	if err != nil {
 		return nil, err
@@ -62,8 +68,8 @@ func (s *service) GetAll(c context.Context) (*[]domain.Warehouse, error) {
 	return &warehouses, nil
 }
 
-func (s *service) GetOne(c context.Context, id int) (*domain.Warehouse, error) {
-	result, err := s.repository.Get(c, id)
+func (s *service) GetOne(c *context.Context, id int) (*domain.Warehouse, error) {
+	result, err := s.repository.Get(*c, id)
 	if err != nil {
 		return nil, ErrNotFound
 	}
@@ -71,24 +77,24 @@ func (s *service) GetOne(c context.Context, id int) (*domain.Warehouse, error) {
 	return &result, nil
 }
 
-func (s *service) Update(c context.Context, id int, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
+func (s *service) Update(c *context.Context, id int, dto dtos.WarehouseRequestDTO) (*domain.Warehouse, error) {
 	newWarehouse, er := s.GetOne(c, id)
 
 	if er != nil {
 		return nil, ErrNotFound
 	}
 
-	exists := s.repository.Exists(c, dto.WarehouseCode)
+	exists := s.repository.Exists(*c, dto.WarehouseCode)
 
 	if exists {
 		if newWarehouse.WarehouseCode != dto.WarehouseCode {
 			return nil, ErrConflict
 		}
-	}		
+	}
 
 	newWarehouse = updateFormatter(dto, *newWarehouse)
 
-	err := s.repository.Update(c, *newWarehouse)
+	err := s.repository.Update(*c, *newWarehouse)
 
 	if err != nil {
 		return nil, err
@@ -97,18 +103,14 @@ func (s *service) Update(c context.Context, id int, dto dtos.WarehouseRequestDTO
 	return newWarehouse, nil
 }
 
-func (s *service) Delete(c context.Context, id int) error {
-	result := s.repository.Delete(c, id)
+func (s *service) Delete(c *context.Context, id int) error {
+	result := s.repository.Delete(*c, id)
 
 	if result != nil {
 		return ErrNotFound
 	}
 
 	return nil
-}
-
-func NewService(r Repository) Service {
-	return &service{repository: r}
 }
 
 func updateFormatter(dto dtos.WarehouseRequestDTO, newWarehouse domain.Warehouse) *domain.Warehouse {

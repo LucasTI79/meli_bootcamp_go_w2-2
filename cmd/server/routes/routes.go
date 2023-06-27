@@ -6,6 +6,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
+	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -84,7 +85,7 @@ func (r *router) buildSectionRoutes() {
 func (r *router) buildWarehouseRoutes() {
 	repository := warehouse.NewRepository(r.db)
 	service := warehouse.NewService(repository)
-	handler := handlers.NewWarehouse(service)
+	handler := warehouse2.NewWarehouse(service)
 	r.rg.POST("/warehouses", handler.Create())
 	r.rg.GET("/warehouses", handler.GetAll())
 	r.rg.GET("/warehouses/:id", handler.Get())

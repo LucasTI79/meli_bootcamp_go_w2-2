@@ -908,7 +908,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create warehouse",
+                "description": "Create warehouses",
                 "consumes": [
                     "application/json"
                 ],
@@ -918,10 +918,10 @@ const docTemplate = `{
                 "tags": [
                     "Warehouses"
                 ],
-                "summary": "Create warehouse",
+                "summary": "Create warehouses",
                 "parameters": [
                     {
-                        "description": "warehouse to create",
+                        "description": "warehouses to create",
                         "name": "Warehouse",
                         "in": "body",
                         "required": true,
@@ -942,14 +942,14 @@ const docTemplate = `{
         },
         "/api/v1/warehouses/{id}": {
             "get": {
-                "description": "get one warehouse by id",
+                "description": "get one warehouses by id",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Warehouses"
                 ],
-                "summary": "Get warehouse",
+                "summary": "Get warehouses",
                 "parameters": [
                     {
                         "type": "integer",
@@ -969,11 +969,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "delete warehouse by id",
+                "description": "delete warehouses by id",
                 "tags": [
                     "Warehouses"
                 ],
-                "summary": "Delete warehouse",
+                "summary": "Delete warehouses",
                 "parameters": [
                     {
                         "type": "integer",
