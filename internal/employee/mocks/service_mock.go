@@ -11,6 +11,10 @@ type EmployeeServiceMock struct {
 	mock.Mock
 }
 
+func NewEmployeeServiceMock() *EmployeeServiceMock {
+	return &EmployeeServiceMock{}
+}
+
 func (service *EmployeeServiceMock) Get(ctx *context.Context, id int) (*domain.Employee, error) {
 	args := service.Called(ctx, id)
 
