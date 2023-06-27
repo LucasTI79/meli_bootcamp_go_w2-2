@@ -122,8 +122,8 @@ func (s *service) Delete(ctx *context.Context, id int) error {
 		}
 	}
 
-	err1 := s.repository.Delete(*ctx, id)
-	if err1 != nil {
+	err = s.repository.Delete(*ctx, id)
+	if err != nil {
 		return err
 	}
 
