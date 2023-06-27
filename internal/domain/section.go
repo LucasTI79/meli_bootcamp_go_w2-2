@@ -11,11 +11,3 @@ type Section struct {
 	WarehouseID        int `json:"warehouse_id"`
 	ProductTypeID      int `json:"product_type_id"`
 }
-
-type SectionsResponse struct {
-	Data []Section `json:"data"`
-}
-
-type SectionResponse struct {
-	Data Section `json:"data"`
-}

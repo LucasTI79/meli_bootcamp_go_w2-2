@@ -4,9 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -89,7 +88,7 @@ func TestGetAll(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		//Parsear response
-		body, _ := ioutil.ReadAll(response.Body)
+		body, _ := io.ReadAll(response.Body)
 		var responseDTO struct {
 			Data *[]domain.Section `json:"data"`
 		}
@@ -98,13 +97,9 @@ func TestGetAll(t *testing.T) {
 
 		//Validar resultado
 		assert.Equal(t, http.StatusOK, response.Code)
-		fmt.Println(actualSections)
-
-		assert.Equal(t, http.StatusOK, response.Code)
 		assert.Equal(t, *expectedSections, *actualSections)
-		assert.True(t, len(*actualSections) == 2)
 	})
-	// Not implemented in cod this usecase.
+
 	t.Run("READ - Empty Database - should return status 204 when the list returns empty", func(t *testing.T) {
 		// Definir resultado da consulta
 		expectedSections := &[]domain.Section{}
@@ -175,8 +170,8 @@ func TestGet(t *testing.T) {
 		response := httptest.NewRecorder()
 		server.ServeHTTP(response, request)
 
-		body, _ := ioutil.ReadAll(response.Body)
-		responseResult := &domain.SectionResponse{}
+		body, _ := io.ReadAll(response.Body)
+		responseResult := &dtos.SectionResponse{}
 		json.Unmarshal(body, responseResult)
 
 		assert.Equal(t, http.StatusOK, response.Code)
@@ -198,10 +193,8 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("READ - invalid id - should return error 400 when an invalid ID is entered.", func(t *testing.T) {
-		server, mockService, handler := InitServerWithGetSections(t)
+		server, _, handler := InitServerWithGetSections(t)
 
-		mockService.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Section{}, section.ErrNotFound)
-		//Dúvida sobre o retorno section.ErrNotFound ao invés de um invalid id personalizado...
 		server.GET("/api/v1/sections/:id", handler.Get())
 
 		//Definir request e response
@@ -212,7 +205,7 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 
-	t.Run("READ - invalid id - should return error 500 when an internal server error occurs when looking up a section by id", func(t *testing.T) {
+	t.Run("READ - should return error 500 when an internal server error occurs when looking up a section by id", func(t *testing.T) {
 		server, mockService, handler := InitServerWithGetSections(t)
 
 		mockService.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Section{}, assert.AnError)
@@ -303,7 +296,7 @@ func TestCreate(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		//Parsear response
-		bodyResponse, _ := ioutil.ReadAll(response.Body)
+		bodyResponse, _ := io.ReadAll(response.Body)
 
 		var responseSection struct {
 			Data *domain.Section `json:"data"`
@@ -624,7 +617,7 @@ func TestUpdate(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		//Parsear response
-		bodyResponse, _ := ioutil.ReadAll(response.Body)
+		bodyResponse, _ := io.ReadAll(response.Body)
 
 		var responseSection struct {
 			Data *domain.Section `json:"data"`
@@ -661,7 +654,7 @@ func TestUpdate(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		//Parsear response
-		bodyResponse, _ := ioutil.ReadAll(response.Body)
+		bodyResponse, _ := io.ReadAll(response.Body)
 
 		var responseSection struct {
 			Data *domain.Section `json:"data"`
@@ -693,7 +686,7 @@ func TestUpdate(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		//Parsear response
-		bodyResponse, _ := ioutil.ReadAll(response.Body)
+		bodyResponse, _ := io.ReadAll(response.Body)
 
 		var responseSection struct {
 			Data *domain.Section `json:"data"`
@@ -728,7 +721,7 @@ func TestUpdate(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		//Parsear response
-		bodyResponse, _ := ioutil.ReadAll(response.Body)
+		bodyResponse, _ := io.ReadAll(response.Body)
 
 		var responseSection struct {
 			Data *domain.Section `json:"data"`

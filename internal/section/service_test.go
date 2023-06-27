@@ -3,7 +3,6 @@ package section_test
 import (
 	"context"
 	"database/sql"
-	"errors"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 	"testing"
 
@@ -13,30 +12,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
-
-// var (
-// 	expectedSection = domain.Section{
-// 		ID:                 1,
-// 		SectionNumber:      10,
-// 		CurrentTemperature: 10,
-// 		MinimumTemperature: 10,
-// 		CurrentCapacity:    10,
-// 		MinimumCapacity:    10,
-// 		MaximumCapacity:    10,
-// 		WarehouseID:        10,
-// 		ProductTypeID:      10,
-// 	}
-// 	requestSection = dtos.CreateSectionRequestDTO{
-// 		SectionNumber:      10,
-// 		CurrentTemperature: 10,
-// 		MinimumTemperature: 10,
-// 		CurrentCapacity:    10,
-// 		MinimumCapacity:    10,
-// 		MaximumCapacity:    10,
-// 		WarehouseID:        10,
-// 		ProductTypeID:      10,
-// 	}
-// )
 
 func TestGet(t *testing.T) {
 	t.Run("GET - get_find_by_id_existent", func(t *testing.T) {
@@ -75,17 +50,17 @@ func TestGet(t *testing.T) {
 
 		ctx := context.TODO()
 		sectionRepositoryMock, service := InitMock()
-		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Section{}, errors.New("error"))
+		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Section{}, assert.AnError)
 		sectionReceived, err := service.Get(&ctx, 1)
 
 		assert.Nil(t, sectionReceived)
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 	})
 }
 
 func TestGetAll(t *testing.T) {
 	t.Run("GET_ALL - getAll_find_all", func(t *testing.T) {
-		expectedsections := &[]domain.Section{
+		expectedSections := &[]domain.Section{
 			{
 				ID:                 1,
 				SectionNumber:      10,
@@ -113,11 +88,11 @@ func TestGetAll(t *testing.T) {
 		ctx := context.TODO()
 
 		sectionRepositoryMock, service := InitMock()
-		sectionRepositoryMock.On("GetAll", ctx).Return(*expectedsections, nil)
+		sectionRepositoryMock.On("GetAll", ctx).Return(*expectedSections, nil)
 
 		sectionsReceived, err := service.GetAll(&ctx)
 
-		assert.Equal(t, *expectedsections, *sectionsReceived)
+		assert.Equal(t, *expectedSections, *sectionsReceived)
 		assert.Equal(t, nil, err)
 	})
 
@@ -126,12 +101,12 @@ func TestGetAll(t *testing.T) {
 		ctx := context.TODO()
 
 		sectionRepositoryMock, service := InitMock()
-		sectionRepositoryMock.On("GetAll", ctx).Return([]domain.Section{}, errors.New("error"))
+		sectionRepositoryMock.On("GetAll", ctx).Return([]domain.Section{}, assert.AnError)
 
 		sectionsReceived, err := service.GetAll(&ctx)
 
 		assert.Nil(t, sectionsReceived)
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 	})
 }
 
@@ -168,11 +143,11 @@ func TestDelete(t *testing.T) {
 
 		sectionRepositoryMock, service := InitMock()
 
-		sectionRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(errors.New("error"))
+		sectionRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(assert.AnError)
 
 		err := service.Delete(&ctx, 1)
 
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 	})
 }
 
@@ -219,12 +194,12 @@ func TestCreate(t *testing.T) {
 
 		sectionRepositoryMock := new(mocks.SectionRepositoryMock)
 		sectionRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(false)
-		sectionRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Section")).Return(0, errors.New("error"))
+		sectionRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Section")).Return(0, assert.AnError)
 
 		service := section.NewService(sectionRepositoryMock)
 		sectionSaved, err := service.Save(&ctx, requestSection.SectionNumber, requestSection.CurrentTemperature, requestSection.MinimumTemperature, requestSection.CurrentCapacity, requestSection.MinimumCapacity, requestSection.MaximumCapacity, requestSection.WarehouseID, requestSection.ProductTypeID)
 
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 		assert.Nil(t, sectionSaved)
 
 	})
@@ -247,11 +222,11 @@ func TestCreate(t *testing.T) {
 		sectionRepositoryMock, service := InitMock()
 		sectionRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(false)
 		sectionRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Section")).Return(1, nil)
-		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Section{}, errors.New("error"))
+		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Section{}, assert.AnError)
 
 		sectionSaved, err := service.Save(&ctx, requestSection.SectionNumber, requestSection.CurrentTemperature, requestSection.MinimumTemperature, requestSection.CurrentCapacity, requestSection.MinimumCapacity, requestSection.MaximumCapacity, requestSection.WarehouseID, requestSection.ProductTypeID)
 
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 		assert.Nil(t, sectionSaved)
 
 	})
@@ -393,11 +368,11 @@ func TestUpdate(t *testing.T) {
 		sectionRepositoryMock, service := InitMock()
 		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedSection, nil)
 		sectionRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(false)
-		sectionRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Section")).Return(errors.New("error"))
+		sectionRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Section")).Return(assert.AnError)
 
 		sectionUpdate, err := service.Update(ctx, requestSection.SectionNumber, requestSection.CurrentTemperature, requestSection.MinimumTemperature, requestSection.CurrentCapacity, requestSection.MinimumCapacity, requestSection.MaximumCapacity, requestSection.WarehouseID, requestSection.ProductTypeID, 1)
 
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 		assert.Nil(t, sectionUpdate)
 	})
 
@@ -426,11 +401,11 @@ func TestUpdate(t *testing.T) {
 
 		ctx := context.TODO()
 		sectionRepositoryMock, service := InitMock()
-		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Section{}, errors.New("error"))
+		sectionRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Section{}, assert.AnError)
 
 		sectionUpdate, err := service.Update(ctx, requestSection.SectionNumber, requestSection.CurrentTemperature, requestSection.MinimumTemperature, requestSection.CurrentCapacity, requestSection.MinimumCapacity, requestSection.MaximumCapacity, requestSection.WarehouseID, requestSection.ProductTypeID, 1)
 
-		assert.Equal(t, errors.New("error"), err)
+		assert.Equal(t, assert.AnError, err)
 		assert.Nil(t, sectionUpdate)
 	})
 
