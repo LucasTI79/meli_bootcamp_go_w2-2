@@ -2,25 +2,14 @@ package sections
 
 import (
 	"fmt"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 	"net/http"
 	"strconv"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
 )
-
-type RequestUpdateSection struct {
-	SectionNumber      *int `json:"section_number"`
-	CurrentTemperature *int `json:"current_temperature"`
-	MinimumTemperature *int `json:"minimum_temperature"`
-	CurrentCapacity    *int `json:"current_capacity"`
-	MinimumCapacity    *int `json:"minimum_capacity"`
-	MaximumCapacity    *int `json:"maximum_capacity"`
-	WarehouseID        *int `json:"warehouse_id"`
-	ProductTypeID      *int `json:"product_type_id"`
-}
 
 type Section struct {
 	sectionService section.Service
@@ -105,7 +94,7 @@ func (s *Section) Get() gin.HandlerFunc {
 //	@Router			/api/v1/sections [post]
 func (s *Section) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req domain.SectionRequest
+		var req dtos.CreateSectionRequestDTO
 		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
@@ -186,7 +175,7 @@ func (s *Section) Update() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		var req RequestUpdateSection
+		var req dtos.UpdateSectionRequestDTO
 		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return

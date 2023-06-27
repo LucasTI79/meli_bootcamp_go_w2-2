@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/mocks"
@@ -26,7 +26,7 @@ import (
 // 		WarehouseID:        10,
 // 		ProductTypeID:      10,
 // 	}
-// 	requestSection = domain.SectionRequest{
+// 	requestSection = dtos.CreateSectionRequestDTO{
 // 		SectionNumber:      10,
 // 		CurrentTemperature: 10,
 // 		MinimumTemperature: 10,
@@ -179,7 +179,7 @@ func TestDelete(t *testing.T) {
 func TestCreate(t *testing.T) {
 	t.Run("CREATE - create_conflict", func(t *testing.T) {
 
-		requestSection := domain.SectionRequest{
+		requestSection := dtos.CreateSectionRequestDTO{
 			SectionNumber:      10,
 			CurrentTemperature: 10,
 			MinimumTemperature: 10,
@@ -204,7 +204,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("CREATE - create_error", func(t *testing.T) {
 
-		requestSection := domain.SectionRequest{
+		requestSection := dtos.CreateSectionRequestDTO{
 			SectionNumber:      10,
 			CurrentTemperature: 10,
 			MinimumTemperature: 10,
@@ -231,7 +231,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("CREATE - create_error_get_section", func(t *testing.T) {
 
-		requestSection := domain.SectionRequest{
+		requestSection := dtos.CreateSectionRequestDTO{
 			SectionNumber:      10,
 			CurrentTemperature: 10,
 			MinimumTemperature: 10,
@@ -268,7 +268,7 @@ func TestCreate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := domain.SectionRequest{
+		requestSection := dtos.CreateSectionRequestDTO{
 			SectionNumber:      10,
 			CurrentTemperature: 10,
 			MinimumTemperature: 10,
@@ -307,7 +307,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := sections.RequestUpdateSection{
+		requestSection := dtos.UpdateSectionRequestDTO{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -342,7 +342,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := sections.RequestUpdateSection{
+		requestSection := dtos.UpdateSectionRequestDTO{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -377,7 +377,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := sections.RequestUpdateSection{
+		requestSection := dtos.UpdateSectionRequestDTO{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -413,7 +413,7 @@ func TestUpdate(t *testing.T) {
 			WarehouseID:        10,
 			ProductTypeID:      10,
 		}
-		requestSection := sections.RequestUpdateSection{
+		requestSection := dtos.UpdateSectionRequestDTO{
 			SectionNumber:      &expectedSection.SectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,
@@ -447,7 +447,7 @@ func TestUpdate(t *testing.T) {
 			ProductTypeID:      10,
 		}
 		sectionNumber := 10
-		requestSection := sections.RequestUpdateSection{
+		requestSection := dtos.UpdateSectionRequestDTO{
 			SectionNumber:      &sectionNumber,
 			CurrentTemperature: &expectedSection.CurrentTemperature,
 			MinimumTemperature: &expectedSection.MinimumCapacity,

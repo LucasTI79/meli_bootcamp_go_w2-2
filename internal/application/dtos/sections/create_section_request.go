@@ -1,7 +1,6 @@
-package domain
+package sections
 
-type Section struct {
-	ID                 int `json:"id"`
+type CreateSectionRequestDTO struct {
 	SectionNumber      int `json:"section_number"`
 	CurrentTemperature int `json:"current_temperature"`
 	MinimumTemperature int `json:"minimum_temperature"`
@@ -10,12 +9,4 @@ type Section struct {
 	MaximumCapacity    int `json:"maximum_capacity"`
 	WarehouseID        int `json:"warehouse_id"`
 	ProductTypeID      int `json:"product_type_id"`
-}
-
-type SectionsResponse struct {
-	Data []Section `json:"data"`
-}
-
-type SectionResponse struct {
-	Data Section `json:"data"`
 }

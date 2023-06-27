@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -31,7 +32,7 @@ var (
 		WarehouseID:        10,
 		ProductTypeID:      10,
 	}
-	requestSection = domain.SectionRequest{
+	requestSection = dtos.CreateSectionRequestDTO{
 		SectionNumber:      10,
 		CurrentTemperature: 10,
 		MinimumTemperature: 10,
@@ -386,7 +387,16 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("CREATE - Create_Fail_SectionNumber_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{0, 10, 10, 10, 10, 10, 10, 10}
+		requestSection := dtos.CreateSectionRequestDTO{
+			CurrentTemperature: 10,
+			MinimumTemperature: 10,
+			CurrentCapacity:    10,
+			MinimumCapacity:    10,
+			MaximumCapacity:    10,
+			WarehouseID:        10,
+			ProductTypeID:      10,
+		}
+
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -411,7 +421,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_CurrentTemperature_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{SectionNumber: 10, CurrentTemperature: 0, MinimumTemperature: 10, CurrentCapacity: 10, MinimumCapacity: 10, MaximumCapacity: 10, WarehouseID: 10, ProductTypeID: 10}
+		requestSection := dtos.CreateSectionRequestDTO{SectionNumber: 10, CurrentTemperature: 0, MinimumTemperature: 10, CurrentCapacity: 10, MinimumCapacity: 10, MaximumCapacity: 10, WarehouseID: 10, ProductTypeID: 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -436,7 +446,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_MinimumTemperature_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 10, 0, 10, 10, 10, 10, 10}
+		requestSection := dtos.CreateSectionRequestDTO{SectionNumber: 10, CurrentTemperature: 10, CurrentCapacity: 10, MinimumCapacity: 10, MaximumCapacity: 10, WarehouseID: 10, ProductTypeID: 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -461,7 +471,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_CurrentCapacity_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 10, 10, 0, 10, 10, 10, 10}
+		requestSection := dtos.CreateSectionRequestDTO{10, 10, 10, 0, 10, 10, 10, 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -486,7 +496,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_MinimumCapacity_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 10, 10, 10, 0, 10, 10, 10}
+		requestSection := dtos.CreateSectionRequestDTO{10, 10, 10, 10, 0, 10, 10, 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -511,7 +521,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_MaximumCapacity_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 10, 10, 10, 10, 0, 10, 10}
+		requestSection := dtos.CreateSectionRequestDTO{10, 10, 10, 10, 10, 0, 10, 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -536,7 +546,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_WarehouseID_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 10, 10, 10, 10, 10, 0, 10}
+		requestSection := dtos.CreateSectionRequestDTO{10, 10, 10, 10, 10, 10, 0, 10}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
@@ -561,7 +571,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 	t.Run("CREATE - Create_Fail_ProductTypeID_Nil - Status Code 422", func(t *testing.T) {
-		requestSection := domain.SectionRequest{10, 10, 10, 10, 10, 10, 10, 0}
+		requestSection := dtos.CreateSectionRequestDTO{10, 10, 10, 10, 10, 10, 10, 0}
 		server, mockService, handler := InitServerWithGetSections(t)
 		mockService.On("Save",
 			mock.AnythingOfType("*context.Context"),
