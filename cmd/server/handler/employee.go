@@ -82,7 +82,7 @@ func (e *Employee) GetAll() gin.HandlerFunc {
 		}
 
 		if len(*employee) == 0 {
-			web.Error(c, http.StatusNoContent, "There are no employee stored: %s", err.Error())
+			web.Error(c, http.StatusNoContent, "There are no employee stored: ")
 			return
 		}
 
@@ -105,7 +105,7 @@ func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// createEmployee := domain.RequestCreateEmployee{}
 		createEmployee := new(domain.RequestCreateEmployee)
-		if err := c.Bind(&createEmployee); err != nil {
+		if err := c.ShouldBindJSON(&createEmployee); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
@@ -173,7 +173,7 @@ func (e *Employee) Update() gin.HandlerFunc {
 
 		ReqUpdateEmployee := new(domain.RequestUpdateEmployee)
 
-		if err := c.Bind(&ReqUpdateEmployee); err != nil {
+		if err := c.ShouldBindJSON(&ReqUpdateEmployee); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
 		}
