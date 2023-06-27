@@ -3,7 +3,6 @@ package routes
 import (
 	"database/sql"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
@@ -14,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/employees"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
@@ -99,7 +99,7 @@ func (r *router) buildWarehouseRoutes() {
 func (r *router) buildEmployeeRoutes() {
 	repo := employee.NewRepository(r.db)
 	service := employee.NewService(repo)
-	handler := handlers.NewEmployee(service)
+	handler := employees.NewEmployee(service)
 
 	r.rg.POST("/employees", handler.Save())
 	r.rg.GET("/employees", handler.GetAll())

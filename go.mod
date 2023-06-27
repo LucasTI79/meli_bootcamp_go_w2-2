@@ -4,7 +4,6 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.9.1
-	github.com/go-playground/assert/v2 v2.2.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/swag v1.16.1

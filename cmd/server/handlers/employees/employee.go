@@ -1,6 +1,7 @@
-package handlers
+package employees
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -8,6 +9,11 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
+)
+
+var (
+	ErrNotFound = errors.New("employee not found")
+	ErrConflict = errors.New("409 Conflict: Employee with CardNumberID already exists")
 )
 
 type Employee struct {
@@ -39,8 +45,14 @@ func (e *Employee) Get() gin.HandlerFunc {
 			return
 		}
 
-		employee, err := e.service.Get(c, id)
+		ctx := c.Request.Context()
+		employee, err := e.service.Get(&ctx, id)
+
 		if err != nil {
+			if errors.Is(err, ErrNotFound) {
+				web.Error(c, http.StatusNotFound, "Employee not found: %s", err.Error())
+				return
+			}
 			web.Error(c, http.StatusInternalServerError, "Failed to get employee: %s", err.Error())
 			return
 		}
@@ -61,14 +73,16 @@ func (e *Employee) Get() gin.HandlerFunc {
 //	@Router			/api/v1/employees [get]
 func (e *Employee) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		employee, err := e.service.GetAll(c)
+		ctx := c.Request.Context()
+		employee, err := e.service.GetAll(&ctx)
+
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, "Failed to get employee: %s", err.Error())
 			return
 		}
 
 		if len(*employee) == 0 {
-			web.Error(c, http.StatusNotFound, "There are no employee stored: %s", err.Error())
+			web.Error(c, http.StatusNoContent, "There are no employee stored: ")
 			return
 		}
 
@@ -91,8 +105,8 @@ func (e *Employee) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// createEmployee := domain.RequestCreateEmployee{}
 		createEmployee := new(domain.RequestCreateEmployee)
-		if err := c.Bind(&createEmployee); err != nil {
-			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
+		if err := c.ShouldBindJSON(&createEmployee); err != nil {
+			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
 
@@ -120,7 +134,8 @@ func (e *Employee) Save() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Field Ware House ID is required: %s", "")
 		}
 
-		employeeDomain, err := e.service.Save(c, *employeeDomain)
+		ctx := c.Request.Context()
+		employeeDomain, err := e.service.Save(&ctx, *employeeDomain)
 		if err != nil {
 			switch err {
 			case employee.ErrConflict:
@@ -158,12 +173,13 @@ func (e *Employee) Update() gin.HandlerFunc {
 
 		ReqUpdateEmployee := new(domain.RequestUpdateEmployee)
 
-		if err := c.Bind(&ReqUpdateEmployee); err != nil {
+		if err := c.ShouldBindJSON(&ReqUpdateEmployee); err != nil {
 			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
 			return
 		}
 
-		employeeUpdate, err := e.service.Update(c, id, ReqUpdateEmployee)
+		ctx := c.Request.Context()
+		employeeUpdate, err := e.service.Update(&ctx, id, ReqUpdateEmployee)
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to update: %s", err.Error())
 			return
@@ -191,8 +207,8 @@ func (e *Employee) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-
-		err = e.service.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = e.service.Delete(&ctx, int(id))
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to delete: %s", err.Error())
 			return
