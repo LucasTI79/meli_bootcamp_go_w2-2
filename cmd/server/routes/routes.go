@@ -2,11 +2,13 @@ package routes
 
 import (
 	"database/sql"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
+
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -74,7 +76,7 @@ func (r *router) buildProductRoutes() {
 func (r *router) buildSectionRoutes() {
 	repo := section.NewRepository(r.db)
 	service := section.NewService(repo)
-	handler := handlers.NewSection(service)
+	handler := sections.NewSection(service)
 	r.rg.POST("/sections", handler.Create())
 	r.rg.GET("/sections", handler.GetAll())
 	r.rg.GET("/sections/:id", handler.Get())
