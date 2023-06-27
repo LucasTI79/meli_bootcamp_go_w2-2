@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
+
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/mocks"

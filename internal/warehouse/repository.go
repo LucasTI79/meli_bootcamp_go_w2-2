@@ -49,7 +49,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Warehouse, error) 
 	query := "SELECT * FROM warehouses WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	w := domain.Warehouse{}
-	err := row.Scan(w.ID, w.Address, w.Telephone, w.WarehouseCode, w.MinimumCapacity, w.MinimumTemperature)
+	err := row.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature)
 	if err != nil {
 		return domain.Warehouse{}, err
 	}
@@ -71,7 +71,7 @@ func (r *repository) Save(ctx context.Context, w domain.Warehouse) (int, error) 
 		return 0, err
 	}
 
-	res, err := stmt.Exec(w.Address, w.Telephone, w.WarehouseCode, w.MinimumCapacity, w.MinimumTemperature)
+	res, err := stmt.Exec(&w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature)
 	if err != nil {
 		return 0, err
 	}
@@ -91,7 +91,7 @@ func (r *repository) Update(ctx context.Context, w domain.Warehouse) error {
 		return err
 	}
 
-	res, err := stmt.Exec(w.Address, w.Telephone, w.WarehouseCode, w.MinimumCapacity, w.MinimumTemperature, w.ID)
+	res, err := stmt.Exec(&w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature, &w.ID)
 	if err != nil {
 		return err
 	}

@@ -2,9 +2,10 @@ package sections
 
 import (
 	"fmt"
-	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 	"net/http"
 	"strconv"
+
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sections"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"

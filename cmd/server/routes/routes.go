@@ -2,10 +2,11 @@ package routes
 
 import (
 	"database/sql"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
+
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 

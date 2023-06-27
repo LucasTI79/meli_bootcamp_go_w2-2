@@ -124,19 +124,19 @@ func (w *Warehouse) Update() gin.HandlerFunc {
 		var req dtos.WarehouseRequestDTO
 
 		if e != nil {
-			web.Error(c, http.StatusNotFound, "parameter id must be a integer")
+			web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 			return
 		}
 
 		if err := c.ShouldBindJSON(&req); err != nil {
-			web.Error(c, http.StatusNotFound, "JSON format may be wrong")
+			web.Error(c, http.StatusUnprocessableEntity, "JSON format may be wrong")
 			return
 		}
 
 		result, err := w.warehouseService.Update(&ctx, warehouseId, req)
 
 		if err != nil {
-			web.Error(c, http.StatusNotFound, e.Error())
+			web.Error(c, http.StatusNotFound, err.Error())
 			return
 		}
 
