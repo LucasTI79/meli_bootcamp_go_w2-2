@@ -1,4 +1,4 @@
-package handler
+package products
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type requestCreateProduct struct {
+type RequestCreateProduct struct {
 	Description    string  `json:"description"`
 	ExpirationRate int     `json:"expiration_rate"`
 	FreezingRate   int     `json:"freezing_rate"`
@@ -24,7 +24,7 @@ type requestCreateProduct struct {
 	SellerID       int     `json:"seller_id"`
 }
 
-type requestUpdateProduct struct {
+type RequestUpdateProduct struct {
 	Description    *string  `json:"description"`
 	ExpirationRate *int     `json:"expiration_rate"`
 	FreezingRate   *int     `json:"freezing_rate"`
@@ -60,10 +60,14 @@ func NewProduct(p product.Service) *Product {
 //	@Router			/api/v1/products [get]
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		products, err := p.productService.GetAll(c)
+		ctx := c.Request.Context()
+		products, err := p.productService.GetAll(&ctx)
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
+		}
+		if len(*products) == 0 {
+			web.Success(c, http.StatusNoContent, nil)
 		}
 		web.Success(c, http.StatusOK, products)
 	}
@@ -87,7 +91,8 @@ func (p *Product) Get() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, err.Error())
 			return
 		}
-		productResponse, err := p.productService.Get(c, int(id))
+		ctx := c.Request.Context()
+		productResponse, err := p.productService.Get(&ctx, int(id))
 		if err != nil {
 			switch err {
 			case product.ErrNotFound:
@@ -114,8 +119,8 @@ func (p *Product) Get() gin.HandlerFunc {
 //	@Router			/api/v1/products [post]
 func (p *Product) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req requestCreateProduct
-		if err := c.Bind(&req); err != nil {
+		var req RequestCreateProduct
+		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
@@ -174,8 +179,8 @@ func (p *Product) Create() gin.HandlerFunc {
 			web.Error(c, http.StatusUnprocessableEntity, "The field SellerID is required.")
 			return
 		}
-
-		productResponse, err := p.productService.Save(c, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
+		ctx := c.Request.Context()
+		productResponse, err := p.productService.Save(&ctx, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
 			req.Length, req.Netweight, req.ProductCode, req.RecomFreezTemp, req.Width, req.ProductTypeID, req.SellerID)
 		if err != nil {
 			switch err {
@@ -209,12 +214,13 @@ func (p *Product) Update() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		var req requestUpdateProduct
+		var req RequestUpdateProduct
 		if err := c.Bind(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-		productResponse, err := p.productService.Update(c, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
+		ctx := c.Request.Context()
+		productResponse, err := p.productService.Update(&ctx, req.Description, req.ExpirationRate, req.FreezingRate, req.Height,
 			req.Length, req.Netweight, req.ProductCode, req.RecomFreezTemp, req.Width, req.ProductTypeID, req.SellerID, id)
 		if err != nil {
 			switch err {
@@ -249,7 +255,8 @@ func (p *Product) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-		err = p.productService.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = p.productService.Delete(&ctx, int(id))
 		if err != nil {
 			switch err {
 			case product.ErrNotFound:

@@ -1,4 +1,4 @@
-package handler
+package sellers
 
 import (
 	"errors"
@@ -34,7 +34,9 @@ func NewSeller(s seller.Service) *Seller {
 //	@Router			/api/v1/sellers [get]
 func (s *Seller) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sellers, err := s.sellerService.GetAll(c)
+		ctx := c.Request.Context()
+
+		sellers, err := s.sellerService.GetAll(&ctx)
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, "Failed to get sellers: %s", err.Error())
 			return
@@ -63,7 +65,7 @@ func (s *Seller) GetAll() gin.HandlerFunc {
 func (s *Seller) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		createSellerRequestDTO := new(dtos.CreateSellerRequestDTO)
-		if err := c.Bind(&createSellerRequestDTO); err != nil {
+		if err := c.ShouldBindJSON(createSellerRequestDTO); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, "Error to read request: %s", err.Error())
 			return
 		}
@@ -95,14 +97,15 @@ func (s *Seller) Create() gin.HandlerFunc {
 			return
 		}
 
-		sellerDomain, err := s.sellerService.Save(c, *sellerDomain)
+		ctx := c.Request.Context()
+		sellerDomain, err := s.sellerService.Save(&ctx, *sellerDomain)
 		if err != nil {
 			switch err {
 			case seller.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
-				web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
+				web.Error(c, http.StatusInternalServerError, "Error to save request: %s", err.Error())
 				return
 			}
 		}
@@ -130,7 +133,8 @@ func (s *Seller) Get() gin.HandlerFunc {
 			return
 		}
 
-		sellerResult, err := s.sellerService.Get(c, int(id))
+		ctx := c.Request.Context()
+		sellerResult, err := s.sellerService.Get(&ctx, int(id))
 
 		if err != nil {
 			if errors.Is(err, seller.ErrNotFound) {
@@ -172,10 +176,18 @@ func (s *Seller) Update() gin.HandlerFunc {
 			return
 		}
 
-		sellerUpdated, err := s.sellerService.Update(c, int(id), updateSellerRequestDTO)
+		ctx := c.Request.Context()
+		sellerUpdated, err := s.sellerService.Update(&ctx, int(id), updateSellerRequestDTO)
 		if err != nil {
-			web.Error(c, http.StatusConflict, "Error to update: %s", err.Error())
-			return
+			switch err {
+			case seller.ErrConflict:
+				web.Error(c, http.StatusConflict, err.Error())
+				return
+			case seller.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+				return
+			}
+
 		}
 
 		web.Success(c, http.StatusOK, sellerUpdated)
@@ -200,8 +212,8 @@ func (s *Seller) Delete() gin.HandlerFunc {
 			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
 			return
 		}
-
-		err = s.sellerService.Delete(c, int(id))
+		ctx := c.Request.Context()
+		err = s.sellerService.Delete(&ctx, int(id))
 		if err != nil {
 			web.Error(c, http.StatusNotFound, "Error to delete: %s", err.Error())
 			return
