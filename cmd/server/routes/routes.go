@@ -2,13 +2,17 @@ package routes
 
 import (
 	"database/sql"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
+	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
@@ -50,7 +54,7 @@ func (r *router) setGroup() {
 func (r *router) buildSellerRoutes() {
 	repo := seller.NewRepository(r.db)
 	service := seller.NewService(repo)
-	handler := handler.NewSeller(service)
+	handler := sellers.NewSeller(service)
 	r.rg.POST("/sellers", handler.Create())
 	r.rg.GET("/sellers", handler.GetAll())
 	r.rg.GET("/sellers/:id", handler.Get())
@@ -61,7 +65,7 @@ func (r *router) buildSellerRoutes() {
 func (r *router) buildProductRoutes() {
 	repo := product.NewRepository(r.db)
 	service := product.NewService(repo)
-	handler := handler.NewProduct(service)
+	handler := products.NewProduct(service)
 	r.rg.POST("/products", handler.Create())
 	r.rg.GET("/products", handler.GetAll())
 	r.rg.GET("/products/:id", handler.Get())
@@ -83,7 +87,7 @@ func (r *router) buildSectionRoutes() {
 func (r *router) buildWarehouseRoutes() {
 	repository := warehouse.NewRepository(r.db)
 	service := warehouse.NewService(repository)
-	handler := handler.NewWarehouse(service)
+	handler := warehouse2.NewWarehouse(service)
 	r.rg.POST("/warehouses", handler.Create())
 	r.rg.GET("/warehouses", handler.GetAll())
 	r.rg.GET("/warehouses/:id", handler.Get())
@@ -94,7 +98,7 @@ func (r *router) buildWarehouseRoutes() {
 func (r *router) buildEmployeeRoutes() {
 	repo := employee.NewRepository(r.db)
 	service := employee.NewService(repo)
-	handler := handler.NewEmployee(service)
+	handler := handlers.NewEmployee(service)
 
 	r.rg.POST("/employees", handler.Save())
 	r.rg.GET("/employees", handler.GetAll())
@@ -107,7 +111,7 @@ func (r *router) buildEmployeeRoutes() {
 func (r *router) buildBuyerRoutes() {
 	buyerRepository := buyer.NewRepository(r.db)
 	buyerService := buyer.NewService(buyerRepository)
-	buyerHandler := handler.NewBuyer(buyerService)
+	buyerHandler := buyers.NewBuyerHandler(buyerService)
 
 	// Create custom validation
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

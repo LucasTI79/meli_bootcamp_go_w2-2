@@ -446,7 +446,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func InitMock() (*mocks.SectionRepositoryMock, section.Service) {
-	sectionRepositoryMock := new(mocks.SectionRepositoryMock)
+	sectionRepositoryMock := mocks.NewSectionRepositoryMock()
 	service := section.NewService(sectionRepositoryMock)
 	return sectionRepositoryMock, service
 }

@@ -1,4 +1,4 @@
-package handler
+package buyers
 
 import (
 	"errors"
@@ -16,7 +16,7 @@ type BuyerHandler struct {
 	buyerService buyer.Service
 }
 
-func NewBuyer(buyerService buyer.Service) *BuyerHandler {
+func NewBuyerHandler(buyerService buyer.Service) *BuyerHandler {
 	return &BuyerHandler{
 		buyerService,
 	}
@@ -43,7 +43,9 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 			return
 		}
 
-		if buyerResponse, err := handler.buyerService.Get(c, id); err != nil {
+		ctx := c.Request.Context()
+
+		if buyerResponse, err := handler.buyerService.Get(&ctx, id); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -72,10 +74,15 @@ func (handler *BuyerHandler) Get() gin.HandlerFunc {
 func (handler *BuyerHandler) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		if buyers, err := handler.buyerService.GetAll(c); err != nil {
+		ctx := c.Request.Context()
+		if buyers, err := handler.buyerService.GetAll(&ctx); err != nil {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
 		} else {
+			if len(*buyers) == 0 {
+				web.Success(c, http.StatusNoContent, buyers)
+				return
+			}
 			web.Success(c, http.StatusOK, buyers)
 			return
 		}
@@ -103,7 +110,8 @@ func (handler *BuyerHandler) Create() gin.HandlerFunc {
 			return
 		}
 
-		if createdBuyer, err := handler.buyerService.Create(c, createBuyerRequest); err != nil {
+		ctx := c.Request.Context()
+		if createdBuyer, err := handler.buyerService.Create(&ctx, createBuyerRequest); err != nil {
 			switch err {
 			case buyer.ErrCardNumberDuplicated:
 				web.Error(c, http.StatusConflict, err.Error())
@@ -144,11 +152,12 @@ func (handler *BuyerHandler) Update() gin.HandlerFunc {
 
 		updateBuyerRequest := new(dtos.UpdateBuyerRequestDTO)
 		if err := c.ShouldBind(updateBuyerRequest); err != nil {
-			web.Error(c, http.StatusBadRequest, err.Error())
+			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
 
-		if updatedBuyer, err := handler.buyerService.Update(c, id, updateBuyerRequest); err != nil {
+		ctx := c.Request.Context()
+		if updatedBuyer, err := handler.buyerService.Update(&ctx, id, updateBuyerRequest); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -187,7 +196,8 @@ func (handler *BuyerHandler) Delete() gin.HandlerFunc {
 			return
 		}
 
-		if err := handler.buyerService.Delete(c, id); err != nil {
+		ctx := c.Request.Context()
+		if err := handler.buyerService.Delete(&ctx, id); err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
