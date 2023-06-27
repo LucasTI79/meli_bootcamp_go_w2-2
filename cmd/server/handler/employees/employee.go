@@ -1,4 +1,4 @@
-package handler
+package employees
 
 import (
 	"errors"

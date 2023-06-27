@@ -1,4 +1,4 @@
-package handler_test
+package employees_test
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handler/employees"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee/mocks"
@@ -33,12 +33,12 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(employeeFound, nil)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees/:id", handler.Get())
+		r.GET("/api/v1/employees/:id", employees.Get())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees/1", nil)
@@ -67,13 +67,13 @@ func TestGet(t *testing.T) {
 	t.Run("find_by_id_non_existent", func(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Employee{}, handler.ErrNotFound)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Employee{}, employees.ErrNotFound)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees/:id", handler.Get())
+		r.GET("/api/v1/employees/:id", employees.Get())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees/1", nil)
@@ -89,13 +89,13 @@ func TestGet(t *testing.T) {
 	t.Run("invalid_id", func(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Employee{}, handler.ErrNotFound)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Employee{}, employees.ErrNotFound)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees/:id", handler.Get())
+		r.GET("/api/v1/employees/:id", employees.Get())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees/a", nil)
@@ -112,12 +112,12 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Employee{}, assert.AnError)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees/:id", handler.Get())
+		r.GET("/api/v1/employees/:id", employees.Get())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees/1", nil)
@@ -155,12 +155,12 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(expectedEmployee, nil)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees", handler.GetAll())
+		r.GET("/api/v1/employees", employees.GetAll())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
@@ -189,12 +189,12 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Employee{}, assert.AnError)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees", handler.GetAll())
+		r.GET("/api/v1/employees", employees.GetAll())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
@@ -212,12 +212,12 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("GetAll", mock.Anything).Return(employeeFound, nil)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/employees", handler.GetAll())
+		r.GET("/api/v1/employees", employees.GetAll())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
@@ -252,12 +252,12 @@ func TestSave(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(expectedEmployeeCreate, nil)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.POST("/api/v1/employees", handler.Save())
+		r.POST("/api/v1/employees", employees.Save())
 
 		requestBody, _ := json.Marshal(requestEmployeeCreated)
 		request := bytes.NewReader(requestBody)
@@ -297,12 +297,12 @@ func TestSave(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context")).Return(requestEmployeeCreated, employee.ErrUnprocessableEntity)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.POST("/api/v1/employees", handler.Save())
+		r.POST("/api/v1/employees", employees.Save())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", nil)
@@ -326,12 +326,12 @@ func TestSave(t *testing.T) {
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(expectedEmployeeCreate, employee.ErrConflict) //warehouse.ErrUnprocessableEntity
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.POST("/api/v1/employees", handler.Save())
+		r.POST("/api/v1/employees", employees.Save())
 
 		requestBody, _ := json.Marshal(requestEmployeeCreated)
 		request := bytes.NewReader(requestBody)
@@ -354,12 +354,12 @@ func TestDelete(t *testing.T) {
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(employeeFound, nil)
 		employeeServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.DELETE("/api/v1/employees/:id", handler.Delete())
+		r.DELETE("/api/v1/employees/:id", employees.Delete())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodDelete, "/api/v1/employees/1", nil)
@@ -375,12 +375,12 @@ func TestDelete(t *testing.T) {
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
 		employeeServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(employee.ErrNotFound)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.DELETE("/api/v1/employees/:id", handler.Delete())
+		r.DELETE("/api/v1/employees/:id", employees.Delete())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodDelete, "/api/v1/employees/1", nil)
@@ -413,12 +413,12 @@ func TestUpdate(t *testing.T) {
 
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("*domain.RequestUpdateEmployee")).Return(&employeeUpdated, nil)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.PATCH("/api/v1/employees/:id", handler.Update())
+		r.PATCH("/api/v1/employees/:id", employees.Update())
 
 		requestBody, _ := json.Marshal(RequestUpdateEmployee)
 		request := bytes.NewReader(requestBody)
@@ -444,12 +444,12 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_non_existent", func(t *testing.T) {
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
 		employeeServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil, employee.ErrNotFound)
-		handler := handler.NewEmployee(employeeServiceMock)
+		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.PATCH("/api/v1/employees/:id", handler.Update())
+		r.PATCH("/api/v1/employees/:id", employees.Update())
 
 		//Definir request e response
 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/employees/1", nil)
