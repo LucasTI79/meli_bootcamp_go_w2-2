@@ -325,7 +325,7 @@ func TestSave(t *testing.T) {
 
 		//Configurar o mock do service
 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(expectedEmployeeCreate, employee.ErrConflict) //warehouse.ErrUnprocessableEntity
+		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(expectedEmployeeCreate, employee.ErrConflict)
 		employees := employees.NewEmployee(employeeServiceMock)
 
 		//Configurar o servidor
@@ -344,6 +344,115 @@ func TestSave(t *testing.T) {
 
 		assert.Equal(t, http.StatusConflict, res.Code)
 	})
+
+	t.Run("create_fail_card_number_id_nil", func(t *testing.T) {
+
+		requestEmployeeCreated := domain.RequestCreateEmployee{
+			FirstName:   "Maria",
+			LastName:    "Silva",
+			WarehouseID: 1,
+		}
+
+		//Configurar o mock do service
+		employeeServiceMock := mocks.NewEmployeeServiceMock()
+		employees := employees.NewEmployee(employeeServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/employees", employees.Save())
+
+		requestBody, _ := json.Marshal(requestEmployeeCreated)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_fail_first_name_nil", func(t *testing.T) {
+
+		requestEmployeeCreated := domain.RequestCreateEmployee{
+			CardNumberID: "123",
+			LastName:     "Silva",
+			WarehouseID:  1,
+		}
+
+		//Configurar o mock do service
+		employeeServiceMock := mocks.NewEmployeeServiceMock()
+		employees := employees.NewEmployee(employeeServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/employees", employees.Save())
+
+		requestBody, _ := json.Marshal(requestEmployeeCreated)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_fail_last_name_nil", func(t *testing.T) {
+
+		requestEmployeeCreated := domain.RequestCreateEmployee{
+			CardNumberID: "123",
+			FirstName:    "Maria",
+			WarehouseID:  1,
+		}
+
+		//Configurar o mock do service
+		employeeServiceMock := mocks.NewEmployeeServiceMock()
+		employees := employees.NewEmployee(employeeServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/employees", employees.Save())
+
+		requestBody, _ := json.Marshal(requestEmployeeCreated)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_fail_warehouse_id_nil", func(t *testing.T) {
+
+		requestEmployeeCreated := domain.RequestCreateEmployee{
+			CardNumberID: "123",
+			FirstName:    "Maria",
+			LastName:     "Silva",
+		}
+
+		//Configurar o mock do service
+		employeeServiceMock := mocks.NewEmployeeServiceMock()
+		employees := employees.NewEmployee(employeeServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/employees", employees.Save())
+
+		requestBody, _ := json.Marshal(requestEmployeeCreated)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
 }
 
 func TestDelete(t *testing.T) {
