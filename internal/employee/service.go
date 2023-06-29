@@ -36,12 +36,7 @@ func NewService(r Repository) Service {
 func (s *service) Get(ctx *context.Context, id int) (*domain.Employee, error) {
 	employees, err := s.repository.Get(*ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
+		return nil, ErrNotFound
 	}
 	return &employees, nil
 }
