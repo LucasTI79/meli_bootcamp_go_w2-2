@@ -141,10 +141,11 @@ func (e *Employee) Save() gin.HandlerFunc {
 			case employee.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 				return
-
+			default:
+				web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
+				return
 			}
-			web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
-			return
+
 		}
 
 		web.Success(c, http.StatusCreated, *employeeDomain)
@@ -174,7 +175,7 @@ func (e *Employee) Update() gin.HandlerFunc {
 		ReqUpdateEmployee := new(domain.RequestUpdateEmployee)
 
 		if err := c.ShouldBindJSON(&ReqUpdateEmployee); err != nil {
-			web.Error(c, http.StatusBadRequest, "Error to read request: %s", err.Error())
+			web.Error(c, http.StatusUnprocessableEntity, "Error to read request: %s", err.Error())
 			return
 		}
 
