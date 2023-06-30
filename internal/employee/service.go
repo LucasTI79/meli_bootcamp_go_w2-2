@@ -2,7 +2,6 @@ package employee
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
@@ -36,12 +35,7 @@ func NewService(r Repository) Service {
 func (s *service) Get(ctx *context.Context, id int) (*domain.Employee, error) {
 	employees, err := s.repository.Get(*ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
+		return nil, ErrNotFound
 	}
 	return &employees, nil
 }
@@ -77,12 +71,7 @@ func (s *service) Save(ctx *context.Context, employee domain.Employee) (*domain.
 func (s *service) Update(ctx *context.Context, id int, reqUpdateEmployee *domain.RequestUpdateEmployee) (*domain.Employee, error) {
 	existingEmployee, err := s.repository.Get(*ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return nil, ErrNotFound
-		default:
-			return nil, err
-		}
+		return nil, ErrNotFound
 	}
 
 	if reqUpdateEmployee.CardNumberID != nil {
@@ -103,9 +92,9 @@ func (s *service) Update(ctx *context.Context, id int, reqUpdateEmployee *domain
 		existingEmployee.WarehouseID = *reqUpdateEmployee.WarehouseID
 	}
 
-	err1 := s.repository.Update(*ctx, existingEmployee)
-	if err1 != nil {
-		return nil, err1
+	err = s.repository.Update(*ctx, existingEmployee)
+	if err != nil {
+		return nil, err
 	}
 
 	return &existingEmployee, nil
@@ -114,18 +103,12 @@ func (s *service) Update(ctx *context.Context, id int, reqUpdateEmployee *domain
 func (s *service) Delete(ctx *context.Context, id int) error {
 	_, err := s.repository.Get(*ctx, id)
 	if err != nil {
-		switch err {
-		case sql.ErrNoRows:
-			return ErrNotFound
-		default:
-			return err
-		}
+		return ErrNotFound
 	}
 
 	err = s.repository.Delete(*ctx, id)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

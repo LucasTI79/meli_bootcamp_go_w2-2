@@ -134,6 +134,20 @@ func TestDelete(t *testing.T) {
 
 		assert.Equal(t, employee.ErrNotFound, err)
 	})
+	t.Run("delete_not_found", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		employeeRepositoryMock := mocks.NewEmployeeRepositoryMock()
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, employee.ErrNotFound)
+		//employeeRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(employee.ErrNotFound)
+		service := employee.NewService(employeeRepositoryMock)
+
+		err := service.Delete(&ctx, 1)
+
+		assert.Equal(t, employee.ErrNotFound, err)
+	})
+
 }
 
 func TestCreate(t *testing.T) {
@@ -276,5 +290,112 @@ func TestUpdate(t *testing.T) {
 		_, err := service.Update(&ctx, 1, updateEmployeeRequest)
 
 		assert.Equal(t, employee.ErrNotFound, err)
+	})
+
+	t.Run("update_unexpected_error", func(t *testing.T) {
+
+		newCardNumberID := "2"
+		newFirstName := "Test2"
+		newLastName := "Test2"
+		newWarehouseID := 2
+
+		updateEmployeeRequest := &domain.RequestUpdateEmployee{
+			CardNumberID: &newCardNumberID,
+			FirstName:    &newFirstName,
+			LastName:     &newLastName,
+			WarehouseID:  &newWarehouseID,
+		}
+
+		ctx := context.TODO()
+
+		employeeRepositoryMock := mocks.NewEmployeeRepositoryMock()
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, employee.ErrNotFound)
+		employeeRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		employeeRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Employee")).Return(assert.AnError)
+
+		service := employee.NewService(employeeRepositoryMock)
+		UpdateEmployees, err := service.Update(&ctx, 1, updateEmployeeRequest)
+
+		assert.Nil(t, UpdateEmployees)
+		assert.Error(t, err)
+	})
+
+	t.Run("update_get_conflit_error", func(t *testing.T) {
+		newCardNumberID := "2"
+		newFirstName := "Test2"
+		newLastName := "Test2"
+		newWarehouseID := 2
+
+		updateEmployeeRequest := &domain.RequestUpdateEmployee{
+			CardNumberID: &newCardNumberID,
+			FirstName:    &newFirstName,
+			LastName:     &newLastName,
+			WarehouseID:  &newWarehouseID,
+		}
+
+		ctx := context.TODO()
+
+		employeeRepositoryMock := mocks.NewEmployeeRepositoryMock()
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, employee.ErrNotFound)
+		employeeRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
+
+		service := employee.NewService(employeeRepositoryMock)
+		UpdateEmployees, err := service.Update(&ctx, 1, updateEmployeeRequest)
+
+		assert.Nil(t, UpdateEmployees)
+		assert.Error(t, err)
+	})
+
+	t.Run("update_conflit_error_card_number_id", func(t *testing.T) {
+		newCardNumberID := "2"
+		newFirstName := "Test2"
+		newLastName := "Test2"
+		newWarehouseID := 2
+
+		updateEmployeeRequest := &domain.RequestUpdateEmployee{
+			CardNumberID: &newCardNumberID,
+			FirstName:    &newFirstName,
+			LastName:     &newLastName,
+			WarehouseID:  &newWarehouseID,
+		}
+
+		ctx := context.TODO()
+
+		employeeRepositoryMock := mocks.NewEmployeeRepositoryMock()
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
+		employeeRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
+
+		service := employee.NewService(employeeRepositoryMock)
+		UpdateEmployees, err := service.Update(&ctx, 1, updateEmployeeRequest)
+
+		assert.Nil(t, UpdateEmployees)
+		assert.Error(t, err)
+	})
+
+	t.Run("update_repository_error", func(t *testing.T) {
+		newCardNumberID := "2"
+		newFirstName := "Test2"
+		newLastName := "Test2"
+		newWarehouseID := 2
+
+		updateEmployeeRequest := &domain.RequestUpdateEmployee{
+			CardNumberID: &newCardNumberID,
+			FirstName:    &newFirstName,
+			LastName:     &newLastName,
+			WarehouseID:  &newWarehouseID,
+		}
+
+		ctx := context.TODO()
+
+		employeeRepositoryMock := mocks.NewEmployeeRepositoryMock()
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
+		employeeRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		employeeRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Employee")).Return(assert.AnError)
+
+		service := employee.NewService(employeeRepositoryMock)
+		UpdateEmployees, err := service.Update(&ctx, 1, updateEmployeeRequest)
+
+		assert.Nil(t, UpdateEmployees)
+		assert.Error(t, err)
 	})
 }
