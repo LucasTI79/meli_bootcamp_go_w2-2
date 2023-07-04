@@ -10,7 +10,7 @@ import (
 // Repository encapsulates the storage of a Product.
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.ProductRecord, error)
-	//Get(ctx context.Context, id int) (domain.Product, error)
+	Get(ctx context.Context, id int) (domain.ProductRecord, error)
 	//Exists(ctx context.Context, productCode string) bool
 	//Save(ctx context.Context, p domain.Product) (int, error)
 	//Update(ctx context.Context, p domain.Product) error
@@ -43,4 +43,16 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.ProductRecord, error)
 	}
 
 	return productsRecords, nil
+}
+
+func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, error) {
+	query := "SELECT * FROM productsRecords WHERE id=?;"
+	row := r.db.QueryRow(query, id)
+	p := domain.ProductRecord{}
+	err := row.Scan(&p.ID, &p.LastUpdateRate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
+	if err != nil {
+		return domain.ProductRecord{}, err
+	}
+
+	return p, nil
 }

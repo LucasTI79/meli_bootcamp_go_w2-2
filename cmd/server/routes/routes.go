@@ -137,7 +137,7 @@ func (r *router) buildProductRecordsRoutes() {
 	handler := productsRecords.NewProductRecord(service)
 	//	r.rg.POST("/productRecords", handler.Create())
 	r.rg.GET("/productRecords", handler.GetAll())
-	// r.rg.GET("/productRecords/:id", handler.Get())
+	r.rg.GET("/productRecords/:id", handler.Get())
 	// r.rg.DELETE("/productRecords/:id", handler.Delete())
 	// r.rg.PATCH("/productRecords/:id", handler.Update())
 }

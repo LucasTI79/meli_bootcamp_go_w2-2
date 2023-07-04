@@ -1,7 +1,9 @@
 package productsRecords
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
@@ -54,5 +56,38 @@ func (p *ProductRecord) GetAll() gin.HandlerFunc {
 			web.Success(c, http.StatusNoContent, nil)
 		}
 		web.Success(c, http.StatusOK, productsRecords)
+	}
+}
+
+// Method Get
+// GetProductsRecords godoc
+//
+//	@Summary		Get ProductRecord
+//	@Tags			ProductsRecords
+//	@LastUpdateRate	Get the details of a ProductsRecords
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"ID of ProductRecord to be searched"
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/productsRecords/{id} [get]
+func (p *ProductRecord) Get() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, err.Error())
+			return
+		}
+		ctx := c.Request.Context()
+		productRecordResponse, err := p.productRecordService.Get(&ctx, int(id))
+		if err != nil {
+			switch err {
+			case productRecord.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error getting productRecord %s", err.Error()))
+			}
+			return
+		}
+		web.Success(c, http.StatusOK, productRecordResponse)
 	}
 }
