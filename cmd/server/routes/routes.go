@@ -5,11 +5,13 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
@@ -46,6 +48,8 @@ func (r *router) MapRoutes() {
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
+	r.buildProductRecordsRoutes()
+
 }
 
 func (r *router) setGroup() {
@@ -125,4 +129,15 @@ func (r *router) buildBuyerRoutes() {
 	buyerRoutes.POST("", buyerHandler.Create())
 	buyerRoutes.PATCH(":id", buyerHandler.Update())
 	buyerRoutes.DELETE(":id", buyerHandler.Delete())
+}
+
+func (r *router) buildProductRecordsRoutes() {
+	repo := productRecord.NewRepository(r.db)
+	service := productRecord.NewService(repo)
+	handler := productsRecords.NewProductRecord(service)
+	//	r.rg.POST("/productRecords", handler.Create())
+	r.rg.GET("/productRecords", handler.GetAll())
+	// r.rg.GET("/productRecords/:id", handler.Get())
+	// r.rg.DELETE("/productRecords/:id", handler.Delete())
+	// r.rg.PATCH("/productRecords/:id", handler.Update())
 }
