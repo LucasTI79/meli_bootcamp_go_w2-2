@@ -7,6 +7,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
+// Repository encapsulates the storage of a Product.
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.ProductRecord, error)
 	//Get(ctx context.Context, id int) (domain.Product, error)
