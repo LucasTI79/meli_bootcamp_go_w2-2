@@ -23,6 +23,7 @@ func TestCreate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		expectedSeller := &domain.Seller{
@@ -31,6 +32,7 @@ func TestCreate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		sellerRepositoryMock := mocks.NewSellerRepositoryMock()
@@ -53,6 +55,7 @@ func TestCreate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		sellerRepositoryMock := mocks.NewSellerRepositoryMock()
@@ -73,6 +76,7 @@ func TestCreate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		sellerRepositoryMock := mocks.NewSellerRepositoryMock()
@@ -97,6 +101,7 @@ func TestGet(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "Test",
+			LocalityID:  "123",
 		}
 
 		ctx := context.TODO()
@@ -135,12 +140,14 @@ func TestGetAll(t *testing.T) {
 				CompanyName: "Test",
 				Address:     "Test",
 				Telephone:   "12345",
+				LocalityID:  "123",
 			},
 			{
 				CID:         1,
 				CompanyName: "Test",
 				Address:     "Test",
 				Telephone:   "12345",
+				LocalityID:  "123",
 			},
 		}
 
@@ -166,6 +173,7 @@ func TestDelete(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		ctx := context.TODO()
@@ -201,6 +209,7 @@ func TestDelete(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		ctx := context.TODO()
@@ -225,18 +234,21 @@ func TestUpdate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		newCID := 2
 		newCompanyName := "Test2"
 		newAddress := "Test2"
 		newTelephone := "67890"
+		newLocalityID := "456"
 
 		updateSellerRequest := &dtos.UpdateSellerRequestDTO{
 			CID:         &newCID,
 			CompanyName: &newCompanyName,
 			Address:     &newAddress,
 			Telephone:   &newTelephone,
+			LocalityID:  &newLocalityID,
 		}
 
 		expectedSeller := &domain.Seller{
@@ -245,6 +257,7 @@ func TestUpdate(t *testing.T) {
 			CompanyName: "Test2",
 			Address:     "Test2",
 			Telephone:   "67890",
+			LocalityID:  "456",
 		}
 
 		ctx := context.TODO()
@@ -267,12 +280,14 @@ func TestUpdate(t *testing.T) {
 		newCompanyName := "Test2"
 		newAddress := "Test2"
 		newTelephone := "67890"
+		newLocalityID := "456"
 
 		updateSellerRequest := &dtos.UpdateSellerRequestDTO{
 			CID:         &newCID,
 			CompanyName: &newCompanyName,
 			Address:     &newAddress,
 			Telephone:   &newTelephone,
+			LocalityID:  &newLocalityID,
 		}
 
 		ctx := context.TODO()

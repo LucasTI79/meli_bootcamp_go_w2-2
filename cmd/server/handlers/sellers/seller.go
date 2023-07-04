@@ -75,26 +75,7 @@ func (s *Seller) Create() gin.HandlerFunc {
 			CompanyName: createSellerRequestDTO.CompanyName,
 			Address:     createSellerRequestDTO.Address,
 			Telephone:   createSellerRequestDTO.Telephone,
-		}
-
-		if sellerDomain.CID <= 0.0 {
-			web.Error(c, http.StatusBadRequest, "Field CID is required: %s", "")
-			return
-		}
-
-		if sellerDomain.CompanyName == "" {
-			web.Error(c, http.StatusBadRequest, "Field CompanyName is required: %s", "")
-			return
-		}
-
-		if sellerDomain.Address == "" {
-			web.Error(c, http.StatusBadRequest, "Field Address is required: %s", "")
-			return
-		}
-
-		if sellerDomain.Telephone == "" {
-			web.Error(c, http.StatusBadRequest, "Field Telephone is required: %s", "")
-			return
+			LocalityID:  createSellerRequestDTO.LocalityID,
 		}
 
 		ctx := c.Request.Context()
