@@ -15,14 +15,11 @@ var (
 )
 
 type Service interface {
-	//	Save(ctx *context.Context, description string, expiration_rate, freezing_rate int, height, length, netweight float32, product_code string,
-	//		recommended_freezing_temperature, width float32, product_type_id, seller_id int) (*domain.Product, error)
+	Save(ctx *context.Context, lastUpdateRate string, purchasePrice, salePrice float32, productId int) (*domain.ProductRecord, error)
 	GetAll(ctx *context.Context) (*[]domain.ProductRecord, error)
 	Get(ctx *context.Context, id int) (*domain.ProductRecord, error)
-	// Delete(ctx *context.Context, id int) error
-	// Update(ctx *context.Context, description *string, expiration_rate, freezing_rate *int, height, length, netweight *float32, product_code *string,
-	//
-	//	recommended_freezing_temperature, width *float32, product_type_id, seller_id *int, id int) (*domain.Product, error)
+	Delete(ctx *context.Context, id int) error
+	Update(ctx *context.Context, lastUpdateRate *string, purchasePrice, salePrice *float32, productId *int, id int) (*domain.ProductRecord, error)
 }
 
 type service struct {
@@ -56,4 +53,82 @@ func (s *service) Get(ctx *context.Context, id int) (*domain.ProductRecord, erro
 	}
 
 	return &productRecord, nil
+}
+
+func (s *service) Save(ctx *context.Context, lastUpdateRate string, purchasePrice, salePrice float32, productId int) (*domain.ProductRecord, error) {
+	existingProductRecord := s.productRecordsRepository.Exists(*ctx, productId)
+
+	if existingProductRecord {
+		return nil, ErrConflict
+	}
+
+	newProductRecord := domain.ProductRecord{
+		LastUpdateRate: lastUpdateRate,
+		PurchasePrice:  purchasePrice,
+		SalePrice:      salePrice,
+		ProductId:      productId,
+	}
+
+	productRecordId, err := s.productRecordsRepository.Save(*ctx, newProductRecord)
+	if err != nil {
+		return nil, err
+
+	}
+
+	savedProductRecord, err := s.productRecordsRepository.Get(*ctx, productRecordId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &savedProductRecord, nil
+}
+
+func (s *service) Update(ctx *context.Context, lastUpdateRate *string, purchasePrice, salePrice *float32, productId *int, id int) (*domain.ProductRecord, error) {
+	existingProductRecord, err := s.productRecordsRepository.Get(*ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	if lastUpdateRate != nil {
+		existingProductRecord.LastUpdateRate = *lastUpdateRate
+	}
+	if purchasePrice != nil {
+		existingProductRecord.PurchasePrice = *purchasePrice
+	}
+	if salePrice != nil {
+		existingProductRecord.SalePrice = *salePrice
+	}
+
+	if productId != nil {
+		existingProductRecordSearch := s.productRecordsRepository.Exists(*ctx, *productId)
+		if existingProductRecordSearch && *productId != existingProductRecord.ProductId {
+			return nil, ErrConflict
+		}
+		existingProductRecord.ProductId = *productId
+	}
+
+	err1 := s.productRecordsRepository.Update(*ctx, existingProductRecord)
+	if err1 != nil {
+		switch err1 {
+		case sql.ErrNoRows:
+			return nil, ErrNotFound
+		default:
+			return nil, err1
+		}
+	}
+
+	return &existingProductRecord, nil
+}
+
+func (s *service) Delete(ctx *context.Context, id int) error {
+	err := s.productRecordsRepository.Delete(*ctx, id)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return ErrNotFound
+		default:
+			return err
+		}
+	}
+	return nil
 }

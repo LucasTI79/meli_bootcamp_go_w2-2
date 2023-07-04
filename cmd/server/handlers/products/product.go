@@ -238,7 +238,7 @@ func (p *Product) Update() gin.HandlerFunc {
 }
 
 // Method Delete
-// DeleteSections godoc
+// DeleteProducts godoc
 //
 //	@Summary		Delete Product
 //	@Tags			Products

@@ -11,10 +11,10 @@ import (
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.ProductRecord, error)
 	Get(ctx context.Context, id int) (domain.ProductRecord, error)
-	//Exists(ctx context.Context, productCode string) bool
-	//Save(ctx context.Context, p domain.Product) (int, error)
-	//Update(ctx context.Context, p domain.Product) error
-	//Delete(ctx context.Context, id int) error
+	Exists(ctx context.Context, productId int) bool
+	Save(ctx context.Context, p domain.ProductRecord) (int, error)
+	Update(ctx context.Context, p domain.ProductRecord) error
+	Delete(ctx context.Context, id int) error
 }
 
 type repository struct {
@@ -55,4 +55,75 @@ func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, err
 	}
 
 	return p, nil
+}
+
+func (r *repository) Save(ctx context.Context, p domain.ProductRecord) (int, error) {
+	query := "INSERT INTO productsRecords(lastUpdateRate,purchasePrice,salePrice,productId) VALUES (?,?,?,?)"
+	stmt, err := r.db.Prepare(query)
+	if err != nil {
+		return 0, err
+	}
+
+	res, err := stmt.Exec(p.LastUpdateRate, p.PurchasePrice, p.SalePrice, p.ProductId)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (r *repository) Exists(ctx context.Context, productId int) bool {
+	query := "SELECT productID FROM products WHERE productID=?;"
+	row := r.db.QueryRow(query, productId)
+	err := row.Scan(&productId)
+	return err == nil
+}
+
+func (r *repository) Update(ctx context.Context, p domain.ProductRecord) error {
+	query := "UPDATE productsRecords SET lastUpdateRate=?, purchasePrice=?, salePrice=?, productId=? WHERE id=?"
+	stmt, err := r.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.Exec(p.LastUpdateRate, p.PurchasePrice, p.SalePrice, p.ProductId, p.ID)
+	if err != nil {
+		return err
+	}
+
+	_, err = res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *repository) Delete(ctx context.Context, id int) error {
+	query := "DELETE FROM productsRecords WHERE id=?"
+	stmt, err := r.db.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	res, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	affect, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if affect < 1 {
+		return ErrNotFound
+	}
+
+	return nil
 }
