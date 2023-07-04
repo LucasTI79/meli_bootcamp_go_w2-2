@@ -8,7 +8,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
-// Errors
+// Errors.
 var (
 	ErrNotFound = errors.New("productRecord not found")
 	ErrConflict = errors.New("productRecord with ProductRecord Number already exists")
