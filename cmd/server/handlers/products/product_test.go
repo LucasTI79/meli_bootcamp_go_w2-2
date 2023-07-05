@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
@@ -615,7 +616,6 @@ func TestCreate(t *testing.T) {
 }
 func TestGetAll(t *testing.T) {
 
-	/*find_all Quando a solicitação for bem-sucedida, o back-end retornará uma lista de todos os vendedores existentes - 200*/
 	t.Run("getAll_find_all", func(t *testing.T) {
 		productsFounds := &[]domain.Product{
 			{
