@@ -9,6 +9,20 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 )
 
+func LocalityTableHeaders() []string {
+	return []string{"id", "country_name", "province_name", "locality_name"}
+}
+
+const (
+	GetAllLocalities         = "SELECT localities.id, localities.country_name, localities.province_name, localities.locality_name FROM localities"
+	GetLocalityByID          = "SELECT localities.id, localities.country_name, localities.province_name, localities.locality_name FROM localities WHERE id = ?"
+	ExistsLocalityByID       = "SELECT id FROM localities WHERE id=?"
+	SaveLocality             = "INSERT INTO localities(country_name, province_name, locality_name) VALUES (?,?,?)"
+	UpdateLocality           = "UPDATE localities SET country_name=?, province_name=?, locality_name=?  WHERE id=?"
+	DeleteLocalityByID       = "DELETE FROM localities WHERE id = ?"
+	CountLocalitySellersByID = "SELECT COUNT(*) from localities where id = ?"
+)
+
 type localityRepository struct {
 	db *sql.DB
 }
@@ -20,26 +34,28 @@ func NewLocalityRepository(db *sql.DB) repositories.LocalityRepository {
 }
 
 func (r *localityRepository) GetAll(ctx context.Context) ([]entities.Locality, error) {
-	query := "SELECT * FROM localities"
-	rows, err := r.db.Query(query)
-	if err != nil {
-		return nil, err
-	}
+	localities := make([]entities.Locality, 0)
 
-	var localities []entities.Locality
+	rows, err := r.db.Query(GetAllLocalities)
+	if err != nil {
+		return localities, err
+	}
 
 	for rows.Next() {
 		locality := entities.Locality{}
-		_ = rows.Scan(&locality.ID, &locality.CountryName, &locality.ProvinceName, &locality.LocalityName)
+		err := rows.Scan(&locality.ID, &locality.CountryName, &locality.ProvinceName, &locality.LocalityName)
+		if err != nil {
+			return localities, err
+		}
+
 		localities = append(localities, locality)
 	}
 
-	return localities, nil
+	return localities, rows.Err()
 }
 
-func (r *localityRepository) Get(ctx context.Context, id string) (entities.Locality, error) {
-	query := "SELECT * FROM localities WHERE id = ?;"
-	row := r.db.QueryRow(query, id)
+func (r *localityRepository) Get(ctx context.Context, id int) (entities.Locality, error) {
+	row := r.db.QueryRow(GetLocalityByID, id)
 	locality := entities.Locality{}
 	err := row.Scan(&locality.ID, &locality.CountryName, &locality.ProvinceName, &locality.LocalityName)
 	if err != nil {
@@ -49,16 +65,15 @@ func (r *localityRepository) Get(ctx context.Context, id string) (entities.Local
 	return locality, nil
 }
 
-func (r *localityRepository) Exists(ctx context.Context, id string) bool {
-	query := "SELECT id FROM localities WHERE id=?;"
-	row := r.db.QueryRow(query, id)
-	err := row.Scan(&id)
+func (r *localityRepository) Exists(ctx context.Context, id int) bool {
+	row := r.db.QueryRow(ExistsLocalityByID, id)
+	var foundId int
+	err := row.Scan(&foundId)
 	return err == nil
 }
 
 func (r *localityRepository) Save(ctx context.Context, locality entities.Locality) (int, error) {
-	query := "INSERT INTO localities(country_name, province_name, locality_name) VALUES (?,?,?)"
-	stmt, err := r.db.Prepare(query)
+	stmt, err := r.db.Prepare(SaveLocality)
 	if err != nil {
 		return 0, err
 	}
@@ -77,8 +92,7 @@ func (r *localityRepository) Save(ctx context.Context, locality entities.Localit
 }
 
 func (r *localityRepository) Update(ctx context.Context, locality entities.Locality) error {
-	query := "UPDATE localities SET country_name=?, province_name=?, locality_name=?  WHERE id=?"
-	stmt, err := r.db.Prepare(query)
+	stmt, err := r.db.Prepare(UpdateLocality)
 	if err != nil {
 		return err
 	}
@@ -96,9 +110,8 @@ func (r *localityRepository) Update(ctx context.Context, locality entities.Local
 	return nil
 }
 
-func (r *localityRepository) Delete(ctx context.Context, id string) error {
-	query := "DELETE FROM localities WHERE id = ?"
-	stmt, err := r.db.Prepare(query)
+func (r *localityRepository) Delete(ctx context.Context, id int) error {
+	stmt, err := r.db.Prepare(DeleteLocalityByID)
 	if err != nil {
 		return err
 	}
@@ -120,14 +133,10 @@ func (r *localityRepository) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *localityRepository) GetNumberOfSellers(ctx context.Context, id string) (int, error) {
-	query := "SELECT COUNT(*) FROM localities WHERE id = ?;"
-
+func (r *localityRepository) GetNumberOfSellers(ctx context.Context, id int) (int, error) {
 	count := 0
-	err := r.db.QueryRow(query, id).Scan(&count)
-	if err != nil {
-		return 0, err
-	}
+	row := r.db.QueryRow(CountLocalitySellersByID, id)
+	err := row.Scan(&count)
 
-	return count, nil
+	return count, err
 }

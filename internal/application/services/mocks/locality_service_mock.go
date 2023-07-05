@@ -15,7 +15,7 @@ func NewLocalityServiceMock() *LocalityServiceMock {
 	return &LocalityServiceMock{}
 }
 
-func (service *LocalityServiceMock) Get(ctx *context.Context, id string) (entities.Locality, error) {
+func (service *LocalityServiceMock) Get(ctx *context.Context, id int) (entities.Locality, error) {
 	args := service.Called(ctx, id)
 
 	return args.Get(0).(entities.Locality), args.Error(1)
@@ -33,19 +33,19 @@ func (service *LocalityServiceMock) Create(ctx *context.Context, locality entiti
 	return args.Get(0).(entities.Locality), args.Error(1)
 }
 
-func (service *LocalityServiceMock) Update(ctx *context.Context, id string, updateLocalityRequest dtos.UpdateLocalityRequestDTO) (entities.Locality, error) {
+func (service *LocalityServiceMock) Update(ctx *context.Context, id int, updateLocalityRequest dtos.UpdateLocalityRequestDTO) (entities.Locality, error) {
 	args := service.Called(ctx, id, updateLocalityRequest)
 
 	return args.Get(0).(entities.Locality), args.Error(1)
 }
 
-func (service *LocalityServiceMock) Delete(ctx *context.Context, id string) error {
+func (service *LocalityServiceMock) Delete(ctx *context.Context, id int) error {
 	args := service.Called(ctx, id)
 
 	return args.Error(0)
 }
 
-func (service *LocalityServiceMock) CountSellers(ctx *context.Context, id string) (int, error) {
+func (service *LocalityServiceMock) CountSellers(ctx *context.Context, id int) (int, error) {
 	args := service.Called(ctx, id)
 
 	return args.Get(0).(int), args.Error(1)

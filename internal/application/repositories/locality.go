@@ -7,10 +7,10 @@ import (
 
 type LocalityRepository interface {
 	GetAll(ctx context.Context) ([]entities.Locality, error)
-	Get(ctx context.Context, id string) (entities.Locality, error)
-	Exists(ctx context.Context, id string) bool
+	Get(ctx context.Context, id int) (entities.Locality, error)
+	Exists(ctx context.Context, id int) bool
 	Save(ctx context.Context, locality entities.Locality) (int, error)
 	Update(ctx context.Context, locality entities.Locality) error
-	Delete(ctx context.Context, id string) error
-	GetNumberOfSellers(ctx context.Context, id string) (int, error)
+	Delete(ctx context.Context, id int) error
+	GetNumberOfSellers(ctx context.Context, id int) (int, error)
 }

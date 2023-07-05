@@ -45,7 +45,7 @@ func (handler *LocalityHandler) Get() gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-		if locality, err := handler.localityService.Get(&ctx, strconv.Itoa(id)); err != nil {
+		if locality, err := handler.localityService.Get(&ctx, id); err != nil {
 			switch err {
 			case services.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -157,7 +157,7 @@ func (handler *LocalityHandler) Update() gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-		if updatedLocality, err := handler.localityService.Update(&ctx, strconv.Itoa(id), updateLocalityRequest); err != nil {
+		if updatedLocality, err := handler.localityService.Update(&ctx, id, updateLocalityRequest); err != nil {
 			switch err {
 			case services.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -197,7 +197,7 @@ func (handler *LocalityHandler) Delete() gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-		if err := handler.localityService.Delete(&ctx, strconv.Itoa(id)); err != nil {
+		if err := handler.localityService.Delete(&ctx, id); err != nil {
 			switch err {
 			case services.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -236,7 +236,7 @@ func (handler *LocalityHandler) CountSellers() gin.HandlerFunc {
 
 		ctx := c.Request.Context()
 
-		locality, err := handler.localityService.Get(&ctx, strconv.Itoa(id))
+		locality, err := handler.localityService.Get(&ctx, id)
 		if err != nil {
 			switch err {
 			case services.ErrNotFound:
@@ -247,7 +247,7 @@ func (handler *LocalityHandler) CountSellers() gin.HandlerFunc {
 			return
 		}
 
-		count, err := handler.localityService.CountSellers(&ctx, strconv.Itoa(id))
+		count, err := handler.localityService.CountSellers(&ctx, id)
 		if err != nil {
 			web.Error(c, http.StatusInternalServerError, err.Error())
 			return

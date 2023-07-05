@@ -21,14 +21,14 @@ func (repository *LocalityRepositoryMock) GetAll(ctx context.Context) ([]entitie
 	return args.Get(0).([]entities.Locality), args.Error(1)
 }
 
-func (repository *LocalityRepositoryMock) Get(ctx context.Context, id string) (entities.Locality, error) {
+func (repository *LocalityRepositoryMock) Get(ctx context.Context, id int) (entities.Locality, error) {
 	args := repository.Called(ctx, id)
 
 	return args.Get(0).(entities.Locality), args.Error(1)
 }
 
-func (repository *LocalityRepositoryMock) Exists(ctx context.Context, cardNumberID string) bool {
-	args := repository.Called(ctx, cardNumberID)
+func (repository *LocalityRepositoryMock) Exists(ctx context.Context, id int) bool {
+	args := repository.Called(ctx, id)
 
 	return args.Get(0).(bool)
 }
@@ -45,13 +45,13 @@ func (repository *LocalityRepositoryMock) Update(ctx context.Context, b entities
 	return args.Error(0)
 }
 
-func (repository *LocalityRepositoryMock) Delete(ctx context.Context, id string) error {
+func (repository *LocalityRepositoryMock) Delete(ctx context.Context, id int) error {
 	args := repository.Called(ctx, id)
 
 	return args.Error(0)
 }
 
-func (repository *LocalityRepositoryMock) GetNumberOfSellers(ctx context.Context, id string) (int, error) {
+func (repository *LocalityRepositoryMock) GetNumberOfSellers(ctx context.Context, id int) (int, error) {
 	args := repository.Called(ctx, id)
 
 	return args.Get(0).(int), args.Error(1)
