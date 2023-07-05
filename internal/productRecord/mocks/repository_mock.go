@@ -27,11 +27,11 @@ func (_m *ProductRecordRepositoryMock) Delete(ctx context.Context, id int) error
 }
 
 // Exists provides a mock function with given fields: ctx, productCode
-func (_m *ProductRecordRepositoryMock) Exists(ctx context.Context, ProductId string) bool {
+func (_m *ProductRecordRepositoryMock) Exists(ctx context.Context, ProductId int) bool {
 	ret := _m.Called(ctx, ProductId)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(context.Context, string) bool); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) bool); ok {
 		r0 = rf(ctx, ProductId)
 	} else {
 		r0 = ret.Get(0).(bool)
