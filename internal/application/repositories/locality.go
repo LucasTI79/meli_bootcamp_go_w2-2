@@ -12,5 +12,5 @@ type LocalityRepository interface {
 	Save(ctx context.Context, locality entities.Locality) (int, error)
 	Update(ctx context.Context, locality entities.Locality) error
 	Delete(ctx context.Context, id int) error
-	GetNumberOfSellers(ctx context.Context, id int) (int, error)
+	CountSellers(ctx context.Context, id int) (int, error)
 }

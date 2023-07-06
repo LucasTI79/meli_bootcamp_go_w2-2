@@ -451,7 +451,7 @@ func Test_localityRepository_GetNumberOfSellers(t *testing.T) {
 				WithArgs(tt.args.id).
 				WillReturnRows(rows)
 
-			got, err := r.GetNumberOfSellers(tt.args.ctx, tt.args.id)
+			got, err := r.CountSellers(tt.args.ctx, tt.args.id)
 
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err != nil)

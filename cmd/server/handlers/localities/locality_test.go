@@ -69,7 +69,7 @@ func TestGet(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			localityServiceMock := mocks.NewLocalityServiceMock()
+			localityServiceMock := mocks.NewMockLocalityService(t)
 			localityServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedLocality, test.expectedGetError)
 
 			localityHandler := localities.NewLocalityHandler(localityServiceMock)
@@ -153,7 +153,7 @@ func TestGetAll(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			localityServiceMock := mocks.NewLocalityServiceMock()
+			localityServiceMock := mocks.NewMockLocalityService(t)
 			localityServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(test.expectedGetAllResult, test.expectedGetAllError)
 
 			localityHandler := localities.NewLocalityHandler(localityServiceMock)
@@ -233,7 +233,7 @@ func TestDelete(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			localityServiceMock := mocks.NewLocalityServiceMock()
+			localityServiceMock := mocks.NewMockLocalityService(t)
 			localityServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedDeleteError)
 
 			localityHandler := localities.NewLocalityHandler(localityServiceMock)
@@ -312,7 +312,7 @@ func TestCreate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			localityServiceMock := mocks.NewLocalityServiceMock()
+			localityServiceMock := mocks.NewMockLocalityService(t)
 			localityServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("entities.Locality")).Return(test.expectedCreateResult, test.expectedCreateError)
 
 			localityHandler := handlers.NewLocalityHandler(localityServiceMock)
@@ -433,7 +433,7 @@ func TestUpdate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			localityServiceMock := mocks.NewLocalityServiceMock()
+			localityServiceMock := mocks.NewMockLocalityService(t)
 			localityServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("dtos.UpdateLocalityRequestDTO")).Return(test.expectedUpdateResult, test.expectedUpdateError)
 
 			localityHandler := localities.NewLocalityHandler(localityServiceMock)
@@ -554,7 +554,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			localityServiceMock := mocks.NewLocalityServiceMock()
+			localityServiceMock := mocks.NewMockLocalityService(t)
 			localityServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
 			localityServiceMock.On("CountSellers", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedCountSellersResult, test.expectedCountSellersError)
 

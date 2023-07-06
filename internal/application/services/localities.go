@@ -46,10 +46,10 @@ func (service *localityService) GetAll(ctx *context.Context) ([]entities.Localit
 	localities := make([]entities.Locality, 0)
 
 	localities, err := service.localityRepository.GetAll(*ctx)
-
 	if err != nil {
-		return nil, err
+		return localities, err
 	}
+
 	return localities, nil
 }
 
@@ -112,7 +112,7 @@ func (service *localityService) Delete(ctx *context.Context, id int) error {
 }
 
 func (service *localityService) CountSellers(ctx *context.Context, id int) (int, error) {
-	count, err := service.localityRepository.GetNumberOfSellers(*ctx, id)
+	count, err := service.localityRepository.CountSellers(*ctx, id)
 	if err != nil {
 		return 0, err
 	}

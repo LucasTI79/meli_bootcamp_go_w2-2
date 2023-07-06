@@ -133,7 +133,7 @@ func (r *localityRepository) Delete(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r *localityRepository) GetNumberOfSellers(ctx context.Context, id int) (int, error) {
+func (r *localityRepository) CountSellers(ctx context.Context, id int) (int, error) {
 	count := 0
 	row := r.db.QueryRow(CountLocalitySellersByID, id)
 	err := row.Scan(&count)
