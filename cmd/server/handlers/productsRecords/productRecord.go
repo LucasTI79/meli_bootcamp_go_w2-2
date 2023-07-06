@@ -166,7 +166,7 @@ func (p *ProductRecord) Update() gin.HandlerFunc {
 			return
 		}
 		var req RequestUpdateProductRecord
-		if err := c.Bind(&req); err != nil {
+		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}

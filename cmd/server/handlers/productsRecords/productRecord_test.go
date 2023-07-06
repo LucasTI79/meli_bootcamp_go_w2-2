@@ -4,18 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord/mocks"
-
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/assert/v2"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -115,7 +116,7 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
-			mock.AnythingOfType("int")).Return(&domain.ProductRecord{})
+			mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, assert.AnError)
 		handler := productsRecords.NewProductRecord(productRecordServiceMock)
 
 		//Configurar o servidor
@@ -188,6 +189,29 @@ func TestCreate(t *testing.T) {
 		//Validar resultado
 		assert.Equal(t, http.StatusCreated, res.Code)
 		assert.Equal(t, *expectedProductRecord, *actualProductRecord)
+	})
+
+	t.Run("create_fail", func(t *testing.T) {
+		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
+			LastUpdateRate: "Test",
+			PurchasePrice:  1.1,
+			SalePrice:      1.1,
+			ProductId:      1,
+		}
+
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+		productRecordServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createProductRecordRequestDTO, productRecord.ErrConflict)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/productsRecords", handler.Create())
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/productsRecords", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
 	t.Run("create_fail_last_update_rate", func(t *testing.T) {
@@ -271,7 +295,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("create_product_id_nil", func(t *testing.T) {
+	t.Run("create_product_record_id_nil", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRecordRequestDTO := buildProductRecordRequestDTO("teste", 2.2, 2.2, 0)
 
@@ -442,7 +466,7 @@ func TestGetAll(t *testing.T) {
 		productsRecordsFounds := &[]domain.ProductRecord{}
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
-		productRecordServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsRecordsFounds)
+		productRecordServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsRecordsFounds, assert.AnError)
 		handler := productsRecords.NewProductRecord(productRecordServiceMock)
 
 		//Configurar o servidor
@@ -537,7 +561,7 @@ func TestDelete(t *testing.T) {
 
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
-		productRecordServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return()
+		productRecordServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
 		handler := productsRecords.NewProductRecord(productRecordServiceMock)
 
 		//Configurar o servidor
@@ -713,7 +737,7 @@ func TestUpdate(t *testing.T) {
 		//Validar resultado
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
 	})
-	t.Run("id_conversion_error", func(t *testing.T) {
+	t.Run("update_id_conversion_error", func(t *testing.T) {
 
 		lastUpdaterate := "teste2"
 		var purchasePrice float32 = 2.2
@@ -830,6 +854,48 @@ func TestUpdate(t *testing.T) {
 
 	})
 
+	t.Run("update_status_unprocessable_entity", func(t *testing.T) {
+		server, mockService, handler := InitServerWithGetProductsRecords(t)
+		mockService.On("Update",
+			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
+		).Return(&domain.ProductRecord{}, errors.New("error"))
+		server.PATCH("/api/v1/productsRecords/:id", handler.Update())
+
+		//Definir request e response
+		request := httptest.NewRequest(http.MethodPatch, "/api/v1/productsRecords/2", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		//Parsear response
+		bodyResponse, _ := io.ReadAll(response.Body)
+
+		var responseProductRecord struct {
+			Data *domain.ProductRecord `json:"data"`
+		}
+		json.Unmarshal(bodyResponse, &responseProductRecord)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
+	})
+
+}
+
+func buildProductRequestDTO(description string, expirationRate int, freezinRate int, height float32, length float32, netweight float32, productCode string,
+	recomFreezTemp float32, width float32, productTypeID int, sellerId int) products.RequestCreateProduct {
+	return products.RequestCreateProduct{
+		Description:    description,
+		ExpirationRate: expirationRate,
+		FreezingRate:   freezinRate,
+		Height:         height,
+		Length:         length,
+		Netweight:      netweight,
+		ProductCode:    productCode,
+		RecomFreezTemp: recomFreezTemp,
+		Width:          width,
+		ProductTypeID:  productTypeID,
+		SellerID:       sellerId,
+	}
+
 }
 
 func buildProductRecordRequestDTO(lastUpdaterate string, purchasePrice float32, salePrice float32, productID int) productsRecords.RequestCreateProductRecord {
@@ -839,4 +905,18 @@ func buildProductRecordRequestDTO(lastUpdaterate string, purchasePrice float32, 
 		SalePrice:      salePrice,
 		ProductId:      productID,
 	}
+}
+
+func InitServerWithGetProductsRecords(t *testing.T) (*gin.Engine, *mocks.ProductRecordServiceMock, *productsRecords.ProductRecord) {
+	t.Helper()
+	server := createServer()
+	mockService := new(mocks.ProductRecordServiceMock)
+	handler := productsRecords.NewProductRecord(mockService)
+	return server, mockService, handler
+}
+func createServer() *gin.Engine {
+	//Configurar o servidor
+	gin.SetMode(gin.TestMode)
+	server := gin.Default()
+	return server
 }
