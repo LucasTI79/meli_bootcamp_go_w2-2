@@ -240,8 +240,6 @@ func Test_localityRepository_Save(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	id := locality.ID
-
 	tests := []struct {
 		name    string
 		fields  fields
@@ -258,7 +256,7 @@ func Test_localityRepository_Save(t *testing.T) {
 				ctx:      ctx,
 				locality: locality,
 			},
-			want:    id,
+			want:    locality.ID,
 			wantErr: false,
 		},
 		// TODO Return errors

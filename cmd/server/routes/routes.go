@@ -56,7 +56,7 @@ func (r *router) setGroup() {
 }
 
 func (r *router) buildSellerRoutes() {
-	repo := seller.NewRepository(r.db)
+	repo := seller.NewSellerRepository(r.db)
 	service := seller.NewService(repo)
 	handler := sellers.NewSeller(service)
 	r.rg.POST("/sellers", handler.Create())
