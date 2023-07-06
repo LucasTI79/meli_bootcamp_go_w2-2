@@ -4,12 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	productbatcheshandler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/product_batches_handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	prodBatches"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productbatches"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
@@ -43,6 +45,7 @@ func (r *router) MapRoutes() {
 	r.buildSellerRoutes()
 	r.buildProductRoutes()
 	r.buildSectionRoutes()
+	r.buildProductBatchesRoutes()
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
@@ -83,6 +86,13 @@ func (r *router) buildSectionRoutes() {
 	r.rg.GET("/sections/:id", handler.Get())
 	r.rg.DELETE("/sections/:id", handler.Delete())
 	r.rg.PATCH("/sections/:id", handler.Update())
+}
+func (r *router) buildProductBatchesRoutes() {
+	repo := prodBatches.NewRepository(r.db)
+	service := prodBatches.NewService(repo)
+	handler := productbatcheshandler.NewProductBatches(service)
+	r.rg.POST("/productBatches", handler.Create())
+	r.rg.GET("/sections/reportProducts/:id", handler.Get())
 }
 
 func (r *router) buildWarehouseRoutes() {
