@@ -13,7 +13,7 @@ import (
 
 var (
 	ErrNotFound = errors.New("inbound orders not found")
-	ErrConflict = errors.New("409 Conflict: Inboud Orders with ID already exists")
+	ErrConflict = errors.New("409 Conflict: Inbound Orders with ID already exists")
 )
 
 type InboundOrders struct {
