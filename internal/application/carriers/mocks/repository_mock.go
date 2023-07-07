@@ -7,12 +7,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type Repository interface {
-	GetAll(ctx context.Context) ([]domain.Carrier, error)
-	Exists(ctx context.Context, cid string) bool
-	Save(ctx context.Context, w domain.Carrier) (int, error)
-}
-
 type CarrierRepositoryMock struct {
 	mock.Mock
 }

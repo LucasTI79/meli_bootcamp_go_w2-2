@@ -1,14 +1,18 @@
 package carriers_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	carrier_handler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers/mocks"
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/warehouse/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -34,9 +38,9 @@ func TestGetAll(t *testing.T) {
 				LocalityId:  6701,
 			},
 		}
-		carrierServiceMock := new(mocks.CarriersServiceMock)
+		carrierServiceMock := new(mocks.CarrierServiceMock)
 		carrierServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(carriersFounds, nil)
-		handler := carrier_handler.NewWarehouse(carrierServiceMock)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -58,14 +62,14 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("empty_database", func(t *testing.T) {
-		warehousesFounds := &[]domain.Warehouse{}
-		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(warehousesFounds, nil)
-		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
+		carriersFounds := &[]domain.Carrier{}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(carriersFounds, nil)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/warehouses", handler.GetAll())
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses", nil)
+		r.GET("/api/v1/carriers", handler.GetAll())
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/carriers", nil)
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 
@@ -73,19 +77,225 @@ func TestGetAll(t *testing.T) {
 	})
 
 	t.Run("internal_server_error", func(t *testing.T) {
-		warehousesFounds := &[]domain.Warehouse{}
-		warehouseServiceMock := new(mocks.WarehouseServiceMock)
-		warehouseServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(warehousesFounds, assert.AnError)
-		handler := warehouse_handler.NewWarehouse(warehouseServiceMock)
+		carriersFounds := &[]domain.Carrier{}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(carriersFounds, assert.AnError)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/warehouses", handler.GetAll())
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/warehouses", nil)
+		r.GET("/api/v1/carriers", handler.GetAll())
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/carriers", nil)
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
 
+	})
+}
+
+func TestCreate(t *testing.T) {
+	t.Run("create_ok", func(t *testing.T) {
+		expectedCarrier := &domain.Carrier{
+			ID:          1,
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("dtos.CarrierRequestDTO")).Return(expectedCarrier, nil)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		bodyReturn, _ := ioutil.ReadAll(res.Body)
+		var responseDTO struct {
+			Data *domain.Carrier `json:"data"`
+		}
+		json.Unmarshal(bodyReturn, &responseDTO)
+		actualCarrier := responseDTO.Data
+
+		assert.Equal(t, http.StatusCreated, res.Code)
+		assert.Equal(t, *expectedCarrier, *actualCarrier)
+	})
+	t.Run("create_fail", func(t *testing.T) {
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createCarrierRequestDTO, carriers.ErrUnprocessableEntity)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", nil)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+	t.Run("create_conflit", func(t *testing.T) {
+		expectedCarrier := &domain.Carrier{}
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("dtos.CarrierRequestDTO")).Return(expectedCarrier, carriers.ErrConflict)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+		assert.Equal(t, http.StatusConflict, res.Code)
+	})
+	t.Run("create_fail_cid_nil", func(t *testing.T) {
+
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+	t.Run("create_fail_company_name_nil", func(t *testing.T) {
+
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:        "CID#1",
+			Address:    "corrientes 800",
+			Telephone:  "4567-4567",
+			LocalityId: 6700,
+		}
+
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+	t.Run("create_fail_address_nil", func(t *testing.T) {
+
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+	t.Run("create_fail_telephone_nil", func(t *testing.T) {
+
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			LocalityId:  6700,
+		}
+
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+	t.Run("create_fail_locality_id_nil", func(t *testing.T) {
+
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+		}
+
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/carriers", handler.Create())
+
+		requestBody, _ := json.Marshal(createCarrierRequestDTO)
+		request := bytes.NewReader(requestBody)
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/carriers", request)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
 	})
 }
