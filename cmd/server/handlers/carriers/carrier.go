@@ -99,10 +99,9 @@ func CarrierFullRequestValidator(c *gin.Context, req dtos.CarrierRequestDTO) err
 	return nil
 }
 
-func (carrier *Carrier) GetReportCarriersByLocalities(c *gin.Context) gin.HandlerFunc {
+func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-
 		type Response struct {
 			locality_id   int
 			locality_name string
