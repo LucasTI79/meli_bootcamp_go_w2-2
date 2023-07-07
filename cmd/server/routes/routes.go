@@ -135,7 +135,7 @@ func (r *router) buildLocalityRoutes() {
 	localityService := services.NewLocalityService(localityRepository)
 	localityHandler := handlers.NewLocalityHandler(localityService)
 
-	localityRoutes := r.rg.Group("/locality.go/")
+	localityRoutes := r.rg.Group("/localities/")
 	localityRoutes.GET(":id", localityHandler.Get())
 	localityRoutes.GET("", localityHandler.GetAll())
 	localityRoutes.POST("", localityHandler.Create())
