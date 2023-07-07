@@ -118,7 +118,7 @@ func (r *router) buildBuyerRoutes() {
 	buyerService := buyer.NewService(buyerRepository)
 
 	purchaseOrdersRepository := repositories.NewPurchaseOrderRepository(r.db)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrdersRepository)
+	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrdersRepository, buyerRepository)
 
 	buyerHandler := buyers.NewBuyerHandler(buyerService, purchaseOrderService)
 
@@ -152,7 +152,8 @@ func (r *router) buildLocalityRoutes() {
 
 func (r *router) buildPurchaseOrderRoutes() {
 	purchaseOrderRepository := repositories.NewPurchaseOrderRepository(r.db)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepository)
+	buyerRepository := buyer.NewRepository(r.db)
+	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepository, buyerRepository)
 	purchaseOrderHandler := purchase_orders.NewPurchaseOrderHandler(purchaseOrderService)
 
 	purchaseOrderRoutes := r.rg.Group("/purchase-orders/")

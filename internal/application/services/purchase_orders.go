@@ -4,6 +4,7 @@ import (
 	"context"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 )
 
@@ -24,11 +25,13 @@ type PurchaseOrderService interface {
 
 type purchaseOrderService struct {
 	purchaseOrderRepository repositories.PurchaseOrderRepository
+	buyerRepository         buyer.Repository
 }
 
-func NewPurchaseOrderService(r repositories.PurchaseOrderRepository) PurchaseOrderService {
+func NewPurchaseOrderService(r repositories.PurchaseOrderRepository, buyerRepository buyer.Repository) PurchaseOrderService {
 	return &purchaseOrderService{
 		purchaseOrderRepository: r,
+		buyerRepository:         buyerRepository,
 	}
 }
 
@@ -133,6 +136,11 @@ func (service *purchaseOrderService) Delete(ctx *context.Context, id int) error 
 }
 
 func (service *purchaseOrderService) CountByBuyerID(ctx *context.Context, buyerID int) (int, error) {
+	_, err := service.buyerRepository.Get(*ctx, buyerID)
+	if err != nil {
+		return 0, err
+	}
+
 	count, err := service.purchaseOrderRepository.CountByBuyerID(*ctx, buyerID)
 	if err != nil {
 		return 0, err
