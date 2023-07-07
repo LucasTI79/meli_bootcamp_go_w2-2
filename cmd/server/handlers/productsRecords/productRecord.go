@@ -1,6 +1,7 @@
 package productsRecords
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -261,5 +262,19 @@ func (p *ProductRecord) NumberRecords() gin.HandlerFunc {
 		return
 
 	}
+
+}
+
+func getIdFromUri(c *gin.Context) (id int, err error) {
+
+	value, _ := c.Params.Get("id")
+	id, err = strconv.Atoi(value)
+
+	if err != nil {
+		err = errors.New(fmt.Sprintf("Invalid id on request: %s", c.Request.RequestURI))
+		return
+	}
+
+	return
 
 }

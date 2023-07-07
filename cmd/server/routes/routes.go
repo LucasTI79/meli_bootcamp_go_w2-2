@@ -137,9 +137,10 @@ func (r *router) buildProductRecordsRoutes() {
 	productRepository := product.NewRepository(r.db)
 	productService := product.NewService(productRepository)
 	handler := productsRecords.NewProductRecord(productRecordService, productService)
-	//	r.rg.POST("/productRecords", handler.Create())
+
+	r.rg.POST("/productRecords", handler.Create())
 	r.rg.GET("/productRecords", handler.GetAll())
 	r.rg.GET("/productRecords/:id", handler.Get())
-	// r.rg.DELETE("/productRecords/:id", handler.Delete())
-	// r.rg.PATCH("/productRecords/:id", handler.Update())
+	r.rg.DELETE("/productRecords/:id", handler.Delete())
+	r.rg.PATCH("/productRecords/:id", handler.Update())
 }
