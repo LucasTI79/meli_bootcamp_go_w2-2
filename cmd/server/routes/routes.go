@@ -132,9 +132,11 @@ func (r *router) buildBuyerRoutes() {
 }
 
 func (r *router) buildProductRecordsRoutes() {
-	repo := productRecord.NewRepository(r.db)
-	service := productRecord.NewService(repo)
-	handler := productsRecords.NewProductRecord(service)
+	productRecordRepository := productRecord.NewRepository(r.db)
+	productRecordService := productRecord.NewService(productRecordRepository)
+	productRepository := product.NewRepository(r.db)
+	productService := product.NewService(productRepository)
+	handler := productsRecords.NewProductRecord(productRecordService, productService)
 	//	r.rg.POST("/productRecords", handler.Create())
 	r.rg.GET("/productRecords", handler.GetAll())
 	r.rg.GET("/productRecords/:id", handler.Get())

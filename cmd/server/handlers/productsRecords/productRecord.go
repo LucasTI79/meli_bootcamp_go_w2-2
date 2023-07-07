@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
@@ -26,11 +28,12 @@ type RequestUpdateProductRecord struct {
 
 type ProductRecord struct {
 	productRecordService productRecord.Service
+	productService       product.Service
 }
 
-func NewProductRecord(p productRecord.Service) *ProductRecord {
+func NewProductRecord(p productRecord.Service, ps product.Service) *ProductRecord {
 	return &ProductRecord{
-		productRecordService: p,
+		productRecordService: p, productService: ps,
 	}
 }
 
@@ -219,4 +222,44 @@ func (p *ProductRecord) Delete() gin.HandlerFunc {
 
 		web.Success(c, http.StatusNoContent, nil)
 	}
+}
+
+func (p *ProductRecord) NumberRecords() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+			return
+		}
+
+		ctx := c.Request.Context()
+
+		product, err := p.productService.Get(&ctx, id)
+		if err != nil {
+			switch err {
+			case productRecord.ErrNotFound:
+				web.Error(c, http.StatusNotFound, err.Error())
+			default:
+				web.Error(c, http.StatusInternalServerError, err.Error())
+			}
+			return
+		}
+
+		count, err := p.productRecordService.NumberRecords(&ctx, id)
+		if err != nil {
+			web.Error(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		response := dtos.GetNumberOfRecordsResponseDTO{
+			ProductID:    product.ID,
+			Description:  product.Description,
+			RecordsCount: count,
+		}
+
+		web.Success(c, http.StatusOK, response)
+		return
+
+	}
+
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	mocks2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord/mocks"
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,8 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(productRecordFound, nil)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
@@ -70,8 +72,8 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrNotFound)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -93,8 +95,8 @@ func TestGet(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrNotFound)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -117,8 +119,8 @@ func TestGet(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
 			mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, assert.AnError)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -158,8 +160,8 @@ func TestCreate(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(expectedProductRecord, nil)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -201,8 +203,8 @@ func TestCreate(t *testing.T) {
 
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createProductRecordRequestDTO, productRecord.ErrConflict)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
 		r.POST("/api/v1/productsRecords", handler.Create())
@@ -221,8 +223,8 @@ func TestCreate(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrConflict)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -248,8 +250,8 @@ func TestCreate(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrConflict)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -275,8 +277,8 @@ func TestCreate(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrConflict)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -302,8 +304,8 @@ func TestCreate(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrConflict)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -334,8 +336,8 @@ func TestCreate(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, productRecord.ErrConflict)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -367,8 +369,8 @@ func TestCreate(t *testing.T) {
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("float32"), mock.AnythingOfType("int")).Return(&domain.ProductRecord{}, errors.New("error"))
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -410,8 +412,8 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsRecordsFounds, nil)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -444,8 +446,8 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsRecordsFounds, nil)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -467,8 +469,8 @@ func TestGetAll(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsRecordsFounds, assert.AnError)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -493,8 +495,8 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(productRecord.ErrNotFound)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -516,8 +518,8 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -539,8 +541,8 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -562,8 +564,8 @@ func TestDelete(t *testing.T) {
 		//Configurar o mock do service
 		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
 		productRecordServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -604,8 +606,8 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.ProductRecord{}, productRecord.ErrNotFound,
 		)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -656,8 +658,8 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.ProductRecord{}, productRecord.ErrConflict,
 		)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -708,8 +710,8 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.ProductRecord{}, errors.New("error"),
 		)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -759,8 +761,8 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			&domain.ProductRecord{}, errors.New("error"),
 		)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -820,8 +822,8 @@ func TestUpdate(t *testing.T) {
 		).Return(
 			updatedProductRecord, nil,
 		)
-		handler := productsRecords.NewProductRecord(productRecordServiceMock)
-
+		productServiceMock := new(mocks2.ProductServiceMock)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
 		//Configurar o servidor
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
@@ -910,9 +912,10 @@ func buildProductRecordRequestDTO(lastUpdaterate string, purchasePrice float32, 
 func InitServerWithGetProductsRecords(t *testing.T) (*gin.Engine, *mocks.ProductRecordServiceMock, *productsRecords.ProductRecord) {
 	t.Helper()
 	server := createServer()
-	mockService := new(mocks.ProductRecordServiceMock)
-	handler := productsRecords.NewProductRecord(mockService)
-	return server, mockService, handler
+	mockProductRecordService := new(mocks.ProductRecordServiceMock)
+	mockProductService := new(mocks2.ProductServiceMock)
+	handler := productsRecords.NewProductRecord(mockProductRecordService, mockProductService)
+	return server, mockProductRecordService, handler
 }
 func createServer() *gin.Engine {
 	//Configurar o servidor

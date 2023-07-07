@@ -38,3 +38,9 @@ func (service *ProductRecordServiceMock) Delete(ctx *context.Context, id int) er
 
 	return args.Error(0)
 }
+
+func (service *ProductRecordServiceMock) NumberRecords(ctx *context.Context, product_id int) (int, error) {
+	args := service.Called(ctx, product_id)
+
+	return args.Get(0).(int), args.Error(1)
+}

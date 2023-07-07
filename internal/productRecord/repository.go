@@ -15,6 +15,7 @@ type Repository interface {
 	Save(ctx context.Context, p domain.ProductRecord) (int, error)
 	Update(ctx context.Context, p domain.ProductRecord) error
 	Delete(ctx context.Context, id int) error
+	NumberRecords(ctx context.Context, id int) (int, error)
 }
 
 type repository struct {
@@ -28,25 +29,25 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.ProductRecord, error) {
-	query := "SELECT * FROM productsRecords;"
+	query := "SELECT * FROM product_records;"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
 	}
 
-	var productsRecords []domain.ProductRecord
+	var product_records []domain.ProductRecord
 
 	for rows.Next() {
 		p := domain.ProductRecord{}
 		_ = rows.Scan(&p.ID, &p.LastUpdateRate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
-		productsRecords = append(productsRecords, p)
+		product_records = append(product_records, p)
 	}
 
-	return productsRecords, nil
+	return product_records, nil
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, error) {
-	query := "SELECT * FROM productsRecords WHERE id=?;"
+	query := "SELECT * FROM product_records WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	p := domain.ProductRecord{}
 	err := row.Scan(&p.ID, &p.LastUpdateRate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
@@ -58,7 +59,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, err
 }
 
 func (r *repository) Save(ctx context.Context, p domain.ProductRecord) (int, error) {
-	query := "INSERT INTO productsRecords(lastUpdateRate,purchasePrice,salePrice,productId) VALUES (?,?,?,?)"
+	query := "INSERT INTO product_records(last_update_rate,purchase_price,sale_price,product_id) VALUES (?,?,?,?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
@@ -77,15 +78,15 @@ func (r *repository) Save(ctx context.Context, p domain.ProductRecord) (int, err
 	return int(id), nil
 }
 
-func (r *repository) Exists(ctx context.Context, productId int) bool {
-	query := "SELECT productID FROM products WHERE productID=?;"
-	row := r.db.QueryRow(query, productId)
-	err := row.Scan(&productId)
+func (r *repository) Exists(ctx context.Context, id int) bool {
+	query := "SELECT id FROM products WHERE id=?;"
+	row := r.db.QueryRow(query, id)
+	err := row.Scan(&id)
 	return err == nil
 }
 
 func (r *repository) Update(ctx context.Context, p domain.ProductRecord) error {
-	query := "UPDATE productsRecords SET lastUpdateRate=?, purchasePrice=?, salePrice=?, productId=? WHERE id=?"
+	query := "UPDATE product_records SET last_update_rate=?, purchase_price=?, sale_price=?, product_id=? WHERE id=?"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
@@ -105,7 +106,7 @@ func (r *repository) Update(ctx context.Context, p domain.ProductRecord) error {
 }
 
 func (r *repository) Delete(ctx context.Context, id int) error {
-	query := "DELETE FROM productsRecords WHERE id=?"
+	query := "DELETE FROM product_records WHERE id=?"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
@@ -126,4 +127,12 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func (r *repository) NumberRecords(ctx context.Context, product_id int) (int, error) {
+	count := 0
+	row := r.db.QueryRow("SELECT COUNT (*) from product_records where product_id =?", product_id)
+	err := row.Scan(&count)
+
+	return count, err
 }

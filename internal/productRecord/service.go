@@ -20,6 +20,7 @@ type Service interface {
 	Get(ctx *context.Context, id int) (*domain.ProductRecord, error)
 	Delete(ctx *context.Context, id int) error
 	Update(ctx *context.Context, lastUpdateRate *string, purchasePrice, salePrice *float32, productId *int, id int) (*domain.ProductRecord, error)
+	NumberRecords(ctx *context.Context, id int) (int, error)
 }
 
 type service struct {
@@ -131,4 +132,14 @@ func (s *service) Delete(ctx *context.Context, id int) error {
 		}
 	}
 	return nil
+}
+
+func (s *service) NumberRecords(ctx *context.Context, product_id int) (int, error) {
+	count, err := s.productRecordsRepository.NumberRecords(*ctx, product_id)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+
 }
