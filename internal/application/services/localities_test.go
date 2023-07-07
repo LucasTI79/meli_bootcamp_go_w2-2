@@ -380,6 +380,7 @@ func Test_localityService_Update(t *testing.T) {
 		})
 	}
 }
+
 func Test_localityService_Delete(t *testing.T) {
 	type args struct {
 		ctx                 *context.Context
@@ -438,7 +439,7 @@ func Test_localityService_Delete(t *testing.T) {
 				expectedGetError:    nil,
 				expectedGetCalls:    1,
 				expectedDeleteError: assert.AnError,
-				expectedDeleteCalls: 0,
+				expectedDeleteCalls: 1,
 			},
 			wantErr: assert.AnError,
 		},
@@ -453,8 +454,8 @@ func Test_localityService_Delete(t *testing.T) {
 			err := service.Delete(&ctx, tt.args.id)
 
 			assert.Equal(t, tt.wantErr, err)
-			localityRepositoryMock.On("Get", tt.args.expectedGetCalls)
-			localityRepositoryMock.On("Delete", tt.args.expectedDeleteCalls)
+			localityRepositoryMock.AssertNumberOfCalls(t, "Get", tt.args.expectedGetCalls)
+			localityRepositoryMock.AssertNumberOfCalls(t, "Delete", tt.args.expectedDeleteCalls)
 		})
 	}
 }
@@ -512,7 +513,7 @@ func Test_localityService_CountSellers(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 			assert.Equal(t, tt.wantErr, err)
 
-			localityRepositoryMock.On("CountSellers", tt.args.expectedCountSellersCalls)
+			localityRepositoryMock.AssertNumberOfCalls(t, "CountSellers", tt.args.expectedCountSellersCalls)
 
 		})
 	}
