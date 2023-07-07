@@ -5,14 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	serviceMocks "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services/mocks"
+	servicesMocks "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -75,7 +72,7 @@ func TestGet(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedBuyer, test.expectedGetError)
 
-			purchaseOrderServiceMock := serviceMocks.NewMockPurchaseOrderService(t)
+			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
 			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock, purchaseOrderServiceMock)
 
 			//Configurar o servidor
@@ -164,7 +161,7 @@ func TestGetAll(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(test.expectedGetAllResult, test.expectedGetAllError)
 
-			purchaseOrderServiceMock := serviceMocks.NewMockPurchaseOrderService(t)
+			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
 			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock, purchaseOrderServiceMock)
 
 			//Configurar o servidor
@@ -245,7 +242,7 @@ func TestDelete(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedDeleteError)
 
-			purchaseOrderServiceMock := serviceMocks.NewMockPurchaseOrderService(t)
+			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
 			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock, purchaseOrderServiceMock)
 
 			//Configurar o servidor
@@ -328,7 +325,7 @@ func TestCreate(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("*dtos.CreateBuyerRequestDTO")).Return(test.expectedCreateResult, test.expectedCreateError)
 
-			purchaseOrderServiceMock := serviceMocks.NewMockPurchaseOrderService(t)
+			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
 			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock, purchaseOrderServiceMock)
 
 			//Configurar o servidor
@@ -444,7 +441,7 @@ func TestUpdate(t *testing.T) {
 			buyerServiceMock := mocks.NewBuyerServiceMock()
 			buyerServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("*dtos.UpdateBuyerRequestDTO")).Return(test.expectedUpdateResult, test.expectedUpdateError)
 
-			purchaseOrderServiceMock := serviceMocks.NewMockPurchaseOrderService(t)
+			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
 			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock, purchaseOrderServiceMock)
 
 			//Configurar o servidor
@@ -487,106 +484,111 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-func TestGetNumberOfSellers(t *testing.T) {
-	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchaseOrder.json")
-	var validPurchaseOrder entities.PurchaseOrder
-	if err := json.Unmarshal(purchaseOrderSerialized, &validPurchaseOrder); err != nil {
+func TestCountPurchaseOrders(t *testing.T) {
+
+	var validBuyer domain.Buyer
+	buyerSerialized, _ := os.ReadFile("../../../../test/resources/valid_buyer.json")
+	if err := json.Unmarshal(buyerSerialized, &validBuyer); err != nil {
 		t.Fatal(err)
 	}
 
 	expectedResponse := dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{
-		BuyerID:             0,
-		PurchaseOrdersCount: 0,
+		BuyerID:             1,
+		PurchaseOrdersCount: 1,
 	}
 
 	tests := []struct {
-		name                       string
-		id                         int
-		expectedGetResult          entities.PurchaseOrder
-		expectedGetError           error
-		expectedGetCalls           int
-		expectedCountSellersResult int
-		expectedCountSellersError  error
-		expectedCountSellersCalls  int
-		expectedResponse           dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO
-		expectedCode               int
+		name                         string
+		id                           string
+		expectedGetResult            *domain.Buyer
+		expectedGetError             error
+		expectedGetCalls             int
+		expectedCountByBuyerIDResult int
+		expectedCountByBuyerIDError  error
+		expectedCountByBuyerIDCalls  int
+		expectedResponse             dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO
+		expectedCode                 int
 	}{
 		{
-			name:                       "Valid PurchaseOrder",
-			id:                         validPurchaseOrder.ID,
-			expectedGetResult:          validPurchaseOrder,
-			expectedGetError:           nil,
-			expectedGetCalls:           1,
-			expectedCountSellersResult: 1,
-			expectedCountSellersError:  nil,
-			expectedCountSellersCalls:  1,
-			expectedResponse:           expectedResponse,
-			expectedCode:               http.StatusOK,
+			name:                         "Successfully counting purchase orders",
+			id:                           "1",
+			expectedGetResult:            &validBuyer,
+			expectedGetError:             nil,
+			expectedGetCalls:             1,
+			expectedCountByBuyerIDResult: 1,
+			expectedCountByBuyerIDError:  nil,
+			expectedCountByBuyerIDCalls:  1,
+			expectedResponse:             expectedResponse,
+			expectedCode:                 http.StatusOK,
 		},
 		{
-			name:                       "Error PurchaseOrder not found",
-			id:                         validPurchaseOrder.ID,
-			expectedGetResult:          entities.PurchaseOrder{},
-			expectedGetError:           services.ErrNotFound,
-			expectedGetCalls:           1,
-			expectedCountSellersResult: 0,
-			expectedCountSellersError:  nil,
-			expectedCountSellersCalls:  0,
-			expectedResponse:           dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
-			expectedCode:               http.StatusNotFound,
+			name:                         "Error buyer not found",
+			id:                           "1",
+			expectedGetResult:            &domain.Buyer{},
+			expectedGetError:             buyer.ErrNotFound,
+			expectedGetCalls:             1,
+			expectedCountByBuyerIDResult: 0,
+			expectedCountByBuyerIDError:  nil,
+			expectedCountByBuyerIDCalls:  0,
+			expectedResponse:             dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
+			expectedCode:                 http.StatusNotFound,
 		},
 		{
-			name:                       "Internal error finding PurchaseOrder",
-			id:                         validPurchaseOrder.ID,
-			expectedGetResult:          entities.PurchaseOrder{},
-			expectedGetError:           assert.AnError,
-			expectedGetCalls:           1,
-			expectedCountSellersResult: 0,
-			expectedCountSellersError:  nil,
-			expectedCountSellersCalls:  0,
-			expectedResponse:           dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
-			expectedCode:               http.StatusInternalServerError,
+			name:                         "Internal error finding buyer",
+			id:                           "1",
+			expectedGetResult:            &domain.Buyer{},
+			expectedGetError:             assert.AnError,
+			expectedGetCalls:             1,
+			expectedCountByBuyerIDResult: 0,
+			expectedCountByBuyerIDError:  nil,
+			expectedCountByBuyerIDCalls:  0,
+			expectedResponse:             dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
+			expectedCode:                 http.StatusInternalServerError,
 		},
 		{
-			name:                       "Error counting sellers",
-			id:                         validPurchaseOrder.ID,
-			expectedGetResult:          validPurchaseOrder,
-			expectedGetError:           nil,
-			expectedGetCalls:           1,
-			expectedCountSellersResult: 0,
-			expectedCountSellersError:  assert.AnError,
-			expectedCountSellersCalls:  1,
-			expectedResponse:           expectedResponse,
-			expectedCode:               http.StatusInternalServerError,
+			name:                         "Error counting purchase orders",
+			id:                           "1",
+			expectedGetResult:            &validBuyer,
+			expectedGetError:             nil,
+			expectedGetCalls:             1,
+			expectedCountByBuyerIDResult: 0,
+			expectedCountByBuyerIDError:  assert.AnError,
+			expectedCountByBuyerIDCalls:  1,
+			expectedResponse:             dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
+			expectedCode:                 http.StatusInternalServerError,
 		},
-		//{
-		//	name:         "Invalid ID",
-		//	id:           "xyz",
-		//	expectedCode: http.StatusBadRequest,
-		//},
+		{
+			name:         "Invalid ID",
+			id:           "xyz",
+			expectedCode: http.StatusBadRequest,
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			purchaseOrderServiceMock := mocks.NewMockPurchaseOrderService(t)
-			purchaseOrderServiceMock.On("CountSellers", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedCountSellersResult, test.expectedCountSellersError)
 
-			purchaseOrderHandler := purchase_orders.NewPurchaseOrderHandler(purchaseOrderServiceMock)
+			buyerServiceMock := mocks.NewBuyerServiceMock()
+			buyerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
+
+			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
+			purchaseOrderServiceMock.On("CountByBuyerID", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedCountByBuyerIDResult, test.expectedCountByBuyerIDError)
+
+			buyerHandler := buyers.NewBuyerHandler(buyerServiceMock, purchaseOrderServiceMock)
 
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.GET("/api/v1/localities/:id/reportSellers", purchaseOrderHandler.CountSellers())
+			r.GET("/api/v1/buyers/:id/report-purchase-orders", buyerHandler.CountPurchaseOrders())
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s/%d/%s", "/api/v1/localities", test.id, "reportSellers"), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/buyers/%s/report-purchase-orders", test.id), nil)
 			res := httptest.NewRecorder()
 
 			//Executar request
 			r.ServeHTTP(res, req)
 
 			//Validar resultado
-			purchaseOrderServiceMock.AssertNumberOfCalls(t, "CountSellers", test.expectedCountSellersCalls)
+			purchaseOrderServiceMock.AssertNumberOfCalls(t, "CountByBuyerID", test.expectedCountByBuyerIDCalls)
 			assert.Equal(t, test.expectedCode, res.Code)
 
 			// Só testa o body em caso de sucesso
