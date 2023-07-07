@@ -20,6 +20,14 @@ func NewCarrier(s carriers.Service) *Carrier {
 	}
 }
 
+// GetAllCarriers godoc
+//
+//	@Summary		List carriers
+//	@Tags			Carriers
+//	@Description	get carriers
+//	@Produce		json
+//	@Success		200	{object}	[]domain.Carrier
+//	@Router			/api/v1/carriers [get]
 func (carrier *Carrier) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
@@ -38,6 +46,16 @@ func (carrier *Carrier) GetAll() gin.HandlerFunc {
 	}
 }
 
+// createCarriers godoc
+//
+//	@Summary		Create carriers
+//	@Tags			Carriers
+//	@Description	Create carriers
+//	@Accept			json
+//	@Produce		json
+//	@Param			Carrier	body		dtos.CarrierRequestDTO	true	"carrier to create"
+//	@Success		200			{object}	domain.Carrier
+//	@Router			/api/v1/carriers [post]
 func (carrier *Carrier) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dtos.CarrierRequestDTO
