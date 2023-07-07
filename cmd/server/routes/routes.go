@@ -115,7 +115,11 @@ func (r *router) buildEmployeeRoutes() {
 func (r *router) buildBuyerRoutes() {
 	buyerRepository := buyer.NewRepository(r.db)
 	buyerService := buyer.NewService(buyerRepository)
-	buyerHandler := buyers.NewBuyerHandler(buyerService)
+
+	purchaseOrdersRepository := repositories.NewPurchaseOrderRepository(r.db)
+	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrdersRepository)
+
+	buyerHandler := buyers.NewBuyerHandler(buyerService, purchaseOrderService)
 
 	// Create custom validation
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
@@ -128,6 +132,7 @@ func (r *router) buildBuyerRoutes() {
 	buyerRoutes.POST("", buyerHandler.Create())
 	buyerRoutes.PATCH(":id", buyerHandler.Update())
 	buyerRoutes.DELETE(":id", buyerHandler.Delete())
+	buyerRoutes.GET(":id/report-purchase-orders", buyerHandler.CountPurchaseOrders())
 }
 
 func (r *router) buildLocalityRoutes() {

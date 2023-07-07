@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"net/http"
 	"strconv"
@@ -13,12 +14,14 @@ import (
 )
 
 type BuyerHandler struct {
-	buyerService buyer.Service
+	buyerService         buyer.Service
+	purchaseOrderService services.PurchaseOrderService
 }
 
-func NewBuyerHandler(buyerService buyer.Service) *BuyerHandler {
+func NewBuyerHandler(buyerService buyer.Service, purchaseOrderService services.PurchaseOrderService) *BuyerHandler {
 	return &BuyerHandler{
 		buyerService,
+		purchaseOrderService,
 	}
 }
 
@@ -210,6 +213,48 @@ func (handler *BuyerHandler) Delete() gin.HandlerFunc {
 			return
 		}
 	}
+}
+
+// CountPurchaseOrders is the handler search for a purchaseOrder and return the number of sellers
+//
+//	@Summary		CountPurchaseOrders
+//	@Tags			PurchaseOrders
+//	@Description	search for a purchaseOrder and return the number of sellers.
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"ID of PurchaseOrder to be searched"
+//	@Success		200		{object}	web.response{data=dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO}
+//	@Failure		400		{object}	web.errorResponse
+//	@Failure		404		{object}	web.errorResponse
+//	@Failure		422		{object}	web.errorResponse
+//	@Failure		500		{object}	web.errorResponse
+//	@Router			/api/v1/buyers/{id}/report-purchase-orders [get]
+func (handler *BuyerHandler) CountPurchaseOrders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := getIdFromUri(c)
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		ctx := c.Request.Context()
+
+		count, err := handler.purchaseOrderService.CountByBuyerID(&ctx, id)
+		if err != nil {
+			web.Error(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		response := dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{
+			BuyerID:             id,
+			PurchaseOrdersCount: count,
+		}
+
+		web.Success(c, http.StatusOK, response)
+		return
+
+	}
+
 }
 
 func getIdFromUri(c *gin.Context) (id int, err error) {
