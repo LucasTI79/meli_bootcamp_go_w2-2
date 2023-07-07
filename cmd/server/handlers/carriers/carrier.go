@@ -3,6 +3,7 @@ package carriers
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
@@ -96,4 +97,48 @@ func CarrierFullRequestValidator(c *gin.Context, req dtos.CarrierRequestDTO) err
 	}
 
 	return nil
+}
+
+func (carrier *Carrier) GetReportCarriersByLocalities(c *gin.Context) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+
+		type Response struct {
+			locality_id   int
+			locality_name string
+			carries_count int
+		}
+
+		if c.Param("id") == "" {
+			data, err := carrier.carrierService.GetCountAndDataByLocalityId(&ctx)
+			if err != nil {
+				web.Error(c, http.StatusNoContent, "data not found")
+				return
+			}
+			web.Success(c, http.StatusOK, data)
+
+		} else {
+			localityId, e := strconv.Atoi(c.Param("id"))
+			if e != nil {
+				web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
+				return
+			}
+			locality, err := carrier.carrierService.GetLocalityById(&ctx, localityId)
+			if err != nil {
+				web.Error(c, http.StatusNotFound, "locality not found")
+				return
+			}
+			count, err := carrier.carrierService.GetCountCarriersByLocalityId(&ctx, localityId)
+			if err != nil {
+				web.Error(c, http.StatusNotFound, "none carrier exists with this location_id")
+				return
+			}
+			response := Response{
+				locality_id:   localityId,
+				locality_name: locality.LocalityName,
+				carries_count: count,
+			}
+			web.Success(c, http.StatusOK, response)
+		}
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
@@ -11,6 +12,9 @@ type Repository interface {
 	GetAll(ctx context.Context) ([]domain.Carrier, error)
 	Exists(ctx context.Context, cid string) bool
 	Save(ctx context.Context, w domain.Carrier) (int, error)
+	GetLocalityById(ctx context.Context, localityId int) (domain.Locality, error)
+	GetCountCarriersByLocalityId(ctx context.Context, localityId int) (int, error)
+	GetCountAndDataByLocalityId(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error)
 }
 
 type repository struct {
@@ -64,6 +68,44 @@ func (r *repository) Save(ctx context.Context, c domain.Carrier) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
 	return int(id), nil
+}
+
+func (r *repository) GetLocalityById(ctx context.Context, localityId int) (domain.Locality, error) {
+	query := "SELECT * FROM localities WHERE id = ?"
+	row := r.db.QueryRow(query, localityId)
+	l := domain.Locality{}
+	err := row.Scan(&l.ID, &l.LocalityName, &l.ProvinceName)
+	if err != nil {
+		return domain.Locality{}, err
+	}
+	return l, nil
+}
+
+func (r *repository) GetCountCarriersByLocalityId(ctx context.Context, localityId int) (int, error) {
+	query := "SELECT COUNT(id) FROM carriers WHERE locality_id = ?"
+	row := r.db.QueryRow(query, localityId)
+	var count int
+	err := row.Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+func (r *repository) GetCountAndDataByLocalityId(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error) {
+	query := "SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10"
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	var data []dtos.DataLocalityAndCarrier
+
+	for rows.Next() {
+		d := dtos.DataLocalityAndCarrier{}
+		_ = rows.Scan(&d.Id, &d.LocalityName, &d.CountCarrier)
+		data = append(data, d)
+	}
+	return data, nil
 }

@@ -29,3 +29,21 @@ func (service *CarrierServiceMock) Create(ctx *context.Context, carrier dtos.Car
 
 	return args.Get(0).(*domain.Carrier), args.Error(1)
 }
+
+func (service *CarrierServiceMock) GetLocalityById(ctx *context.Context, localityId int) (*domain.Locality, error) {
+	args := service.Called(ctx)
+
+	return args.Get(0).(*domain.Locality), args.Error(1)
+}
+
+func (service *CarrierServiceMock) GetCountCarriersByLocalityId(ctx *context.Context, localityId int) (int, error) {
+	args := service.Called(ctx)
+
+	return args.Get(0).(int), args.Error(1)
+}
+
+func (service *CarrierServiceMock) GetCountAndDataByLocalityId(ctx *context.Context) ([]dtos.DataLocalityAndCarrier, error) {
+	args := service.Called(ctx)
+
+	return args.Get(0).([]dtos.DataLocalityAndCarrier), args.Error(1)
+}
