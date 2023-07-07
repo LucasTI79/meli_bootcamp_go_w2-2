@@ -238,8 +238,8 @@ func (handler *BuyerHandler) CountPurchaseOrders() gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-
-		if _, err = handler.buyerService.Get(&ctx, id); err != nil {
+		count, err := handler.purchaseOrderService.CountByBuyerID(&ctx, id)
+		if err != nil {
 			switch err {
 			case buyer.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
@@ -248,12 +248,6 @@ func (handler *BuyerHandler) CountPurchaseOrders() gin.HandlerFunc {
 				web.Error(c, http.StatusInternalServerError, err.Error())
 				return
 			}
-		}
-
-		count, err := handler.purchaseOrderService.CountByBuyerID(&ctx, id)
-		if err != nil {
-			web.Error(c, http.StatusInternalServerError, err.Error())
-			return
 		}
 
 		response := dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{

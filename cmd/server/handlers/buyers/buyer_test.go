@@ -500,9 +500,6 @@ func TestCountPurchaseOrders(t *testing.T) {
 	tests := []struct {
 		name                         string
 		id                           string
-		expectedGetResult            *domain.Buyer
-		expectedGetError             error
-		expectedGetCalls             int
 		expectedCountByBuyerIDResult int
 		expectedCountByBuyerIDError  error
 		expectedCountByBuyerIDCalls  int
@@ -512,9 +509,6 @@ func TestCountPurchaseOrders(t *testing.T) {
 		{
 			name:                         "Successfully counting purchase orders",
 			id:                           "1",
-			expectedGetResult:            &validBuyer,
-			expectedGetError:             nil,
-			expectedGetCalls:             1,
 			expectedCountByBuyerIDResult: 1,
 			expectedCountByBuyerIDError:  nil,
 			expectedCountByBuyerIDCalls:  1,
@@ -524,33 +518,15 @@ func TestCountPurchaseOrders(t *testing.T) {
 		{
 			name:                         "Error buyer not found",
 			id:                           "1",
-			expectedGetResult:            &domain.Buyer{},
-			expectedGetError:             buyer.ErrNotFound,
-			expectedGetCalls:             1,
 			expectedCountByBuyerIDResult: 0,
-			expectedCountByBuyerIDError:  nil,
-			expectedCountByBuyerIDCalls:  0,
+			expectedCountByBuyerIDError:  buyer.ErrNotFound,
+			expectedCountByBuyerIDCalls:  1,
 			expectedResponse:             dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
 			expectedCode:                 http.StatusNotFound,
 		},
 		{
-			name:                         "Internal error finding buyer",
-			id:                           "1",
-			expectedGetResult:            &domain.Buyer{},
-			expectedGetError:             assert.AnError,
-			expectedGetCalls:             1,
-			expectedCountByBuyerIDResult: 0,
-			expectedCountByBuyerIDError:  nil,
-			expectedCountByBuyerIDCalls:  0,
-			expectedResponse:             dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO{},
-			expectedCode:                 http.StatusInternalServerError,
-		},
-		{
 			name:                         "Error counting purchase orders",
 			id:                           "1",
-			expectedGetResult:            &validBuyer,
-			expectedGetError:             nil,
-			expectedGetCalls:             1,
 			expectedCountByBuyerIDResult: 0,
 			expectedCountByBuyerIDError:  assert.AnError,
 			expectedCountByBuyerIDCalls:  1,
@@ -568,7 +544,6 @@ func TestCountPurchaseOrders(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 
 			buyerServiceMock := mocks.NewBuyerServiceMock()
-			buyerServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
 
 			purchaseOrderServiceMock := servicesMocks.NewMockPurchaseOrderService(t)
 			purchaseOrderServiceMock.On("CountByBuyerID", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(test.expectedCountByBuyerIDResult, test.expectedCountByBuyerIDError)
