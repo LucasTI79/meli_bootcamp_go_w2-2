@@ -1,0 +1,20 @@
+with-expecter: True
+packages:
+  github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories:
+    config:
+      recursive: True
+      all: True
+      outpkg: "mocks"
+      dir: "{{.InterfaceDir}}/mocks/"
+      filename: "{{.InterfaceNameSnake}}_mock.go"
+      mockname: "{{.InterfaceName}}Mock"
+      with-expecter: False
+  github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services:
+    config:
+      recursive: True
+      all: True
+      outpkg: "mocks"
+      dir: "{{.InterfaceDir}}/mocks/"
+      filename: "{{.InterfaceNameSnake}}_mock.go"
+      mockname: "{{.InterfaceName}}Mock"
+      with-expecter: False

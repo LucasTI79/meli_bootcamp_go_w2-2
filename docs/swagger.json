@@ -1,1352 +1,1646 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "This API Handle MELI - Sprint 1 - Grupo 2",
-        "title": "MELI Bootcamp API - Sprint 1 - Grupo 2",
-        "termsOfService": "https://developers.mercadolibre.com.ar/es_ar/terminos-y-condiciones",
-        "contact": {
-            "name": "API Support",
-            "url": "https://developers.mercadolibre.com.ar/support"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "1.0"
+  "swagger": "2.0",
+  "info": {
+    "description": "This API Handle MELI - Sprint 1 - Grupo 2",
+    "title": "MELI Bootcamp API - Sprint 1 - Grupo 2",
+    "termsOfService": "https://developers.mercadolibre.com.ar/es_ar/terminos-y-condiciones",
+    "contact": {
+      "name": "API Support",
+      "url": "https://developers.mercadolibre.com.ar/support"
     },
-    "host": "localhost:8080",
-    "paths": {
-        "/api/v1/buyers": {
-            "get": {
-                "description": "Get the details of all buyers on the database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Buyers"
-                ],
-                "summary": "List Buyers",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web.response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/domain.Buyer"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Save a buyer on the database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Buyers"
-                ],
-                "summary": "Create Buyer",
-                "parameters": [
-                    {
-                        "description": "Buyer to Create",
-                        "name": "Seller",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.CreateBuyerRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Buyer"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/buyers/{id}": {
-            "get": {
-                "description": "Get the details of a Buyer",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Buyers"
-                ],
-                "summary": "Get Buyer",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Buyer to be searched",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Buyer"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete Buyers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Buyers"
-                ],
-                "summary": "Delete Buyer",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of a Buyer to be excluded",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update the details of a Buyer",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Buyers"
-                ],
-                "summary": "Update Buyer",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Buyer to be updated",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated Buyer details",
-                        "name": "Buyer",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.UpdateBuyerRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Buyer"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/employees": {
-            "get": {
-                "description": "getAll employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "List Employees",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "Create Employees",
-                "parameters": [
-                    {
-                        "description": "Employee to Create",
-                        "name": "Employees",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.RequestCreateEmployee"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/employees/{id}": {
-            "get": {
-                "description": "Get the details of a Employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "Get Employees",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Employees to be searched",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete Employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "Delete Employees",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of a Employees to be excluded",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update the details of a Employees",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Employees"
-                ],
-                "summary": "Update Employees",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Employees to be updated",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated Employeesers details",
-                        "name": "Employees",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.RequestUpdateEmployee"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/products": {
-            "get": {
-                "description": "getAll products",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "List products",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Create Product",
-                "parameters": [
-                    {
-                        "description": "Product to Create",
-                        "name": "Product",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handler.requestCreateProduct"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/products/{id}": {
-            "get": {
-                "description": "Get the details of a Products",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Get Product",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Product to be searched",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Delete Product",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of a Product to be excluded",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update the details of a Product",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Products"
-                ],
-                "summary": "Update Product",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Products to be updated",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated Product details",
-                        "name": "Products",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handler.requestUpdateProduct"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/sections": {
-            "get": {
-                "description": "getAll sections",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sections"
-                ],
-                "summary": "List sections",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create section",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sections"
-                ],
-                "summary": "Create Section",
-                "parameters": [
-                    {
-                        "description": "Section to Create",
-                        "name": "Section",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handler.requestCreateSection"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/sections/{id}": {
-            "get": {
-                "description": "Get the details of a Section",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sections"
-                ],
-                "summary": "Get Section",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Section to be searched",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete Section",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sections"
-                ],
-                "summary": "Delete Section",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of a Section to be excluded",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update the details of a Section",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sections"
-                ],
-                "summary": "Update Section",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Section to be updated",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated Section details",
-                        "name": "Sections",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/handler.requestUpdateSection"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/sellers": {
-            "get": {
-                "description": "getAll sellers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sellers"
-                ],
-                "summary": "List sellers",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create sellers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sellers"
-                ],
-                "summary": "Create Sellers",
-                "parameters": [
-                    {
-                        "description": "Seller to Create",
-                        "name": "Seller",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.CreateSellerRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/sellers/{id}": {
-            "get": {
-                "description": "Get the details of a Sellers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sellers"
-                ],
-                "summary": "Get Sellers",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Sellers to be searched",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete Sellers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sellers"
-                ],
-                "summary": "Delete Sellers",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of a Sellers to be excluded",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            },
-            "patch": {
-                "description": "Update the details of a Sellers",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Sellers"
-                ],
-                "summary": "Update Sellers",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID of Sellers to be updated",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Updated Sellers details",
-                        "name": "Sellers",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.UpdateSellerRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web.response"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/warehouses": {
-            "get": {
-                "description": "get warehouses",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Warehouses"
-                ],
-                "summary": "List warehouses",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Warehouse"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create warehouse",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Warehouses"
-                ],
-                "summary": "Create warehouse",
-                "parameters": [
-                    {
-                        "description": "warehouse to create",
-                        "name": "Warehouse",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.WarehouseRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Warehouse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/warehouses/{id}": {
-            "get": {
-                "description": "get one warehouse by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Warehouses"
-                ],
-                "summary": "Get warehouse",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Warehouse ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Warehouse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "delete warehouse by id",
-                "tags": [
-                    "Warehouses"
-                ],
-                "summary": "Delete warehouse",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Warehouse ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            },
-            "patch": {
-                "description": "update warehouses",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Warehouses"
-                ],
-                "summary": "Update warehouses",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Warehouse ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Warehouse to update",
-                        "name": "Warehouse",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dtos.WarehouseRequestDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Warehouse"
-                        }
-                    }
-                }
-            }
-        }
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "definitions": {
-        "domain.Buyer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "x-order": "0"
+    "version": "1.0"
+  },
+  "host": "localhost:8080",
+  "paths": {
+    "/api/v1/buyers": {
+      "get": {
+        "description": "Get the details of all buyers on the database.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buyers"
+        ],
+        "summary": "List Buyers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/web_utils.response"
                 },
-                "card_number_id": {
-                    "type": "string",
-                    "x-order": "1"
-                },
-                "first_name": {
-                    "type": "string",
-                    "x-order": "2"
-                },
-                "last_name": {
-                    "type": "string",
-                    "x-order": "3"
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/entities.Buyer"
+                      }
+                    }
+                  }
                 }
+              ]
             }
-        },
-        "domain.RequestCreateEmployee": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
             }
-        },
-        "domain.RequestUpdateEmployee": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.Warehouse": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "telephone": {
-                    "type": "string"
-                },
-                "warehouse_code": {
-                    "type": "string"
-                }
-            }
-        },
-        "dtos.CreateBuyerRequestDTO": {
-            "type": "object",
-            "required": [
-                "card_number_id",
-                "first_name",
-                "last_name"
-            ],
-            "properties": {
-                "card_number_id": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dtos.CreateSellerRequestDTO": {
-            "type": "object",
-            "required": [
-                "address",
-                "cid",
-                "company_name",
-                "telephone"
-            ],
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "cid": {
-                    "type": "integer"
-                },
-                "company_name": {
-                    "type": "string"
-                },
-                "telephone": {
-                    "type": "string"
-                }
-            }
-        },
-        "dtos.UpdateBuyerRequestDTO": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "string",
-                    "x-order": "0"
-                },
-                "first_name": {
-                    "type": "string",
-                    "x-order": "1"
-                },
-                "last_name": {
-                    "type": "string",
-                    "x-order": "2"
-                }
-            }
-        },
-        "dtos.UpdateSellerRequestDTO": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "cid": {
-                    "type": "integer"
-                },
-                "company_name": {
-                    "type": "string"
-                },
-                "telephone": {
-                    "type": "string"
-                }
-            }
-        },
-        "dtos.WarehouseRequestDTO": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "telephone": {
-                    "type": "string"
-                },
-                "warehouse_code": {
-                    "type": "string"
-                }
-            }
-        },
-        "handler.requestCreateProduct": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "expiration_rate": {
-                    "type": "integer"
-                },
-                "freezing_rate": {
-                    "type": "integer"
-                },
-                "height": {
-                    "type": "number"
-                },
-                "length": {
-                    "type": "number"
-                },
-                "netweight": {
-                    "type": "number"
-                },
-                "product_code": {
-                    "type": "string"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "recommended_freezing_temperature": {
-                    "type": "number"
-                },
-                "seller_id": {
-                    "type": "integer"
-                },
-                "width": {
-                    "type": "number"
-                }
-            }
-        },
-        "handler.requestCreateSection": {
-            "type": "object",
-            "properties": {
-                "current_capacity": {
-                    "type": "integer"
-                },
-                "current_temperature": {
-                    "type": "integer"
-                },
-                "maximum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "section_number": {
-                    "type": "integer"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "handler.requestUpdateProduct": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "expiration_rate": {
-                    "type": "integer"
-                },
-                "freezing_rate": {
-                    "type": "integer"
-                },
-                "height": {
-                    "type": "number"
-                },
-                "length": {
-                    "type": "number"
-                },
-                "netweight": {
-                    "type": "number"
-                },
-                "product_code": {
-                    "type": "string"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "recommended_freezing_temperature": {
-                    "type": "number"
-                },
-                "seller_id": {
-                    "type": "integer"
-                },
-                "width": {
-                    "type": "number"
-                }
-            }
-        },
-        "handler.requestUpdateSection": {
-            "type": "object",
-            "properties": {
-                "current_capacity": {
-                    "type": "integer"
-                },
-                "current_temperature": {
-                    "type": "integer"
-                },
-                "maximum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "section_number": {
-                    "type": "integer"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "web.errorResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "web.response": {
-            "type": "object",
-            "properties": {
-                "data": {}
-            }
+          }
         }
+      },
+      "post": {
+        "description": "Save a buyer on the database.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buyers"
+        ],
+        "summary": "Create Buyer",
+        "parameters": [
+          {
+            "description": "Buyer to Create",
+            "name": "SellerHandler",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.CreateBuyerRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/entities.Buyer"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/buyers/{id}": {
+      "get": {
+        "description": "Get the details of a Buyer",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buyers"
+        ],
+        "summary": "Get Buyer",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Buyer to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entities.Buyer"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete Buyers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buyers"
+        ],
+        "summary": "Delete Buyer",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of a Buyer to be excluded",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the details of a Buyer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Buyers"
+        ],
+        "summary": "Update Buyer",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Buyer to be updated",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated Buyer details",
+            "name": "Buyer",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.UpdateBuyerRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entities.Buyer"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees": {
+      "get": {
+        "description": "getAll employees",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Employees"
+        ],
+        "summary": "List Employees",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create employees",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Create Employees",
+        "parameters": [
+          {
+            "description": "EmployeeHandler to Create",
+            "name": "Employees",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entities.RequestCreateEmployee"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/employees/{id}": {
+      "get": {
+        "description": "Get the details of a Employees",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Get Employees",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Employees to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete Employees",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Delete Employees",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of a Employees to be excluded",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the details of a Employees",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Employees"
+        ],
+        "summary": "Update Employees",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Employees to be updated",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated Employeesers details",
+            "name": "Employees",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/entities.RequestUpdateEmployee"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/localities": {
+      "get": {
+        "description": "Get the details of all localities on the database.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Localities"
+        ],
+        "summary": "List Localities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/web_utils.response"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/entities.Locality"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "search for a locality and return the number of sellers.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Localities"
+        ],
+        "summary": "CountSellers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Locality to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/web_utils.response"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/definitions/dtos.GetNumberOfSellersResponseDTO"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/localities/{id}": {
+      "get": {
+        "description": "Get the details of a Locality",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Localities"
+        ],
+        "summary": "Get Locality",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Locality to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entities.Locality"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete Localities",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Localities"
+        ],
+        "summary": "Delete Locality",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of a Locality to be excluded",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the details of a Locality",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Localities"
+        ],
+        "summary": "Update Locality",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Locality to be updated",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated Locality details",
+            "name": "Locality",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.UpdateLocalityRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/entities.Locality"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/web_utils.errorResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "description": "getAll products",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Products"
+        ],
+        "summary": "List products",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create ProductHandler",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Products"
+        ],
+        "summary": "Create ProductHandler",
+        "parameters": [
+          {
+            "description": "ProductHandler to Create",
+            "name": "ProductHandler",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handlers.RequestCreateProduct"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{id}": {
+      "get": {
+        "description": "Get the details of a Products",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get ProductHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of ProductHandler to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete ProductHandler",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Products"
+        ],
+        "summary": "Delete ProductHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of a ProductHandler to be excluded",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the details of a ProductHandler",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Products"
+        ],
+        "summary": "Update ProductHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Products to be updated",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated ProductHandler details",
+            "name": "Products",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/handlers.RequestUpdateProduct"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sections": {
+      "get": {
+        "description": "getAll sections",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "summary": "List sections",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create section",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "summary": "Create SectionHandler",
+        "parameters": [
+          {
+            "description": "SectionHandler to Create",
+            "name": "SectionHandler",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.CreateSectionRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sections/{id}": {
+      "get": {
+        "description": "Get the details of a SectionHandler",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "summary": "Get SectionHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of SectionHandler to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete SectionHandler",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "summary": "Delete SectionHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of a SectionHandler to be excluded",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the details of a SectionHandler",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sections"
+        ],
+        "summary": "Update SectionHandler",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of SectionHandler to be updated",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated SectionHandler details",
+            "name": "Sections",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.UpdateSectionRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sellers": {
+      "get": {
+        "description": "getAll sellers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sellers"
+        ],
+        "summary": "List sellers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create sellers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sellers"
+        ],
+        "summary": "Create Sellers",
+        "parameters": [
+          {
+            "description": "SellerHandler to Create",
+            "name": "SellerHandler",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.CreateSellerRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sellers/{id}": {
+      "get": {
+        "description": "Get the details of a Sellers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sellers"
+        ],
+        "summary": "Get Sellers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Sellers to be searched",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete Sellers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sellers"
+        ],
+        "summary": "Delete Sellers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of a Sellers to be excluded",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update the details of a Sellers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Sellers"
+        ],
+        "summary": "Update Sellers",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "ID of Sellers to be updated",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Updated Sellers details",
+            "name": "Sellers",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.UpdateSellerRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/warehouses": {
+      "get": {
+        "description": "get warehouses",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Warehouses"
+        ],
+        "summary": "List warehouses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/web_utils.response"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create warehouses",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Warehouses"
+        ],
+        "summary": "Create warehouses",
+        "parameters": [
+          {
+            "description": "warehouses to create",
+            "name": "WarehouseHandler",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.WarehouseRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/warehouses/{id}": {
+      "get": {
+        "description": "get one warehouses by id",
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Warehouses"
+        ],
+        "summary": "Get warehouses",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "WarehouseHandler ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "delete warehouses by id",
+        "tags": [
+          "Warehouses"
+        ],
+        "summary": "Delete warehouses",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "WarehouseHandler ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      },
+      "patch": {
+        "description": "update warehouses",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "Warehouses"
+        ],
+        "summary": "Update warehouses",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "WarehouseHandler ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "WarehouseHandler to update",
+            "name": "WarehouseHandler",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dtos.WarehouseRequestDTO"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/web_utils.response"
+            }
+          }
+        }
+      }
     }
+  },
+  "definitions": {
+    "dtos.CreateBuyerRequestDTO": {
+      "type": "object",
+      "required": [
+        "card_number_id",
+        "first_name",
+        "last_name"
+      ],
+      "properties": {
+        "card_number_id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        }
+      }
+    },
+    "dtos.CreateSectionRequestDTO": {
+      "type": "object",
+      "properties": {
+        "current_capacity": {
+          "type": "integer"
+        },
+        "current_temperature": {
+          "type": "integer"
+        },
+        "maximum_capacity": {
+          "type": "integer"
+        },
+        "minimum_capacity": {
+          "type": "integer"
+        },
+        "minimum_temperature": {
+          "type": "integer"
+        },
+        "product_type_id": {
+          "type": "integer"
+        },
+        "section_number": {
+          "type": "integer"
+        },
+        "warehouse_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "dtos.CreateSellerRequestDTO": {
+      "type": "object",
+      "required": [
+        "address",
+        "cid",
+        "company_name",
+        "locality_id",
+        "telephone"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "cid": {
+          "type": "integer"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "locality_id": {
+          "type": "string"
+        },
+        "telephone": {
+          "type": "string"
+        }
+      }
+    },
+    "dtos.GetNumberOfSellersResponseDTO": {
+      "type": "object",
+      "properties": {
+        "locality_id": {
+          "type": "integer"
+        },
+        "locality_name": {
+          "type": "string"
+        },
+        "sellers_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "dtos.UpdateBuyerRequestDTO": {
+      "type": "object",
+      "properties": {
+        "card_number_id": {
+          "type": "string",
+          "x-order": "0"
+        },
+        "first_name": {
+          "type": "string",
+          "x-order": "1"
+        },
+        "last_name": {
+          "type": "string",
+          "x-order": "2"
+        }
+      }
+    },
+    "dtos.UpdateLocalityRequestDTO": {
+      "type": "object",
+      "properties": {
+        "country_name": {
+          "type": "string"
+        },
+        "locality_name": {
+          "type": "string"
+        },
+        "province_name": {
+          "type": "string"
+        }
+      }
+    },
+    "dtos.UpdateSectionRequestDTO": {
+      "type": "object",
+      "properties": {
+        "current_capacity": {
+          "type": "integer"
+        },
+        "current_temperature": {
+          "type": "integer"
+        },
+        "maximum_capacity": {
+          "type": "integer"
+        },
+        "minimum_capacity": {
+          "type": "integer"
+        },
+        "minimum_temperature": {
+          "type": "integer"
+        },
+        "product_type_id": {
+          "type": "integer"
+        },
+        "section_number": {
+          "type": "integer"
+        },
+        "warehouse_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "dtos.UpdateSellerRequestDTO": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "cid": {
+          "type": "integer"
+        },
+        "company_name": {
+          "type": "string"
+        },
+        "locality_id": {
+          "type": "string"
+        },
+        "telephone": {
+          "type": "string"
+        }
+      }
+    },
+    "dtos.WarehouseRequestDTO": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "minimum_capacity": {
+          "type": "integer"
+        },
+        "minimum_temperature": {
+          "type": "integer"
+        },
+        "telephone": {
+          "type": "string"
+        },
+        "warehouse_code": {
+          "type": "string"
+        }
+      }
+    },
+    "entities.Buyer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "x-order": "0"
+        },
+        "card_number_id": {
+          "type": "string",
+          "x-order": "1"
+        },
+        "first_name": {
+          "type": "string",
+          "x-order": "2"
+        },
+        "last_name": {
+          "type": "string",
+          "x-order": "3"
+        }
+      }
+    },
+    "entities.Locality": {
+      "type": "object",
+      "required": [
+        "country_name",
+        "id",
+        "locality_name",
+        "province_name"
+      ],
+      "properties": {
+        "country_name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "integer"
+        },
+        "locality_name": {
+          "type": "string"
+        },
+        "province_name": {
+          "type": "string"
+        }
+      }
+    },
+    "entities.RequestCreateEmployee": {
+      "type": "object",
+      "properties": {
+        "card_number_id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "warehouse_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "entities.RequestUpdateEmployee": {
+      "type": "object",
+      "properties": {
+        "card_number_id": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "warehouse_id": {
+          "type": "integer"
+        }
+      }
+    },
+    "handlers.RequestCreateProduct": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "expiration_rate": {
+          "type": "integer"
+        },
+        "freezing_rate": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "number"
+        },
+        "length": {
+          "type": "number"
+        },
+        "netweight": {
+          "type": "number"
+        },
+        "product_code": {
+          "type": "string"
+        },
+        "product_type_id": {
+          "type": "integer"
+        },
+        "recommended_freezing_temperature": {
+          "type": "number"
+        },
+        "seller_id": {
+          "type": "integer"
+        },
+        "width": {
+          "type": "number"
+        }
+      }
+    },
+    "handlers.RequestUpdateProduct": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "expiration_rate": {
+          "type": "integer"
+        },
+        "freezing_rate": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "number"
+        },
+        "length": {
+          "type": "number"
+        },
+        "netweight": {
+          "type": "number"
+        },
+        "product_code": {
+          "type": "string"
+        },
+        "product_type_id": {
+          "type": "integer"
+        },
+        "recommended_freezing_temperature": {
+          "type": "number"
+        },
+        "seller_id": {
+          "type": "integer"
+        },
+        "width": {
+          "type": "number"
+        }
+      }
+    },
+    "web_utils.errorResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "web_utils.response": {
+      "type": "object",
+      "properties": {
+        "data": {}
+      }
+    }
+  }
 }

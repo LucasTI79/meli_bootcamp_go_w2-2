@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "cid": 1,
+    "company_name": "Test Company",
+    "address": "Test Address",
+    "telephone": "Test Telephone",
+    "locality_id": "123"
+  },
+  {
+    "id": 2,
+    "cid": 2,
+    "company_name": "Test Company 2",
+    "address": "Test Address 2",
+    "telephone": "Test Telephone 2",
+    "locality_id": "456"
+  }
+]

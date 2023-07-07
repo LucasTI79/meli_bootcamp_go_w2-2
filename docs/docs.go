@@ -43,7 +43,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/web.response"
+                                    "$ref": "#/definitions/web_utils.response"
                                 },
                                 {
                                     "type": "object",
@@ -51,7 +51,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/domain.Buyer"
+                                                "$ref": "#/definitions/entities.Buyer"
                                             }
                                         }
                                     }
@@ -62,7 +62,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     }
                 }
@@ -82,7 +82,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Buyer to Create",
-                        "name": "Seller",
+                        "name": "SellerHandler",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -94,19 +94,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Buyer"
+                            "$ref": "#/definitions/entities.Buyer"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     }
                 }
@@ -135,25 +135,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Buyer"
+                            "$ref": "#/definitions/entities.Buyer"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     }
                 }
@@ -186,19 +186,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     }
                 }
@@ -237,25 +237,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Buyer"
+                            "$ref": "#/definitions/entities.Buyer"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web.errorResponse"
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     }
                 }
@@ -278,7 +278,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -297,12 +297,12 @@ const docTemplate = `{
                 "summary": "Create Employees",
                 "parameters": [
                     {
-                        "description": "Employee to Create",
+                        "description": "EmployeeHandler to Create",
                         "name": "Employees",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.RequestCreateEmployee"
+                            "$ref": "#/definitions/entities.RequestCreateEmployee"
                         }
                     }
                 ],
@@ -310,7 +310,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -342,7 +342,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -372,7 +372,7 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -403,7 +403,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.RequestUpdateEmployee"
+                            "$ref": "#/definitions/entities.RequestUpdateEmployee"
                         }
                     }
                 ],
@@ -411,7 +411,266 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/localities": {
+            "get": {
+                "description": "Get the details of all localities on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "List Localities",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web_utils.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/entities.Locality"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "search for a locality and return the number of sellers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "CountSellers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Locality to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web_utils.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dtos.GetNumberOfSellersResponseDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/localities/{id}": {
+            "get": {
+                "description": "Get the details of a Locality",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Get Locality",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Locality to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Locality"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Localities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Delete Locality",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of a Locality to be excluded",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update the details of a Locality",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Update Locality",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Locality to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated Locality details",
+                        "name": "Locality",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateLocalityRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Locality"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web_utils.errorResponse"
                         }
                     }
                 }
@@ -434,13 +693,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Create Product",
+                "description": "Create ProductHandler",
                 "consumes": [
                     "application/json"
                 ],
@@ -450,15 +709,15 @@ const docTemplate = `{
                 "tags": [
                     "Products"
                 ],
-                "summary": "Create Product",
+                "summary": "Create ProductHandler",
                 "parameters": [
                     {
-                        "description": "Product to Create",
-                        "name": "Product",
+                        "description": "ProductHandler to Create",
+                        "name": "ProductHandler",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestCreateProduct"
+                            "$ref": "#/definitions/handlers.RequestCreateProduct"
                         }
                     }
                 ],
@@ -466,7 +725,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -484,11 +743,11 @@ const docTemplate = `{
                 "tags": [
                     "Products"
                 ],
-                "summary": "Get Product",
+                "summary": "Get ProductHandler",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of Product to be searched",
+                        "description": "ID of ProductHandler to be searched",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -498,13 +757,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Delete Product",
+                "description": "Delete ProductHandler",
                 "consumes": [
                     "application/json"
                 ],
@@ -514,11 +773,11 @@ const docTemplate = `{
                 "tags": [
                     "Products"
                 ],
-                "summary": "Delete Product",
+                "summary": "Delete ProductHandler",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of a Product to be excluded",
+                        "description": "ID of a ProductHandler to be excluded",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -528,13 +787,13 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
             },
             "patch": {
-                "description": "Update the details of a Product",
+                "description": "Update the details of a ProductHandler",
                 "consumes": [
                     "application/json"
                 ],
@@ -544,7 +803,7 @@ const docTemplate = `{
                 "tags": [
                     "Products"
                 ],
-                "summary": "Update Product",
+                "summary": "Update ProductHandler",
                 "parameters": [
                     {
                         "type": "string",
@@ -554,12 +813,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "Updated Product details",
+                        "description": "Updated ProductHandler details",
                         "name": "Products",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestUpdateProduct"
+                            "$ref": "#/definitions/handlers.RequestUpdateProduct"
                         }
                     }
                 ],
@@ -567,7 +826,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -590,7 +849,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -606,15 +865,15 @@ const docTemplate = `{
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Create Section",
+                "summary": "Create SectionHandler",
                 "parameters": [
                     {
-                        "description": "Section to Create",
-                        "name": "Section",
+                        "description": "SectionHandler to Create",
+                        "name": "SectionHandler",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestCreateSection"
+                            "$ref": "#/definitions/dtos.CreateSectionRequestDTO"
                         }
                     }
                 ],
@@ -622,7 +881,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -630,7 +889,7 @@ const docTemplate = `{
         },
         "/api/v1/sections/{id}": {
             "get": {
-                "description": "Get the details of a Section",
+                "description": "Get the details of a SectionHandler",
                 "consumes": [
                     "application/json"
                 ],
@@ -640,11 +899,11 @@ const docTemplate = `{
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Get Section",
+                "summary": "Get SectionHandler",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of Section to be searched",
+                        "description": "ID of SectionHandler to be searched",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -654,13 +913,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
             },
             "delete": {
-                "description": "Delete Section",
+                "description": "Delete SectionHandler",
                 "consumes": [
                     "application/json"
                 ],
@@ -670,11 +929,11 @@ const docTemplate = `{
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Delete Section",
+                "summary": "Delete SectionHandler",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of a Section to be excluded",
+                        "description": "ID of a SectionHandler to be excluded",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -684,13 +943,13 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
             },
             "patch": {
-                "description": "Update the details of a Section",
+                "description": "Update the details of a SectionHandler",
                 "consumes": [
                     "application/json"
                 ],
@@ -700,22 +959,22 @@ const docTemplate = `{
                 "tags": [
                     "Sections"
                 ],
-                "summary": "Update Section",
+                "summary": "Update SectionHandler",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID of Section to be updated",
+                        "description": "ID of SectionHandler to be updated",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Updated Section details",
+                        "description": "Updated SectionHandler details",
                         "name": "Sections",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestUpdateSection"
+                            "$ref": "#/definitions/dtos.UpdateSectionRequestDTO"
                         }
                     }
                 ],
@@ -723,7 +982,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -746,7 +1005,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -765,8 +1024,8 @@ const docTemplate = `{
                 "summary": "Create Sellers",
                 "parameters": [
                     {
-                        "description": "Seller to Create",
-                        "name": "Seller",
+                        "description": "SellerHandler to Create",
+                        "name": "SellerHandler",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -778,7 +1037,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -810,7 +1069,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -840,7 +1099,7 @@ const docTemplate = `{
                     "204": {
                         "description": "No Content",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -879,7 +1138,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web.response"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -901,7 +1160,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Warehouse"
+                                "$ref": "#/definitions/web_utils.response"
                             }
                         }
                     }
@@ -922,7 +1181,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "warehouses to create",
-                        "name": "Warehouse",
+                        "name": "WarehouseHandler",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -934,7 +1193,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Warehouse"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -953,7 +1212,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Warehouse ID",
+                        "description": "WarehouseHandler ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -963,7 +1222,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Warehouse"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -977,7 +1236,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Warehouse ID",
+                        "description": "WarehouseHandler ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1004,14 +1263,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Warehouse ID",
+                        "description": "WarehouseHandler ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Warehouse to update",
-                        "name": "Warehouse",
+                        "description": "WarehouseHandler to update",
+                        "name": "WarehouseHandler",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -1023,7 +1282,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Warehouse"
+                            "$ref": "#/definitions/web_utils.response"
                         }
                     }
                 }
@@ -1031,84 +1290,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Buyer": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "x-order": "0"
-                },
-                "card_number_id": {
-                    "type": "string",
-                    "x-order": "1"
-                },
-                "first_name": {
-                    "type": "string",
-                    "x-order": "2"
-                },
-                "last_name": {
-                    "type": "string",
-                    "x-order": "3"
-                }
-            }
-        },
-        "domain.RequestCreateEmployee": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.RequestUpdateEmployee": {
-            "type": "object",
-            "properties": {
-                "card_number_id": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.Warehouse": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "telephone": {
-                    "type": "string"
-                },
-                "warehouse_code": {
-                    "type": "string"
-                }
-            }
-        },
         "dtos.CreateBuyerRequestDTO": {
             "type": "object",
             "required": [
@@ -1128,12 +1309,42 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.CreateSectionRequestDTO": {
+            "type": "object",
+            "properties": {
+                "current_capacity": {
+                    "type": "integer"
+                },
+                "current_temperature": {
+                    "type": "integer"
+                },
+                "maximum_capacity": {
+                    "type": "integer"
+                },
+                "minimum_capacity": {
+                    "type": "integer"
+                },
+                "minimum_temperature": {
+                    "type": "integer"
+                },
+                "product_type_id": {
+                    "type": "integer"
+                },
+                "section_number": {
+                    "type": "integer"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dtos.CreateSellerRequestDTO": {
             "type": "object",
             "required": [
                 "address",
                 "cid",
                 "company_name",
+                "locality_id",
                 "telephone"
             ],
             "properties": {
@@ -1146,8 +1357,25 @@ const docTemplate = `{
                 "company_name": {
                     "type": "string"
                 },
+                "locality_id": {
+                    "type": "string"
+                },
                 "telephone": {
                     "type": "string"
+                }
+            }
+        },
+        "dtos.GetNumberOfSellersResponseDTO": {
+            "type": "object",
+            "properties": {
+                "locality_id": {
+                    "type": "integer"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "sellers_count": {
+                    "type": "integer"
                 }
             }
         },
@@ -1168,6 +1396,49 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.UpdateLocalityRequestDTO": {
+            "type": "object",
+            "properties": {
+                "country_name": {
+                    "type": "string"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "province_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UpdateSectionRequestDTO": {
+            "type": "object",
+            "properties": {
+                "current_capacity": {
+                    "type": "integer"
+                },
+                "current_temperature": {
+                    "type": "integer"
+                },
+                "maximum_capacity": {
+                    "type": "integer"
+                },
+                "minimum_capacity": {
+                    "type": "integer"
+                },
+                "minimum_temperature": {
+                    "type": "integer"
+                },
+                "product_type_id": {
+                    "type": "integer"
+                },
+                "section_number": {
+                    "type": "integer"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dtos.UpdateSellerRequestDTO": {
             "type": "object",
             "properties": {
@@ -1178,6 +1449,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "company_name": {
+                    "type": "string"
+                },
+                "locality_id": {
                     "type": "string"
                 },
                 "telephone": {
@@ -1205,7 +1479,85 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.requestCreateProduct": {
+        "entities.Buyer": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "x-order": "0"
+                },
+                "card_number_id": {
+                    "type": "string",
+                    "x-order": "1"
+                },
+                "first_name": {
+                    "type": "string",
+                    "x-order": "2"
+                },
+                "last_name": {
+                    "type": "string",
+                    "x-order": "3"
+                }
+            }
+        },
+        "entities.Locality": {
+            "type": "object",
+            "required": [
+                "country_name",
+                "id",
+                "locality_name",
+                "province_name"
+            ],
+            "properties": {
+                "country_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "province_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.RequestCreateEmployee": {
+            "type": "object",
+            "properties": {
+                "card_number_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entities.RequestUpdateEmployee": {
+            "type": "object",
+            "properties": {
+                "card_number_id": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handlers.RequestCreateProduct": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1243,36 +1595,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.requestCreateSection": {
-            "type": "object",
-            "properties": {
-                "current_capacity": {
-                    "type": "integer"
-                },
-                "current_temperature": {
-                    "type": "integer"
-                },
-                "maximum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "section_number": {
-                    "type": "integer"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "handlers.requestUpdateProduct": {
+        "handlers.RequestUpdateProduct": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1310,36 +1633,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.requestUpdateSection": {
-            "type": "object",
-            "properties": {
-                "current_capacity": {
-                    "type": "integer"
-                },
-                "current_temperature": {
-                    "type": "integer"
-                },
-                "maximum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_capacity": {
-                    "type": "integer"
-                },
-                "minimum_temperature": {
-                    "type": "integer"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "section_number": {
-                    "type": "integer"
-                },
-                "warehouse_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "web.errorResponse": {
+        "web_utils.errorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1350,7 +1644,7 @@ const docTemplate = `{
                 }
             }
         },
-        "web.response": {
+        "web_utils.response": {
             "type": "object",
             "properties": {
                 "data": {}

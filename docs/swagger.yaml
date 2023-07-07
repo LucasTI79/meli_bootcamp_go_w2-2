@@ -1,56 +1,4 @@
 definitions:
-  domain.Buyer:
-    properties:
-      card_number_id:
-        type: string
-        x-order: "1"
-      first_name:
-        type: string
-        x-order: "2"
-      id:
-        type: integer
-        x-order: "0"
-      last_name:
-        type: string
-        x-order: "3"
-    type: object
-  domain.RequestCreateEmployee:
-    properties:
-      card_number_id:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      warehouse_id:
-        type: integer
-    type: object
-  domain.RequestUpdateEmployee:
-    properties:
-      card_number_id:
-        type: string
-      first_name:
-        type: string
-      last_name:
-        type: string
-      warehouse_id:
-        type: integer
-    type: object
-  domain.Warehouse:
-    properties:
-      address:
-        type: string
-      id:
-        type: integer
-      minimum_capacity:
-        type: integer
-      minimum_temperature:
-        type: integer
-      telephone:
-        type: string
-      warehouse_code:
-        type: string
-    type: object
   dtos.CreateBuyerRequestDTO:
     properties:
       card_number_id:
@@ -60,9 +8,28 @@ definitions:
       last_name:
         type: string
     required:
-    - card_number_id
-    - first_name
-    - last_name
+      - card_number_id
+      - first_name
+      - last_name
+    type: object
+  dtos.CreateSectionRequestDTO:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
     type: object
   dtos.CreateSellerRequestDTO:
     properties:
@@ -72,13 +39,25 @@ definitions:
         type: integer
       company_name:
         type: string
+      locality_id:
+        type: string
       telephone:
         type: string
     required:
-    - address
-    - cid
-    - company_name
-    - telephone
+      - address
+      - cid
+      - company_name
+      - locality_id
+      - telephone
+    type: object
+  dtos.GetNumberOfSellersResponseDTO:
+    properties:
+      locality_id:
+        type: integer
+      locality_name:
+        type: string
+      sellers_count:
+        type: integer
     type: object
   dtos.UpdateBuyerRequestDTO:
     properties:
@@ -92,6 +71,34 @@ definitions:
         type: string
         x-order: "2"
     type: object
+  dtos.UpdateLocalityRequestDTO:
+    properties:
+      country_name:
+        type: string
+      locality_name:
+        type: string
+      province_name:
+        type: string
+    type: object
+  dtos.UpdateSectionRequestDTO:
+    properties:
+      current_capacity:
+        type: integer
+      current_temperature:
+        type: integer
+      maximum_capacity:
+        type: integer
+      minimum_capacity:
+        type: integer
+      minimum_temperature:
+        type: integer
+      product_type_id:
+        type: integer
+      section_number:
+        type: integer
+      warehouse_id:
+        type: integer
+    type: object
   dtos.UpdateSellerRequestDTO:
     properties:
       address:
@@ -99,6 +106,8 @@ definitions:
       cid:
         type: integer
       company_name:
+        type: string
+      locality_id:
         type: string
       telephone:
         type: string
@@ -116,7 +125,60 @@ definitions:
       warehouse_code:
         type: string
     type: object
-  handler.requestCreateProduct:
+  entities.Buyer:
+    properties:
+      card_number_id:
+        type: string
+        x-order: "1"
+      first_name:
+        type: string
+        x-order: "2"
+      id:
+        type: integer
+        x-order: "0"
+      last_name:
+        type: string
+        x-order: "3"
+    type: object
+  entities.Locality:
+    properties:
+      country_name:
+        type: string
+      id:
+        type: integer
+      locality_name:
+        type: string
+      province_name:
+        type: string
+    required:
+      - country_name
+      - id
+      - locality_name
+      - province_name
+    type: object
+  entities.RequestCreateEmployee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  entities.RequestUpdateEmployee:
+    properties:
+      card_number_id:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
+  handlers.RequestCreateProduct:
     properties:
       description:
         type: string
@@ -141,26 +203,7 @@ definitions:
       width:
         type: number
     type: object
-  handler.requestCreateSection:
-    properties:
-      current_capacity:
-        type: integer
-      current_temperature:
-        type: integer
-      maximum_capacity:
-        type: integer
-      minimum_capacity:
-        type: integer
-      minimum_temperature:
-        type: integer
-      product_type_id:
-        type: integer
-      section_number:
-        type: integer
-      warehouse_id:
-        type: integer
-    type: object
-  handler.requestUpdateProduct:
+  handlers.RequestUpdateProduct:
     properties:
       description:
         type: string
@@ -185,35 +228,16 @@ definitions:
       width:
         type: number
     type: object
-  handler.requestUpdateSection:
-    properties:
-      current_capacity:
-        type: integer
-      current_temperature:
-        type: integer
-      maximum_capacity:
-        type: integer
-      minimum_capacity:
-        type: integer
-      minimum_temperature:
-        type: integer
-      product_type_id:
-        type: integer
-      section_number:
-        type: integer
-      warehouse_id:
-        type: integer
-    type: object
-  web.errorResponse:
+  web_utils.errorResponse:
     properties:
       code:
         type: string
       message:
         type: string
     type: object
-  web.response:
+  web_utils.response:
     properties:
-      data: {}
+      data: { }
     type: object
 host: localhost:8080
 info:
@@ -231,662 +255,828 @@ paths:
   /api/v1/buyers:
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of all buyers on the database.
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/web.response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/domain.Buyer'
-                  type: array
-              type: object
+              - $ref: '#/definitions/web_utils.response'
+              - properties:
+                  data:
+                    items:
+                      $ref: '#/definitions/entities.Buyer'
+                    type: array
+                type: object
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
       summary: List Buyers
       tags:
-      - Buyers
+        - Buyers
     post:
       consumes:
-      - application/json
+        - application/json
       description: Save a buyer on the database.
       parameters:
-      - description: Buyer to Create
-        in: body
-        name: Seller
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.CreateBuyerRequestDTO'
+        - description: Buyer to Create
+          in: body
+          name: SellerHandler
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.CreateBuyerRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.Buyer'
+            $ref: '#/definitions/entities.Buyer'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
       summary: Create Buyer
       tags:
-      - Buyers
+        - Buyers
   /api/v1/buyers/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete Buyers
       parameters:
-      - description: ID of a Buyer to be excluded
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of a Buyer to be excluded
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "204":
           description: No Content
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
       summary: Delete Buyer
       tags:
-      - Buyers
+        - Buyers
     get:
       description: Get the details of a Buyer
       parameters:
-      - description: ID of Buyer to be searched
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of Buyer to be searched
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Buyer'
+            $ref: '#/definitions/entities.Buyer'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
       summary: Get Buyer
       tags:
-      - Buyers
+        - Buyers
     patch:
       consumes:
-      - application/json
+        - application/json
       description: Update the details of a Buyer
       parameters:
-      - description: ID of Buyer to be updated
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated Buyer details
-        in: body
-        name: Buyer
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.UpdateBuyerRequestDTO'
+        - description: ID of Buyer to be updated
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Updated Buyer details
+          in: body
+          name: Buyer
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.UpdateBuyerRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Buyer'
+            $ref: '#/definitions/entities.Buyer'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web.errorResponse'
+            $ref: '#/definitions/web_utils.errorResponse'
       summary: Update Buyer
       tags:
-      - Buyers
+        - Buyers
   /api/v1/employees:
     get:
       consumes:
-      - application/json
+        - application/json
       description: getAll employees
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: List Employees
       tags:
-      - Employees
+        - Employees
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create employees
       parameters:
-      - description: Employee to Create
-        in: body
-        name: Employees
-        required: true
-        schema:
-          $ref: '#/definitions/domain.RequestCreateEmployee'
+        - description: EmployeeHandler to Create
+          in: body
+          name: Employees
+          required: true
+          schema:
+            $ref: '#/definitions/entities.RequestCreateEmployee'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Create Employees
       tags:
-      - Employees
+        - Employees
   /api/v1/employees/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete Employees
       parameters:
-      - description: ID of a Employees to be excluded
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of a Employees to be excluded
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Delete Employees
       tags:
-      - Employees
+        - Employees
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of a Employees
       parameters:
-      - description: ID of Employees to be searched
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of Employees to be searched
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Get Employees
       tags:
-      - Employees
+        - Employees
     patch:
       consumes:
-      - application/json
+        - application/json
       description: Update the details of a Employees
       parameters:
-      - description: ID of Employees to be updated
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated Employeesers details
-        in: body
-        name: Employees
-        required: true
-        schema:
-          $ref: '#/definitions/domain.RequestUpdateEmployee'
+        - description: ID of Employees to be updated
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Updated Employeesers details
+          in: body
+          name: Employees
+          required: true
+          schema:
+            $ref: '#/definitions/entities.RequestUpdateEmployee'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Update Employees
       tags:
-      - Employees
+        - Employees
+  /api/v1/localities:
+    get:
+      consumes:
+        - application/json
+      description: Get the details of all localities on the database.
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+              - $ref: '#/definitions/web_utils.response'
+              - properties:
+                  data:
+                    items:
+                      $ref: '#/definitions/entities.Locality'
+                    type: array
+                type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+      summary: List Localities
+      tags:
+        - Localities
+    post:
+      consumes:
+        - application/json
+      description: search for a locality and return the number of sellers.
+      parameters:
+        - description: ID of Locality to be searched
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+              - $ref: '#/definitions/web_utils.response'
+              - properties:
+                  data:
+                    $ref: '#/definitions/dtos.GetNumberOfSellersResponseDTO'
+                type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+      summary: CountSellers
+      tags:
+        - Localities
+  /api/v1/localities/{id}:
+    delete:
+      consumes:
+        - application/json
+      description: Delete Localities
+      parameters:
+        - description: ID of a Locality to be excluded
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+      summary: Delete Locality
+      tags:
+        - Localities
+    get:
+      description: Get the details of a Locality
+      parameters:
+        - description: ID of Locality to be searched
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Locality'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+      summary: Get Locality
+      tags:
+        - Localities
+    patch:
+      consumes:
+        - application/json
+      description: Update the details of a Locality
+      parameters:
+        - description: ID of Locality to be updated
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Updated Locality details
+          in: body
+          name: Locality
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.UpdateLocalityRequestDTO'
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Locality'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web_utils.errorResponse'
+      summary: Update Locality
+      tags:
+        - Localities
   /api/v1/products:
     get:
       consumes:
-      - application/json
+        - application/json
       description: getAll products
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: List products
       tags:
-      - Products
+        - Products
     post:
       consumes:
-      - application/json
-      description: Create Product
+        - application/json
+      description: Create ProductHandler
       parameters:
-      - description: Product to Create
-        in: body
-        name: Product
-        required: true
-        schema:
-          $ref: '#/definitions/handler.requestCreateProduct'
+        - description: ProductHandler to Create
+          in: body
+          name: ProductHandler
+          required: true
+          schema:
+            $ref: '#/definitions/handlers.RequestCreateProduct'
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Create Product
+            $ref: '#/definitions/web_utils.response'
+      summary: Create ProductHandler
       tags:
-      - Products
+        - Products
   /api/v1/products/{id}:
     delete:
       consumes:
-      - application/json
-      description: Delete Product
+        - application/json
+      description: Delete ProductHandler
       parameters:
-      - description: ID of a Product to be excluded
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of a ProductHandler to be excluded
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Delete Product
+            $ref: '#/definitions/web_utils.response'
+      summary: Delete ProductHandler
       tags:
-      - Products
+        - Products
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of a Products
       parameters:
-      - description: ID of Product to be searched
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of ProductHandler to be searched
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Get Product
+            $ref: '#/definitions/web_utils.response'
+      summary: Get ProductHandler
       tags:
-      - Products
+        - Products
     patch:
       consumes:
-      - application/json
-      description: Update the details of a Product
+        - application/json
+      description: Update the details of a ProductHandler
       parameters:
-      - description: ID of Products to be updated
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated Product details
-        in: body
-        name: Products
-        required: true
-        schema:
-          $ref: '#/definitions/handler.requestUpdateProduct'
+        - description: ID of Products to be updated
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Updated ProductHandler details
+          in: body
+          name: Products
+          required: true
+          schema:
+            $ref: '#/definitions/handlers.RequestUpdateProduct'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Update Product
+            $ref: '#/definitions/web_utils.response'
+      summary: Update ProductHandler
       tags:
-      - Products
+        - Products
   /api/v1/sections:
     get:
       consumes:
-      - application/json
+        - application/json
       description: getAll sections
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: List sections
       tags:
-      - Sections
+        - Sections
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create section
       parameters:
-      - description: Section to Create
-        in: body
-        name: Section
-        required: true
-        schema:
-          $ref: '#/definitions/handler.requestCreateSection'
+        - description: SectionHandler to Create
+          in: body
+          name: SectionHandler
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.CreateSectionRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Create Section
+            $ref: '#/definitions/web_utils.response'
+      summary: Create SectionHandler
       tags:
-      - Sections
+        - Sections
   /api/v1/sections/{id}:
     delete:
       consumes:
-      - application/json
-      description: Delete Section
+        - application/json
+      description: Delete SectionHandler
       parameters:
-      - description: ID of a Section to be excluded
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of a SectionHandler to be excluded
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Delete Section
+            $ref: '#/definitions/web_utils.response'
+      summary: Delete SectionHandler
       tags:
-      - Sections
+        - Sections
     get:
       consumes:
-      - application/json
-      description: Get the details of a Section
+        - application/json
+      description: Get the details of a SectionHandler
       parameters:
-      - description: ID of Section to be searched
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of SectionHandler to be searched
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Get Section
+            $ref: '#/definitions/web_utils.response'
+      summary: Get SectionHandler
       tags:
-      - Sections
+        - Sections
     patch:
       consumes:
-      - application/json
-      description: Update the details of a Section
+        - application/json
+      description: Update the details of a SectionHandler
       parameters:
-      - description: ID of Section to be updated
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated Section details
-        in: body
-        name: Sections
-        required: true
-        schema:
-          $ref: '#/definitions/handler.requestUpdateSection'
+        - description: ID of SectionHandler to be updated
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Updated SectionHandler details
+          in: body
+          name: Sections
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.UpdateSectionRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
-      summary: Update Section
+            $ref: '#/definitions/web_utils.response'
+      summary: Update SectionHandler
       tags:
-      - Sections
+        - Sections
   /api/v1/sellers:
     get:
       consumes:
-      - application/json
+        - application/json
       description: getAll sellers
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: List sellers
       tags:
-      - Sellers
+        - Sellers
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create sellers
       parameters:
-      - description: Seller to Create
-        in: body
-        name: Seller
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.CreateSellerRequestDTO'
+        - description: SellerHandler to Create
+          in: body
+          name: SellerHandler
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.CreateSellerRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Create Sellers
       tags:
-      - Sellers
+        - Sellers
   /api/v1/sellers/{id}:
     delete:
       consumes:
-      - application/json
+        - application/json
       description: Delete Sellers
       parameters:
-      - description: ID of a Sellers to be excluded
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of a Sellers to be excluded
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "204":
           description: No Content
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Delete Sellers
       tags:
-      - Sellers
+        - Sellers
     get:
       consumes:
-      - application/json
+        - application/json
       description: Get the details of a Sellers
       parameters:
-      - description: ID of Sellers to be searched
-        in: path
-        name: id
-        required: true
-        type: string
+        - description: ID of Sellers to be searched
+          in: path
+          name: id
+          required: true
+          type: string
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Get Sellers
       tags:
-      - Sellers
+        - Sellers
     patch:
       consumes:
-      - application/json
+        - application/json
       description: Update the details of a Sellers
       parameters:
-      - description: ID of Sellers to be updated
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Updated Sellers details
-        in: body
-        name: Sellers
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.UpdateSellerRequestDTO'
+        - description: ID of Sellers to be updated
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: Updated Sellers details
+          in: body
+          name: Sellers
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.UpdateSellerRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web.response'
+            $ref: '#/definitions/web_utils.response'
       summary: Update Sellers
       tags:
-      - Sellers
+        - Sellers
   /api/v1/warehouses:
     get:
       description: get warehouses
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
             items:
-              $ref: '#/definitions/domain.Warehouse'
+              $ref: '#/definitions/web_utils.response'
             type: array
       summary: List warehouses
       tags:
-      - Warehouses
+        - Warehouses
     post:
       consumes:
-      - application/json
+        - application/json
       description: Create warehouses
       parameters:
-      - description: warehouses to create
-        in: body
-        name: Warehouse
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.WarehouseRequestDTO'
+        - description: warehouses to create
+          in: body
+          name: WarehouseHandler
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.WarehouseRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Warehouse'
+            $ref: '#/definitions/web_utils.response'
       summary: Create warehouses
       tags:
-      - Warehouses
+        - Warehouses
   /api/v1/warehouses/{id}:
     delete:
       description: delete warehouses by id
       parameters:
-      - description: Warehouse ID
-        in: path
-        name: id
-        required: true
-        type: integer
+        - description: WarehouseHandler ID
+          in: path
+          name: id
+          required: true
+          type: integer
       responses:
         "204":
           description: No Content
       summary: Delete warehouses
       tags:
-      - Warehouses
+        - Warehouses
     get:
       description: get one warehouses by id
       parameters:
-      - description: Warehouse ID
-        in: path
-        name: id
-        required: true
-        type: integer
+        - description: WarehouseHandler ID
+          in: path
+          name: id
+          required: true
+          type: integer
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Warehouse'
+            $ref: '#/definitions/web_utils.response'
       summary: Get warehouses
       tags:
-      - Warehouses
+        - Warehouses
     patch:
       consumes:
-      - application/json
+        - application/json
       description: update warehouses
       parameters:
-      - description: Warehouse ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Warehouse to update
-        in: body
-        name: Warehouse
-        required: true
-        schema:
-          $ref: '#/definitions/dtos.WarehouseRequestDTO'
+        - description: WarehouseHandler ID
+          in: path
+          name: id
+          required: true
+          type: integer
+        - description: WarehouseHandler to update
+          in: body
+          name: WarehouseHandler
+          required: true
+          schema:
+            $ref: '#/definitions/dtos.WarehouseRequestDTO'
       produces:
-      - application/json
+        - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Warehouse'
+            $ref: '#/definitions/web_utils.response'
       summary: Update warehouses
       tags:
-      - Warehouses
+        - Warehouses
 swagger: "2.0"

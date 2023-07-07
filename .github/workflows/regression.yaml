@@ -3,23 +3,23 @@ on:
   workflow_dispatch:
     inputs:
       wave:
-        description: 'Wave of the test'
+        description: 'Wave of the tests'
         type: string
         required: true
       sprint:
-        description: 'Sprint of the test'
+        description: 'Sprint of the tests'
         type: string
         required: true
       company:
-        description: 'Company of the test'
+        description: 'Company of the tests'
         type: string
         required: true
       group:
-        description: 'Group of the test'
+        description: 'Group of the tests'
         type: string
         required: true
       token:
-        description: 'Token to clone the test'
+        description: 'Token to clone the tests'
         type: string
         required: true
 
@@ -50,12 +50,12 @@ jobs:
         run: |
           sudo /etc/init.d/mysql start
           make rebuild-database-with-password p=root
-      - name: Start go server
+      - name: Start go http
         timeout-minutes: 1
         run: |
           nohup make start & \
           while [ "$(curl -s -o /dev/null -w ''%{http_code}'' localhost:8080)" != "404" ]; do sleep 1; done
-      - name: Install test tool
+      - name: Install tests tool
         run: go get -u github.com/ezedh/go-regression
 
       - name: Checkout tests repo
