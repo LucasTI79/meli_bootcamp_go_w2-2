@@ -21,7 +21,7 @@ import (
 
 func TestGet(t *testing.T) {
 
-	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchaseOrder.json")
+	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_order.json")
 	var validPurchaseOrder entities.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &validPurchaseOrder); err != nil {
 		t.Fatal(err)
@@ -76,10 +76,10 @@ func TestGet(t *testing.T) {
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.GET("/api/v1/localities/:id", purchaseOrderHandler.Get())
+			r.GET("/api/v1/puchase-orders/:id", purchaseOrderHandler.Get())
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", "/api/v1/localities", test.id), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s/%s", "/api/v1/puchase-orders", test.id), nil)
 			res := httptest.NewRecorder()
 
 			//Executar request
@@ -110,9 +110,9 @@ func TestGet(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 
-	localitiesSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_orders.json")
-	var validLocalities []entities.PurchaseOrder
-	if err := json.Unmarshal(localitiesSerialized, &validLocalities); err != nil {
+	purchaseOrdersSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_orders.json")
+	var validPurchaseOrders []entities.PurchaseOrder
+	if err := json.Unmarshal(purchaseOrdersSerialized, &validPurchaseOrders); err != nil {
 		t.Fatal(err)
 	}
 
@@ -125,11 +125,11 @@ func TestGetAll(t *testing.T) {
 		expectedCode         int
 	}{
 		{
-			name:                 "Successfully get all expectedLocalities",
-			expectedGetAllResult: validLocalities,
+			name:                 "Successfully get all",
+			expectedGetAllResult: validPurchaseOrders,
 			expectedGetAllError:  nil,
 			expectedGetAllCalls:  1,
-			expectedResponse:     validLocalities,
+			expectedResponse:     validPurchaseOrders,
 			expectedCode:         http.StatusOK,
 		},
 		{
@@ -141,7 +141,7 @@ func TestGetAll(t *testing.T) {
 			expectedCode:         http.StatusNoContent,
 		},
 		{
-			name:                 "Error getting all expectedLocalities",
+			name:                 "Error getting all",
 			expectedGetAllResult: []entities.PurchaseOrder{},
 			expectedGetAllError:  assert.AnError,
 			expectedGetAllCalls:  1,
@@ -160,10 +160,10 @@ func TestGetAll(t *testing.T) {
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.GET("/api/v1/expectedLocalities", purchaseOrderHandler.GetAll())
+			r.GET("/api/v1/purchase-orders", purchaseOrderHandler.GetAll())
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s", "/api/v1/expectedLocalities"), nil)
+			req := httptest.NewRequest(http.MethodGet, fmt.Sprintf("%s", "/api/v1/purchase-orders"), nil)
 			res := httptest.NewRecorder()
 
 			//Executar request
@@ -240,10 +240,10 @@ func TestDelete(t *testing.T) {
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.DELETE("/api/v1/localities/:id", purchaseOrderHandler.Delete())
+			r.DELETE("/api/v1/puchase-orders/:id", purchaseOrderHandler.Delete())
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("%s/%s", "/api/v1/localities", test.id), nil)
+			req := httptest.NewRequest(http.MethodDelete, fmt.Sprintf("%s/%s", "/api/v1/puchase-orders", test.id), nil)
 			res := httptest.NewRecorder()
 
 			//Executar request
@@ -259,7 +259,7 @@ func TestDelete(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 
-	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchaseOrder.json")
+	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_order.json")
 	var purchaseOrder entities.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &purchaseOrder); err != nil {
 		t.Fatal(err)
@@ -319,13 +319,13 @@ func TestCreate(t *testing.T) {
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.POST("/api/v1/localities", purchaseOrderHandler.Create())
+			r.POST("/api/v1/puchase-orders", purchaseOrderHandler.Create())
 
 			requestBody, _ := json.Marshal(test.createPurchaseOrderRequest)
 			request := bytes.NewReader(requestBody)
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("%s", "/api/v1/localities"), request)
+			req := httptest.NewRequest(http.MethodPost, fmt.Sprintf("%s", "/api/v1/puchase-orders"), request)
 			res := httptest.NewRecorder()
 
 			//Executar request
@@ -460,13 +460,13 @@ func TestUpdate(t *testing.T) {
 			//Configurar o servidor
 			gin.SetMode(gin.TestMode)
 			r := gin.Default()
-			r.PATCH("/api/v1/localities/:id", purchaseOrderHandler.Update())
+			r.PATCH("/api/v1/puchase-orders/:id", purchaseOrderHandler.Update())
 
 			requestBody, _ := json.Marshal(test.updatePurchaseOrderRequest)
 			request := bytes.NewReader(requestBody)
 
 			//Definir request e response
-			req := httptest.NewRequest(http.MethodPatch, fmt.Sprintf("%s/%s", "/api/v1/localities", test.id), request)
+			req := httptest.NewRequest(http.MethodPatch, fmt.Sprintf("%s/%s", "/api/v1/puchase-orders", test.id), request)
 			res := httptest.NewRecorder()
 
 			//Executar request
