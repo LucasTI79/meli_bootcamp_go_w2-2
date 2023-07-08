@@ -42,8 +42,8 @@ func (service *CarrierServiceMock) GetCountCarriersByLocalityId(ctx *context.Con
 	return args.Get(0).(int), args.Error(1)
 }
 
-func (service *CarrierServiceMock) GetCountAndDataByLocalityId(ctx *context.Context) ([]dtos.DataLocalityAndCarrier, error) {
+func (service *CarrierServiceMock) GetCountAndDataByLocalityId(ctx *context.Context) (*[]dtos.DataLocalityAndCarrier, error) {
 	args := service.Called(ctx)
 
-	return args.Get(0).([]dtos.DataLocalityAndCarrier), args.Error(1)
+	return args.Get(0).(*[]dtos.DataLocalityAndCarrier), args.Error(1)
 }
