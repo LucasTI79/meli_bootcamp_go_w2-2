@@ -39,7 +39,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.ProductRecord, error)
 
 	for rows.Next() {
 		p := domain.ProductRecord{}
-		_ = rows.Scan(&p.ID, &p.LastUpdateRate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
+		_ = rows.Scan(&p.ID, &p.LastUpdateDate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
 		product_records = append(product_records, p)
 	}
 
@@ -50,7 +50,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, err
 	query := "SELECT * FROM product_records WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	p := domain.ProductRecord{}
-	err := row.Scan(&p.ID, &p.LastUpdateRate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
+	err := row.Scan(&p.ID, &p.LastUpdateDate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
 	if err != nil {
 		return domain.ProductRecord{}, err
 	}
@@ -59,13 +59,13 @@ func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, err
 }
 
 func (r *repository) Save(ctx context.Context, p domain.ProductRecord) (int, error) {
-	query := "INSERT INTO product_records(last_update_rate,purchase_price,sale_price,product_id) VALUES (?,?,?,?)"
+	query := "INSERT INTO product_records(last_update_date,purchase_price,sale_price,product_id) VALUES (?,?,?,?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
 	}
 
-	res, err := stmt.Exec(p.LastUpdateRate, p.PurchasePrice, p.SalePrice, p.ProductId)
+	res, err := stmt.Exec(p.LastUpdateDate, p.PurchasePrice, p.SalePrice, p.ProductId)
 	if err != nil {
 		return 0, err
 	}
@@ -79,20 +79,20 @@ func (r *repository) Save(ctx context.Context, p domain.ProductRecord) (int, err
 }
 
 func (r *repository) Exists(ctx context.Context, id int) bool {
-	query := "SELECT id FROM products WHERE id=?;"
+	query := "SELECT id FROM products_records WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	err := row.Scan(&id)
 	return err == nil
 }
 
 func (r *repository) Update(ctx context.Context, p domain.ProductRecord) error {
-	query := "UPDATE product_records SET last_update_rate=?, purchase_price=?, sale_price=?, product_id=? WHERE id=?"
+	query := "UPDATE product_records SET last_update_date=?, purchase_price=?, sale_price=?, product_id=? WHERE id=?"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(p.LastUpdateRate, p.PurchasePrice, p.SalePrice, p.ProductId, p.ID)
+	res, err := stmt.Exec(p.LastUpdateDate, p.PurchasePrice, p.SalePrice, p.ProductId, p.ID)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (r *repository) Delete(ctx context.Context, id int) error {
 
 func (r *repository) NumberRecords(ctx context.Context, product_id int) (int, error) {
 	count := 0
-	row := r.db.QueryRow("SELECT COUNT (*) from product_records where product_id =?", product_id)
+	row := r.db.QueryRow("SELECT COUNT(*) from product_records where product_id =?", product_id)
 	err := row.Scan(&count)
 
 	return count, err

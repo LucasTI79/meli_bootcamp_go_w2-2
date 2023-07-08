@@ -143,4 +143,6 @@ func (r *router) buildProductRecordsRoutes() {
 	r.rg.GET("/productRecords/:id", handler.Get())
 	r.rg.DELETE("/productRecords/:id", handler.Delete())
 	r.rg.PATCH("/productRecords/:id", handler.Update())
+	r.rg.GET("/products/reportRecords", handler.NumberRecords())
+
 }

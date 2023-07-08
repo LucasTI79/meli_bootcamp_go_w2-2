@@ -21,7 +21,7 @@ func TestGet(t *testing.T) {
 	t.Run("get_find_by_id_existent", func(t *testing.T) {
 		expectedProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Teste2",
+			LastUpdateDate: "Teste2",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
@@ -73,13 +73,13 @@ func TestGetAll(t *testing.T) {
 		expectedProductsRecords := &[]domain.ProductRecord{
 			{
 				ID:             1,
-				LastUpdateRate: "Test",
+				LastUpdateDate: "Test",
 				PurchasePrice:  1,
 				SalePrice:      1,
 				ProductId:      1,
 			},
 			{
-				LastUpdateRate: "Test",
+				LastUpdateDate: "Test",
 				PurchasePrice:  1,
 				SalePrice:      1,
 				ProductId:      1,
@@ -157,7 +157,7 @@ func TestCreate(t *testing.T) {
 	t.Run("create_conflict", func(t *testing.T) {
 
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
@@ -169,7 +169,7 @@ func TestCreate(t *testing.T) {
 		productRecordRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(true)
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateRate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
+		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateDate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
 			createProductRecordRequestDTO.ProductId)
 
 		assert.Equal(t, productRecord.ErrConflict, err)
@@ -180,7 +180,7 @@ func TestCreate(t *testing.T) {
 	t.Run("create_error", func(t *testing.T) {
 
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
@@ -193,7 +193,7 @@ func TestCreate(t *testing.T) {
 		productRecordRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.ProductRecord")).Return(0, errors.New("error"))
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateRate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
+		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateDate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
 			createProductRecordRequestDTO.ProductId)
 
 		assert.Equal(t, errors.New("error"), err)
@@ -204,7 +204,7 @@ func TestCreate(t *testing.T) {
 	t.Run("create_error_get_product_record", func(t *testing.T) {
 
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
@@ -218,7 +218,7 @@ func TestCreate(t *testing.T) {
 		productRecordRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.ProductRecord{}, errors.New("error"))
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateRate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
+		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateDate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
 			createProductRecordRequestDTO.ProductId)
 
 		assert.Equal(t, errors.New("error"), err)
@@ -229,13 +229,13 @@ func TestCreate(t *testing.T) {
 	t.Run("create_ok", func(t *testing.T) {
 		expectedProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
 		}
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
@@ -249,7 +249,7 @@ func TestCreate(t *testing.T) {
 		productRecordRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedProductRecord, nil)
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateRate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
+		productRecordSaved, err := service.Save(&ctx, createProductRecordRequestDTO.LastUpdateDate, createProductRecordRequestDTO.PurchasePrice, createProductRecordRequestDTO.SalePrice,
 			createProductRecordRequestDTO.ProductId)
 
 		assert.Equal(t, productRecordSaved, expectedProductRecord)
@@ -262,13 +262,13 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_existent", func(t *testing.T) {
 		originalProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
 		}
 		updateProductRecordRequestDTO := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &originalProductRecord.LastUpdateRate,
+			LastUpdateDate: &originalProductRecord.LastUpdateDate,
 			PurchasePrice:  &originalProductRecord.PurchasePrice,
 			SalePrice:      &originalProductRecord.SalePrice,
 			ProductId:      &originalProductRecord.ProductId,
@@ -282,7 +282,7 @@ func TestUpdate(t *testing.T) {
 		productRecordRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.ProductRecord")).Return(nil)
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateRate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
+		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateDate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
 			updateProductRecordRequestDTO.ProductId, 1)
 
 		assert.Equal(t, productRecordUpdate, originalProductRecord)
@@ -292,13 +292,13 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_non_existent", func(t *testing.T) {
 		originalProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
 		}
 		updateProductRecordRequestDTO := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &originalProductRecord.LastUpdateRate,
+			LastUpdateDate: &originalProductRecord.LastUpdateDate,
 			PurchasePrice:  &originalProductRecord.PurchasePrice,
 			SalePrice:      &originalProductRecord.SalePrice,
 			ProductId:      &originalProductRecord.ProductId,
@@ -312,7 +312,7 @@ func TestUpdate(t *testing.T) {
 		productRecordRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.ProductRecord")).Return(sql.ErrNoRows)
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateRate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
+		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateDate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
 			updateProductRecordRequestDTO.ProductId, 1)
 
 		assert.Equal(t, productRecord.ErrNotFound, err)
@@ -322,13 +322,13 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_unexpected_error", func(t *testing.T) {
 		originalProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
 		}
 		updateProductRecordRequestDTO := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &originalProductRecord.LastUpdateRate,
+			LastUpdateDate: &originalProductRecord.LastUpdateDate,
 			PurchasePrice:  &originalProductRecord.PurchasePrice,
 			SalePrice:      &originalProductRecord.SalePrice,
 			ProductId:      &originalProductRecord.ProductId,
@@ -342,7 +342,7 @@ func TestUpdate(t *testing.T) {
 		productRecordRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.ProductRecord")).Return(errors.New("error"))
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateRate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
+		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateDate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
 			updateProductRecordRequestDTO.ProductId, 1)
 
 		assert.Equal(t, errors.New("error"), err)
@@ -352,13 +352,13 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_get_error", func(t *testing.T) {
 		originalProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
 		}
 		updateProductRecordRequestDTO := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &originalProductRecord.LastUpdateRate,
+			LastUpdateDate: &originalProductRecord.LastUpdateDate,
 			PurchasePrice:  &originalProductRecord.PurchasePrice,
 			SalePrice:      &originalProductRecord.SalePrice,
 			ProductId:      &originalProductRecord.ProductId,
@@ -370,7 +370,7 @@ func TestUpdate(t *testing.T) {
 		productRecordRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.ProductRecord{}, errors.New("error"))
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateRate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
+		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateDate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
 			updateProductRecordRequestDTO.ProductId, 1)
 
 		assert.Equal(t, errors.New("error"), err)
@@ -380,14 +380,14 @@ func TestUpdate(t *testing.T) {
 	t.Run("update_different_product_id", func(t *testing.T) {
 		originalProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1,
 			SalePrice:      1,
 			ProductId:      1,
 		}
 		productId := 2
 		updateProductRecordRequestDTO := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &originalProductRecord.LastUpdateRate,
+			LastUpdateDate: &originalProductRecord.LastUpdateDate,
 			PurchasePrice:  &originalProductRecord.PurchasePrice,
 			SalePrice:      &originalProductRecord.SalePrice,
 			ProductId:      &productId,
@@ -400,7 +400,7 @@ func TestUpdate(t *testing.T) {
 		productRecordRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(true)
 
 		service := productRecord.NewService(productRecordRepositoryMock)
-		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateRate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
+		productRecordUpdate, err := service.Update(&ctx, updateProductRecordRequestDTO.LastUpdateDate, updateProductRecordRequestDTO.PurchasePrice, updateProductRecordRequestDTO.SalePrice,
 			updateProductRecordRequestDTO.ProductId, 1)
 
 		assert.Equal(t, productRecord.ErrConflict, err)

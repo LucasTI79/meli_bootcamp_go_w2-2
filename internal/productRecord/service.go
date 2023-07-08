@@ -57,17 +57,17 @@ func (s *service) Get(ctx *context.Context, id int) (*domain.ProductRecord, erro
 }
 
 func (s *service) Save(ctx *context.Context, lastUpdateRate string, purchasePrice, salePrice float32, productId int) (*domain.ProductRecord, error) {
-	existingProductRecord := s.productRecordsRepository.Exists(*ctx, productId)
-
-	if existingProductRecord {
-		return nil, ErrConflict
-	}
-
 	newProductRecord := domain.ProductRecord{
-		LastUpdateRate: lastUpdateRate,
+		LastUpdateDate: lastUpdateRate,
 		PurchasePrice:  purchasePrice,
 		SalePrice:      salePrice,
 		ProductId:      productId,
+	}
+
+	existingProductRecord := s.productRecordsRepository.Exists(*ctx, newProductRecord.ID)
+
+	if existingProductRecord {
+		return nil, ErrConflict
 	}
 
 	productRecordId, err := s.productRecordsRepository.Save(*ctx, newProductRecord)
@@ -84,14 +84,14 @@ func (s *service) Save(ctx *context.Context, lastUpdateRate string, purchasePric
 	return &savedProductRecord, nil
 }
 
-func (s *service) Update(ctx *context.Context, lastUpdateRate *string, purchasePrice, salePrice *float32, productId *int, id int) (*domain.ProductRecord, error) {
+func (s *service) Update(ctx *context.Context, lastUpdateDate *string, purchasePrice, salePrice *float32, productId *int, id int) (*domain.ProductRecord, error) {
 	existingProductRecord, err := s.productRecordsRepository.Get(*ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	if lastUpdateRate != nil {
-		existingProductRecord.LastUpdateRate = *lastUpdateRate
+	if lastUpdateDate != nil {
+		existingProductRecord.LastUpdateDate = *lastUpdateDate
 	}
 	if purchasePrice != nil {
 		existingProductRecord.PurchasePrice = *purchasePrice

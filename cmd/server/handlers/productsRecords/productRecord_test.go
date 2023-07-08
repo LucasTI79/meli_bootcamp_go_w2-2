@@ -27,7 +27,7 @@ func TestGet(t *testing.T) {
 		// Definir resultado da consulta
 		productRecordFound := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1.1,
 			SalePrice:      1.1,
 			ProductId:      1,
@@ -145,13 +145,13 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		expectedProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1.1,
 			SalePrice:      1.1,
 			ProductId:      1,
 		}
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1.1,
 			SalePrice:      1.1,
 			ProductId:      1,
@@ -195,7 +195,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_fail", func(t *testing.T) {
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1.1,
 			SalePrice:      1.1,
 			ProductId:      1,
@@ -216,7 +216,7 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 	})
 
-	t.Run("create_fail_last_update_rate", func(t *testing.T) {
+	t.Run("create_fail_last_update_date", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRecordRequestDTO := buildProductRecordRequestDTO("", 2.2, 2.2, 2)
 
@@ -327,7 +327,7 @@ func TestCreate(t *testing.T) {
 	t.Run("create_conflict", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1.1,
 			SalePrice:      1.1,
 			ProductId:      1,
@@ -360,7 +360,7 @@ func TestCreate(t *testing.T) {
 	t.Run("create_internal_server_error", func(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRecordRequestDTO := productsRecords.RequestCreateProductRecord{
-			LastUpdateRate: "Test",
+			LastUpdateDate: "Test",
 			PurchasePrice:  1.1,
 			SalePrice:      1.1,
 			ProductId:      1,
@@ -397,13 +397,13 @@ func TestGetAll(t *testing.T) {
 		productsRecordsFounds := &[]domain.ProductRecord{
 			{
 				ID:             1,
-				LastUpdateRate: "Test",
+				LastUpdateDate: "Test",
 				PurchasePrice:  1.1,
 				SalePrice:      1.1,
 				ProductId:      1,
 			},
 			{
-				LastUpdateRate: "Test",
+				LastUpdateDate: "Test",
 				PurchasePrice:  1.1,
 				SalePrice:      1.1,
 				ProductId:      1,
@@ -586,13 +586,13 @@ func TestDelete(t *testing.T) {
 func TestUpdate(t *testing.T) {
 
 	t.Run("update_non_existent", func(t *testing.T) {
-		lastUpdaterate := "teste2"
+		lastUpdateDate := "teste2"
 		var purchasePrice float32 = 2.2
 		var salePrice float32 = 2.2
 		productID := 2
 
 		updateProductRecordRequest := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &lastUpdaterate,
+			LastUpdateDate: &lastUpdateDate,
 			PurchasePrice:  &purchasePrice,
 			SalePrice:      &salePrice,
 			ProductId:      &productID,
@@ -638,13 +638,13 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("update_conflict", func(t *testing.T) {
 
-		lastUpdaterate := "teste2"
+		lastUpdateDate := "teste2"
 		var purchasePrice float32 = 2.2
 		var salePrice float32 = 2.2
 		productID := 2
 
 		updateProductRecordRequest := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &lastUpdaterate,
+			LastUpdateDate: &lastUpdateDate,
 			PurchasePrice:  &purchasePrice,
 			SalePrice:      &salePrice,
 			ProductId:      &productID,
@@ -690,13 +690,13 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("update_internal_server_error", func(t *testing.T) {
 
-		lastUpdaterate := "teste2"
+		lastUpdateDate := "teste2"
 		var purchasePrice float32 = 2.2
 		var salePrice float32 = 2.2
 		productID := 2
 
 		updateProductRecordRequest := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &lastUpdaterate,
+			LastUpdateDate: &lastUpdateDate,
 			PurchasePrice:  &purchasePrice,
 			SalePrice:      &salePrice,
 			ProductId:      &productID,
@@ -741,13 +741,13 @@ func TestUpdate(t *testing.T) {
 	})
 	t.Run("update_id_conversion_error", func(t *testing.T) {
 
-		lastUpdaterate := "teste2"
+		lastUpdateDate := "teste2"
 		var purchasePrice float32 = 2.2
 		var salePrice float32 = 2.2
 		productID := 2
 
 		updateProductRecordRequest := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &lastUpdaterate,
+			LastUpdateDate: &lastUpdateDate,
 			PurchasePrice:  &purchasePrice,
 			SalePrice:      &salePrice,
 			ProductId:      &productID,
@@ -795,20 +795,20 @@ func TestUpdate(t *testing.T) {
 
 		//productID := 1
 
-		lastUpdaterate := "teste2"
+		lastUpdateDate := "teste2"
 		var purchasePrice float32 = 2.2
 		var salePrice float32 = 2.2
 		productID := 2
 
 		updateProductRecordRequest := productsRecords.RequestUpdateProductRecord{
-			LastUpdateRate: &lastUpdaterate,
+			LastUpdateDate: &lastUpdateDate,
 			PurchasePrice:  &purchasePrice,
 			SalePrice:      &salePrice,
 			ProductId:      &productID,
 		}
 		updatedProductRecord := &domain.ProductRecord{
 			ID:             1,
-			LastUpdateRate: "Teste2",
+			LastUpdateDate: "Teste2",
 			PurchasePrice:  2,
 			SalePrice:      2,
 			ProductId:      2,
@@ -900,9 +900,9 @@ func buildProductRequestDTO(description string, expirationRate int, freezinRate 
 
 }
 
-func buildProductRecordRequestDTO(lastUpdaterate string, purchasePrice float32, salePrice float32, productID int) productsRecords.RequestCreateProductRecord {
+func buildProductRecordRequestDTO(lastUpdateDate string, purchasePrice float32, salePrice float32, productID int) productsRecords.RequestCreateProductRecord {
 	return productsRecords.RequestCreateProductRecord{
-		LastUpdateRate: lastUpdaterate,
+		LastUpdateDate: lastUpdateDate,
 		PurchasePrice:  purchasePrice,
 		SalePrice:      salePrice,
 		ProductId:      productID,

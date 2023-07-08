@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
@@ -14,17 +15,17 @@ import (
 )
 
 type RequestCreateProductRecord struct {
-	LastUpdateRate string  `json:"lastUpdateRate"`
-	PurchasePrice  float32 `json:"purchasePrice"`
-	SalePrice      float32 `json:"salePrice"`
-	ProductId      int     `json:"productId"`
+	LastUpdateDate string  `json:"last_update_date"`
+	PurchasePrice  float32 `json:"purchase_price"`
+	SalePrice      float32 `json:"sale_price"`
+	ProductId      int     `json:"product_id"`
 }
 
 type RequestUpdateProductRecord struct {
-	LastUpdateRate *string  `json:"lastUpdateRate"`
-	PurchasePrice  *float32 `json:"purchasePrice"`
-	SalePrice      *float32 `json:"salePrice"`
-	ProductId      *int     `json:"productId"`
+	LastUpdateDate *string  `json:"last_update_date"`
+	PurchasePrice  *float32 `json:"purchase_price"`
+	SalePrice      *float32 `json:"sale_price"`
+	ProductId      *int     `json:"product_id"`
 }
 
 type ProductRecord struct {
@@ -43,7 +44,7 @@ func NewProductRecord(p productRecord.Service, ps product.Service) *ProductRecor
 //
 //	@Summary		List productsRecords
 //	@Tags			ProductsRecords
-//	@LastUpdateRate	getAll productsRecords
+//	@LastUpdateDate	getAll productsRecords
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	web.response
@@ -68,7 +69,7 @@ func (p *ProductRecord) GetAll() gin.HandlerFunc {
 //
 //	@Summary		Get ProductRecord
 //	@Tags			ProductsRecords
-//	@LastUpdateRate	Get the details of a ProductsRecords
+//	@LastUpdateDate	Get the details of a ProductsRecords
 //	@Accept			json
 //	@Produce		json
 //	@Param			id	path		string	true	"ID of ProductRecord to be searched"
@@ -101,7 +102,7 @@ func (p *ProductRecord) Get() gin.HandlerFunc {
 //
 //	@Summary		Create ProductRecord
 //	@Tags			ProductsRecords
-//	@LastUpdateRate	Create ProductRecord
+//	@LastUpdateDate	Create ProductRecord
 //	@Accept			json
 //	@Produce		json
 //	@Param			ProductRecord	body		requestCreateProductRecord	true	"ProductRecord to Create"
@@ -115,8 +116,8 @@ func (p *ProductRecord) Create() gin.HandlerFunc {
 			return
 		}
 
-		if req.LastUpdateRate == "" {
-			web.Error(c, http.StatusUnprocessableEntity, "The field LastUpdateRate is required.")
+		if req.LastUpdateDate == "" {
+			web.Error(c, http.StatusUnprocessableEntity, "The field LastUpdateDate is required.")
 			return
 		}
 
@@ -136,7 +137,7 @@ func (p *ProductRecord) Create() gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-		productRecordResponse, err := p.productRecordService.Save(&ctx, req.LastUpdateRate, req.PurchasePrice, req.SalePrice, req.ProductId)
+		productRecordResponse, err := p.productRecordService.Save(&ctx, req.LastUpdateDate, req.PurchasePrice, req.SalePrice, req.ProductId)
 		if err != nil {
 			switch err {
 			case productRecord.ErrConflict:
@@ -155,7 +156,7 @@ func (p *ProductRecord) Create() gin.HandlerFunc {
 //
 //	@Summary		Update ProductRecord
 //	@Tags			ProductsRecords
-//	@LastUpdateRate	Update the details of a ProductRecord
+//	@LastUpdateDate	Update the details of a ProductRecord
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		string			true	"ID of ProductsRecords to be updated"
@@ -175,7 +176,7 @@ func (p *ProductRecord) Update() gin.HandlerFunc {
 			return
 		}
 		ctx := c.Request.Context()
-		productRecordResponse, err := p.productRecordService.Update(&ctx, req.LastUpdateRate, req.PurchasePrice, req.SalePrice, req.ProductId, id)
+		productRecordResponse, err := p.productRecordService.Update(&ctx, req.LastUpdateDate, req.PurchasePrice, req.SalePrice, req.ProductId, id)
 		if err != nil {
 			switch err {
 			case productRecord.ErrNotFound:
@@ -227,38 +228,66 @@ func (p *ProductRecord) Delete() gin.HandlerFunc {
 
 func (p *ProductRecord) NumberRecords() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
-		if err != nil {
-			web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
-			return
-		}
-
+		queryIds := c.Query("id")
 		ctx := c.Request.Context()
+		var responses = []dtos.GetNumberOfRecordsResponseDTO{}
 
-		product, err := p.productService.Get(&ctx, id)
-		if err != nil {
-			switch err {
-			case productRecord.ErrNotFound:
-				web.Error(c, http.StatusNotFound, err.Error())
-			default:
-				web.Error(c, http.StatusInternalServerError, err.Error())
+		if queryIds != "" {
+
+			ids := strings.Split(queryIds, ",")
+
+			for _, queryId := range ids {
+				id, err := strconv.Atoi(queryId)
+				if err != nil {
+					web.Error(c, http.StatusBadRequest, "Invalid ID: %s", err.Error())
+					return
+				}
+				productReceived, err := p.productService.Get(&ctx, id)
+				if err != nil && err != product.ErrNotFound {
+					web.Error(c, http.StatusInternalServerError, err.Error())
+					return
+				}
+				if productReceived != nil {
+
+					count, err := p.productRecordService.NumberRecords(&ctx, id)
+					if err != nil {
+						web.Error(c, http.StatusInternalServerError, err.Error())
+						return
+					}
+
+					productResponse := dtos.GetNumberOfRecordsResponseDTO{
+						ProductID:    productReceived.ID,
+						Description:  productReceived.Description,
+						RecordsCount: count,
+					}
+
+					responses = append(responses, productResponse)
+
+				}
 			}
-			return
+		} else {
+			products, err := p.productService.GetAll(&ctx)
+			if err != nil && err != product.ErrNotFound {
+				web.Error(c, http.StatusInternalServerError, err.Error())
+				return
+			}
+			for _, product := range *products {
+				count, err := p.productRecordService.NumberRecords(&ctx, product.ID)
+				if err != nil {
+					web.Error(c, http.StatusInternalServerError, err.Error())
+					return
+				}
+				productResponse := dtos.GetNumberOfRecordsResponseDTO{
+					ProductID:    product.ID,
+					Description:  product.Description,
+					RecordsCount: count,
+				}
+
+				responses = append(responses, productResponse)
+			}
 		}
 
-		count, err := p.productRecordService.NumberRecords(&ctx, id)
-		if err != nil {
-			web.Error(c, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		response := dtos.GetNumberOfRecordsResponseDTO{
-			ProductID:    product.ID,
-			Description:  product.Description,
-			RecordsCount: count,
-		}
-
-		web.Success(c, http.StatusOK, response)
+		web.Success(c, http.StatusOK, responses)
 		return
 
 	}
