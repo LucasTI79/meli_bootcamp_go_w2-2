@@ -46,7 +46,7 @@ func (repository *CarrierRepositoryMock) GetCountCarriersByLocalityId(ctx contex
 	return args.Get(0).(int), args.Error(1)
 }
 
-func (repository *CarrierRepositoryMock) GetCountAndDataByLocalityId(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error) {
+func (repository *CarrierRepositoryMock) GetCountAndDataByLocality(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error) {
 	args := repository.Called(ctx)
 
 	return args.Get(0).([]dtos.DataLocalityAndCarrier), args.Error(1)

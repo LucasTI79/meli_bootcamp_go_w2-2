@@ -14,7 +14,7 @@ type Repository interface {
 	Save(ctx context.Context, w domain.Carrier) (int, error)
 	GetLocalityById(ctx context.Context, localityId int) (domain.Locality, error)
 	GetCountCarriersByLocalityId(ctx context.Context, localityId int) (int, error)
-	GetCountAndDataByLocalityId(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error)
+	GetCountAndDataByLocality(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error)
 }
 
 type repository struct {
@@ -93,7 +93,7 @@ func (r *repository) GetCountCarriersByLocalityId(ctx context.Context, localityI
 	return count, nil
 }
 
-func (r *repository) GetCountAndDataByLocalityId(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error) {
+func (r *repository) GetCountAndDataByLocality(ctx context.Context) ([]dtos.DataLocalityAndCarrier, error) {
 	query := "SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10"
 	rows, err := r.db.Query(query)
 	if err != nil {

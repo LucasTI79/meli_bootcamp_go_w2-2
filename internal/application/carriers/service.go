@@ -19,7 +19,7 @@ type Service interface {
 	GetAll(c *context.Context) (*[]domain.Carrier, error)
 	GetLocalityById(c *context.Context, localityId int) (*domain.Locality, error)
 	GetCountCarriersByLocalityId(c *context.Context, localityId int) (int, error)
-	GetCountAndDataByLocalityId(c *context.Context) (*[]dtos.DataLocalityAndCarrier, error)
+	GetCountAndDataByLocality(c *context.Context) (*[]dtos.DataLocalityAndCarrier, error)
 }
 
 type service struct {
@@ -85,8 +85,8 @@ func (s *service) GetCountCarriersByLocalityId(c *context.Context, localityId in
 	return count, nil
 }
 
-func (s *service) GetCountAndDataByLocalityId(c *context.Context) (*[]dtos.DataLocalityAndCarrier, error) {
-	dataAndCount, err := s.repository.GetCountAndDataByLocalityId(*c)
+func (s *service) GetCountAndDataByLocality(c *context.Context) (*[]dtos.DataLocalityAndCarrier, error) {
+	dataAndCount, err := s.repository.GetCountAndDataByLocality(*c)
 
 	if err != nil {
 		return nil, err

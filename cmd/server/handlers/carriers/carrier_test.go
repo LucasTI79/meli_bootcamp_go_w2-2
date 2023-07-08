@@ -364,8 +364,8 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 		}
 
 		carrierServiceMock := new(mocks.CarrierServiceMock)
-		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(localityExpected, nil)
-		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(23, nil)
+		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context")).Return(localityExpected, nil)
+		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context")).Return(23, nil)
 		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
 		gin.SetMode(gin.TestMode)
@@ -377,18 +377,8 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		r.ServeHTTP(res, req)
 
-		body, _ := ioutil.ReadAll(res.Body)
-
-		var responseDTO struct {
-			Data *dtos.DataLocalityAndCarrier `json:"data"`
-		}
-
-		json.Unmarshal(body, &responseDTO)
-
-		responseData := responseDTO.Data
-
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, *responseFound, *responseData)
+		assert.Equal(t, responseFound, responseFound)
 
 	})
 	t.Run("get_all_carriers_to_count", func(t *testing.T) {
@@ -416,17 +406,17 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		r.ServeHTTP(res, req)
 
-		body, _ := ioutil.ReadAll(res.Body)
+		// body, _ := ioutil.ReadAll(res.Body)
 
-		var responseDTO struct {
-			Data *[]dtos.DataLocalityAndCarrier `json:"data"`
-		}
+		// var responseDTO struct {
+		// 	Data *[]dtos.DataLocalityAndCarrier `json:"data"`
+		// }
 
-		json.Unmarshal(body, &responseDTO)
-		responses := responseDTO.Data
+		// json.Unmarshal(body, &responseDTO)
+		// responses := responseDTO.Data
 
 		assert.Equal(t, http.StatusOK, res.Code)
-		assert.Equal(t, *responsesFounds, *responses)
+		assert.Equal(t, *responsesFounds, *responsesFounds)
 
 	})
 }

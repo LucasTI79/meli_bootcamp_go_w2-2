@@ -4,11 +4,13 @@ import (
 	"database/sql"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
+	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -46,6 +48,7 @@ func (r *router) MapRoutes() {
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
+	r.buildCarriersRoutes()
 }
 
 func (r *router) setGroup() {
@@ -125,4 +128,13 @@ func (r *router) buildBuyerRoutes() {
 	buyerRoutes.POST("", buyerHandler.Create())
 	buyerRoutes.PATCH(":id", buyerHandler.Update())
 	buyerRoutes.DELETE(":id", buyerHandler.Delete())
+}
+
+func (r *router) buildCarriersRoutes() {
+	repo := carrier.NewRepository(r.db)
+	service := carrier.NewService(repo)
+	handler := carriers.NewCarrier(service)
+	r.rg.POST("/carriers", handler.Create())
+	r.rg.GET("/carriers", handler.GetAll())
+	r.rg.POST("/localities/reportCarries/:id", handler.GetReportCarriersByLocalities())
 }

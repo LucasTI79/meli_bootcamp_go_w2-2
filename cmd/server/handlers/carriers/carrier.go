@@ -109,7 +109,7 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 		}
 
 		if c.Param("id") == "" {
-			data, err := carrier.carrierService.GetCountAndDataByLocalityId(&ctx)
+			data, err := carrier.carrierService.GetCountAndDataByLocality(&ctx)
 			if err != nil {
 				web.Error(c, http.StatusNoContent, "data not found")
 				return
@@ -132,12 +132,12 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 				web.Error(c, http.StatusNotFound, "none carrier exists with this location_id")
 				return
 			}
-			response := Response{
+			response := &Response{
 				locality_id:   localityId,
 				locality_name: locality.LocalityName,
 				carries_count: count,
 			}
-			web.Success(c, http.StatusOK, response)
+			web.Success(c, http.StatusOK, *response)
 		}
 	}
 }
