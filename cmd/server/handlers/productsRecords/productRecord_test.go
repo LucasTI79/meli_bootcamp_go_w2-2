@@ -12,6 +12,7 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	mocks2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
@@ -880,6 +881,387 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, http.StatusUnprocessableEntity, response.Code)
 	})
 
+}
+
+func TestNumberRecords(t *testing.T) {
+
+	t.Run("get_numberRecords_ok", func(t *testing.T) {
+		productsRecordsFounds := &[]dtos.GetNumberOfRecordsResponseDTO{
+			{
+				ProductID:    1,
+				Description:  "Test",
+				RecordsCount: 1,
+			},
+			{
+				ProductID:    2,
+				Description:  "Test2",
+				RecordsCount: 1,
+			},
+		}
+
+		product1Found := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Teste",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		product2Found := &domain.Product{
+			ID:             2,
+			Description:    "Test2",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Teste",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+		productRecordServiceMock.On("NumberRecords", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(1, nil).Return(1, nil)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+
+		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product1Found, nil).Once()
+		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product2Found, nil).Once()
+
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=1,2", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+		responseProductsRecords := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, *productsRecordsFounds, responseProductsRecords)
+	})
+
+	t.Run("get_numberRecords_all_products", func(t *testing.T) {
+		productsRecordsFounds := &[]dtos.GetNumberOfRecordsResponseDTO{
+			{
+				ProductID:    1,
+				Description:  "Test",
+				RecordsCount: 1,
+			},
+			{
+				ProductID:    2,
+				Description:  "Test2",
+				RecordsCount: 1,
+			},
+		}
+
+		productsFound := &[]domain.Product{
+			{
+				ID:             1,
+				Description:    "Test",
+				ExpirationRate: 1,
+				FreezingRate:   1,
+				Height:         1.1,
+				Length:         1.1,
+				Netweight:      1.1,
+				ProductCode:    "Teste",
+				RecomFreezTemp: 1.1,
+				Width:          1.1,
+				ProductTypeID:  1,
+				SellerID:       1,
+			},
+			{
+				ID:             2,
+				Description:    "Test2",
+				ExpirationRate: 1,
+				FreezingRate:   1,
+				Height:         1.1,
+				Length:         1.1,
+				Netweight:      1.1,
+				ProductCode:    "Teste",
+				RecomFreezTemp: 1.1,
+				Width:          1.1,
+				ProductTypeID:  1,
+				SellerID:       1,
+			},
+		}
+
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+		productRecordServiceMock.On("NumberRecords", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(1, nil).Return(1, nil)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+
+		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFound, nil)
+
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+		responseProductsRecords := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, *productsRecordsFounds, responseProductsRecords)
+	})
+
+	t.Run("get_numberRecords_id_error", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=abc", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("get_numberRecords_get_product_internal_server_error", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int")).Return(&domain.Product{}, assert.AnError)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=1,2", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+
+	t.Run("get_numberRecords_number_records_internal_server_error", func(t *testing.T) {
+		productFound := &domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Teste",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+		productRecordServiceMock.On("NumberRecords", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(1, assert.AnError)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
+			mock.AnythingOfType("int")).Return(productFound, nil)
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=1,2", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+
+	t.Run("get_numberRecords_getAll_error", func(t *testing.T) {
+
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+
+		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Product{}, assert.AnError)
+
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+
+	t.Run("get_numberRecords_getAll_numberRecords_error", func(t *testing.T) {
+
+		productsFound := &[]domain.Product{
+			{
+				ID:             1,
+				Description:    "Test",
+				ExpirationRate: 1,
+				FreezingRate:   1,
+				Height:         1.1,
+				Length:         1.1,
+				Netweight:      1.1,
+				ProductCode:    "Teste",
+				RecomFreezTemp: 1.1,
+				Width:          1.1,
+				ProductTypeID:  1,
+				SellerID:       1,
+			},
+			{
+				ID:             2,
+				Description:    "Test2",
+				ExpirationRate: 1,
+				FreezingRate:   1,
+				Height:         1.1,
+				Length:         1.1,
+				Netweight:      1.1,
+				ProductCode:    "Teste",
+				RecomFreezTemp: 1.1,
+				Width:          1.1,
+				ProductTypeID:  1,
+				SellerID:       1,
+			},
+		}
+
+		//Configurar o mock do service
+		productRecordServiceMock := new(mocks.ProductRecordServiceMock)
+		productRecordServiceMock.On("NumberRecords", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(0, assert.AnError)
+
+		productServiceMock := new(mocks2.ProductServiceMock)
+
+		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFound, nil)
+
+		handler := productsRecords.NewProductRecord(productRecordServiceMock, productServiceMock)
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/productsRecords", handler.NumberRecords())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/productsRecords?id=", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []dtos.GetNumberOfRecordsResponseDTO `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
 }
 
 func buildProductRequestDTO(description string, expirationRate int, freezinRate int, height float32, length float32, netweight float32, productCode string,

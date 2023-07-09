@@ -151,14 +151,14 @@ func TestRepositoryExists(t *testing.T) {
 
 		r := productRecord.NewRepository(fields{db}.db)
 
-		rows := sqlmock.NewRows([]string{"product_id"}).
+		rows := sqlmock.NewRows([]string{"id"}).
 			AddRow(expectedProductRecord.ProductId)
 
-		mock.ExpectQuery("SELECT product_id FROM product_records WHERE product_id=?").
-			WithArgs(expectedProductRecord.ProductId).
+		mock.ExpectQuery("SELECT id FROM products_records WHERE id=?").
+			WithArgs(expectedProductRecord.ID).
 			WillReturnRows(rows)
 
-		productRecordExists := r.Exists(ctx, expectedProductRecord.ProductId)
+		productRecordExists := r.Exists(ctx, expectedProductRecord.ID)
 
 		assert.True(t, productRecordExists)
 	})
