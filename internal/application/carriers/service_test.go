@@ -196,36 +196,24 @@ func TestGetCountCarriersByLocalityId(t *testing.T) {
 
 		service := carriers.NewService(carrieRepositoryMock)
 		int, err := service.GetCountCarriersByLocalityId(&ctx, 1)
-		assert.Equal(t, int, intExpected)
+		assert.Equal(t, *int, intExpected)
 		assert.Equal(t, nil, err)
 	})
 
-	// t.Run("find_by_id_not_found", func(t *testing.T) {
+	t.Run("find_by_id_not_found", func(t *testing.T) {
 
-	// 	ctx := context.TODO()
+		ctx := context.TODO()
+		carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
+		carrieRepositoryMock.On("GetCountCarriersByLocalityId", ctx, mock.AnythingOfType("int")).Return(0, sql.ErrNoRows)
 
-	// 	carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
-	// 	carrieRepositoryMock.On("GetCountCarriersByLocalityId", ctx, mock.AnythingOfType("int")).Return(0, sql.ErrNoRows)
+		service := carriers.NewService(carrieRepositoryMock)
 
-	// 	service := carriers.NewService(carrieRepositoryMock)
+		idReceived, err := service.GetCountCarriersByLocalityId(&ctx, 1)
 
-	// 	localityReceived, err := service.GetCountCarriersByLocalityId(&ctx, 0)
+		assert.Nil(t, idReceived)
+		assert.Equal(t, carriers.ErrNotFound, err)
 
-	// 	assert.Nil(t, localityReceived)
-	// 	assert.Equal(t, carriers.ErrNotFound, err)
-	// })
-	// t.Run("get_unexpected_error", func(t *testing.T) {
-	// 	ctx := context.TODO()
-	// 	carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
-	// 	carrieRepositoryMock.On("GetCountCarriersByLocalityId", ctx, mock.AnythingOfType("int")).Return(nil, errors.New("locality_id not found"))
-
-	// 	service := carriers.NewService(carrieRepositoryMock)
-
-	// 	idReceived, err := service.GetCountCarriersByLocalityId(&ctx, 1)
-
-	// 	assert.Nil(t, idReceived)
-	// 	assert.Equal(t, errors.New("locality_id not found"), err)
-	// })
+	})
 }
 
 func TestGetCountAndDataByLocality(t *testing.T) {
