@@ -29,7 +29,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.ProductRecord, error) {
-	query := "SELECT * FROM product_records;"
+	query := "SELECT id, last_update_date, purchase_price, sale_price, product_id FROM product_records;"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.ProductRecord, error)
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, error) {
-	query := "SELECT * FROM product_records WHERE id=?;"
+	query := "SELECT id, last_update_date, purchase_price, sale_price, product_id FROM product_records WHERE id=?;"
 	row := r.db.QueryRow(query, id)
 	p := domain.ProductRecord{}
 	err := row.Scan(&p.ID, &p.LastUpdateDate, &p.PurchasePrice, &p.SalePrice, &p.ProductId)
@@ -59,7 +59,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.ProductRecord, err
 }
 
 func (r *repository) Save(ctx context.Context, p domain.ProductRecord) (int, error) {
-	query := "INSERT INTO product_records(last_update_date,purchase_price,sale_price,product_id) VALUES (?,?,?,?)"
+	query := "INSERT INTO product_records(last_update_date, purchase_price, sale_price, product_id) VALUES (?,?,?,?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
