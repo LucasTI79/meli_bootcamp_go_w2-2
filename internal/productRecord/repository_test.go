@@ -395,7 +395,7 @@ func TestRepositoryUpdate(t *testing.T) {
 
 		r := productRecord.NewRepository(fields{db}.db)
 
-		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE product_records SET last_update_date=?, purchase_price=?, sale_price=?, product_id=? WHERE id=?"))
+		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE product_records SET last_update_date=?, purchase_price=?, sale_price=?, product_id=? WHERE id=?")).WillReturnError(sql.ErrConnDone)
 		mock.ExpectExec(regexp.QuoteMeta("UPDATE product_records SET last_update_date=?, purchase_price=?, sale_price=?, product_id=? WHERE id=?")).
 			WithArgs(expectedProductRecord.LastUpdateDate, expectedProductRecord.PurchasePrice, expectedProductRecord.SalePrice,
 				expectedProductRecord.ProductId, expectedProductRecord.ID).
@@ -494,7 +494,7 @@ func TestRepositorySave(t *testing.T) {
 
 		r := productRecord.NewRepository(fields{db}.db)
 
-		mock.ExpectPrepare(regexp.QuoteMeta("INSERT INTO product_records(last_update_date, purchase_price, sale_price, product_id) VALUES (?,?,?,?)"))
+		mock.ExpectPrepare(regexp.QuoteMeta("INSERT INTO product_records(last_update_date, purchase_price, sale_price, product_id) VALUES (?,?,?,?)")).WillReturnError(sql.ErrConnDone)
 		mock.ExpectExec(regexp.QuoteMeta("INSERT INTO product_records(last_update_date, purchase_price, sale_price, product_id) VALUES (?,?,?,?)")).
 			WithArgs(expectedProductRecord.LastUpdateDate, expectedProductRecord.PurchasePrice, expectedProductRecord.SalePrice,
 				expectedProductRecord.ProductId).
