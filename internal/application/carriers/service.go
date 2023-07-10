@@ -12,6 +12,7 @@ var (
 	ErrNotFound            = errors.New("carriers not found")
 	ErrConflict            = errors.New("a carriers with this cid already exists")
 	ErrUnprocessableEntity = errors.New("all fields are required")
+	ErrInternalServerError = errors.New("error connecting to server")
 )
 
 type Service interface {

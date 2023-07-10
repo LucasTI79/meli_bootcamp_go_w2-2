@@ -337,7 +337,7 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 	t.Run("none_carrier_exist", func(t *testing.T) {
 
 		carrierServiceMock := new(mocks.CarrierServiceMock)
-		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context")).Return((&domain.Locality{}), nil)
+		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context")).Return(domain.Locality{}, nil)
 		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context")).Return(0, assert.AnError)
 		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
@@ -369,11 +369,6 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
 	})
 	t.Run("get_by_locality_id_ok", func(t *testing.T) {
-		// responseExpected := &dtos.DataLocalityAndCarrier{
-		// 	Id:           1,
-		// 	LocalityName: "Teste",
-		// 	CountCarrier: 23,
-		// }
 		localityExpected := &domain.Locality{
 			ID:           1,
 			ProvinceName: "Teste",
@@ -431,14 +426,14 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 	// 	r.ServeHTTP(res, req)
 
-	// body, _ := ioutil.ReadAll(res.Body)
+	// 	body, _ := ioutil.ReadAll(res.Body)
 
-	// var responseDTO struct {
-	// 	Data *[]dtos.DataLocalityAndCarrier `json:"data"`
-	// }
+	// 	var responseDTO struct {
+	// 		Data *[]dtos.DataLocalityAndCarrier `json:"data"`
+	// 	}
 
-	// json.Unmarshal(body, &responseDTO)
-	// responses := responseDTO.Data
+	// 	json.Unmarshal(body, &responseDTO)
+	// 	// responses := responseDTO.Data
 
 	// 	assert.Equal(t, http.StatusOK, res.Code)
 	// 	assert.Equal(t, *responsesFounds, *responsesFounds)

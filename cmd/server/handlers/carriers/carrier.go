@@ -135,7 +135,7 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 			response := &Response{
 				locality_id:   localityId,
 				locality_name: locality.LocalityName,
-				carries_count: count,
+				carries_count: *count,
 			}
 			web.Success(c, http.StatusOK, *response)
 		}

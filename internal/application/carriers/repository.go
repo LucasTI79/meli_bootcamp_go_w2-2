@@ -28,7 +28,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Carrier, error) {
-	query := "SELECT * FROM carriers"
+	query := "SELECT id, cid, company_name, address, telephone, locality_id FROM carriers"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -46,14 +46,14 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Carrier, error) {
 }
 
 func (r *repository) Exists(ctx context.Context, cid string) bool {
-	query := "SELECT CID FROM carriers WHERE CID=?;"
+	query := "SELECT cid FROM carriers WHERE cid=?"
 	row := r.db.QueryRow(query, cid)
 	err := row.Scan(&cid)
 	return err == nil
 }
 
 func (r *repository) Save(ctx context.Context, c domain.Carrier) (int, error) {
-	query := "INSERT INTO carriers (CID, company_name, address, telephone, locality_id) VALUES (?, ?, ?, ?, ?)"
+	query := "INSERT INTO carriers(cid, company_name, address, telephone, locality_id) VALUES (?,?,?,?,?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return 0, err
@@ -72,10 +72,10 @@ func (r *repository) Save(ctx context.Context, c domain.Carrier) (int, error) {
 }
 
 func (r *repository) GetLocalityById(ctx context.Context, localityId int) (domain.Locality, error) {
-	query := "SELECT * FROM localities WHERE id = ?"
+	query := "SELECT localities.id, localities.province_name, localities.locality_name FROM localities WHERE id = ?"
 	row := r.db.QueryRow(query, localityId)
 	l := domain.Locality{}
-	err := row.Scan(&l.ID, &l.LocalityName, &l.ProvinceName)
+	err := row.Scan(&l.ID, &l.ProvinceName, &l.LocalityName)
 	if err != nil {
 		return domain.Locality{}, err
 	}

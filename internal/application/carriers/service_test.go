@@ -85,7 +85,31 @@ func TestCreate(t *testing.T) {
 
 	})
 
-	t.Run("create_error", func(t *testing.T) {
+	t.Run("create_internal_server_error", func(t *testing.T) {
+
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+
+		ctx := context.TODO()
+
+		carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
+		carrieRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		carrieRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Carrier")).Return(0, errors.New("error connecting to server"))
+		service := carriers.NewService(carrieRepositoryMock)
+
+		carrieSaved, err := service.Create(&ctx, createCarrierRequestDTO)
+
+		assert.Equal(t, carriers.ErrInternalServerError, err)
+		assert.Nil(t, carrieSaved)
+
+	})
+
+	t.Run("create_error_cid_exists", func(t *testing.T) {
 
 		createCarrierRequestDTO := dtos.CarrierRequestDTO{
 			CID:         "CID#1",
@@ -131,6 +155,37 @@ func TestCreate(t *testing.T) {
 		carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
 		carrieRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		carrieRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Carrier")).Return(1, nil)
+		service := carriers.NewService(carrieRepositoryMock)
+
+		carrieSaved, err := service.Create(&ctx, createCarrierRequestDTO)
+
+		assert.Equal(t, carrieSaved, expectedCarrier)
+		assert.Nil(t, err)
+
+	})
+
+	t.Run("create_error", func(t *testing.T) {
+		expectedCarrier := &domain.Carrier{
+			ID:          1,
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+		createCarrierRequestDTO := dtos.CarrierRequestDTO{
+			CID:         "CID#1",
+			CompanyName: "some name",
+			Address:     "corrientes 800",
+			Telephone:   "4567-4567",
+			LocalityId:  6700,
+		}
+
+		ctx := context.TODO()
+
+		carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
+		carrieRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		carrieRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Carrier")).Return(nil, sql.ErrNoRows)
 		service := carriers.NewService(carrieRepositoryMock)
 
 		carrieSaved, err := service.Create(&ctx, createCarrierRequestDTO)
