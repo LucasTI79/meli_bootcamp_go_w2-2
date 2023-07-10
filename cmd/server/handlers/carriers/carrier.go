@@ -108,7 +108,7 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 			carries_count int
 		}
 
-		if c.Param("id") == "" {
+		if c.Query("id") == "" {
 			data, err := carrier.carrierService.GetCountAndDataByLocality(&ctx)
 			if err != nil {
 				web.Error(c, http.StatusNoContent, "data not found")
@@ -117,7 +117,7 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 			web.Success(c, http.StatusOK, data)
 
 		} else {
-			localityId, e := strconv.Atoi(c.Param("id"))
+			localityId, e := strconv.Atoi(c.Query("id"))
 			if e != nil {
 				web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 				return

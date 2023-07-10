@@ -136,5 +136,5 @@ func (r *router) buildCarriersRoutes() {
 	handler := carriers.NewCarrier(service)
 	r.rg.POST("/carriers", handler.Create())
 	r.rg.GET("/carriers", handler.GetAll())
-	r.rg.POST("/localities/reportCarries/:id", handler.GetReportCarriersByLocalities())
+	r.rg.GET("/localities/reportCarries", handler.GetReportCarriersByLocalities())
 }

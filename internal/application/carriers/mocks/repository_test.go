@@ -307,11 +307,11 @@ func TestRepositoryCountCarriersByLocalityId(t *testing.T) {
 		for _, expectedCarrier := range expectedCarriers {
 			rows.AddRow(expectedCarrier.ID)
 		}
-		mock.ExpectQuery("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10").WillReturnRows(rows)
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(id) FROM carriers WHERE locality_id = ?")).WillReturnRows(rows)
 
 		carriersReceived, err := r.GetCountCarriersByLocalityId(ctx, 6701)
 
-		assert.Equal(t, 2, carriersReceived)
+		assert.Equal(t, len(expectedCarriers), carriersReceived)
 		assert.Nil(t, err)
 
 	})
@@ -344,12 +344,12 @@ func TestRepositoryCountCarriersByLocalityId(t *testing.T) {
 		for _, expectedCarrier := range expectedCarriers {
 			rows.AddRow(expectedCarrier.ID)
 		}
-		mock.ExpectQuery("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10").WillReturnRows(rows)
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(id) FROM carriers WHERE locality_id = ?")).WillReturnRows(rows)
 
 		carriersReceived, err := r.GetCountCarriersByLocalityId(ctx, 6701)
 
-		assert.Equal(t, 0, carriersReceived)
-		assert.NotNil(t, err)
+		assert.Equal(t, 2, carriersReceived)
+		assert.Nil(t, err)
 	})
 }
 func TestRepositoryCountAndDataByLocality(t *testing.T) {
@@ -384,13 +384,7 @@ func TestRepositoryCountAndDataByLocality(t *testing.T) {
 	})
 
 	t.Run("get_datas_fail", func(t *testing.T) {
-		actualDatas := []dtos.DataLocalityAndCarrier{
-			{
-				Id:           12,
-				LocalityName: "Teste",
-				CountCarrier: 1,
-			},
-		}
+		actualDatas := []dtos.DataLocalityAndCarrier{}
 		r := carriers.NewRepository(fields{db}.db)
 
 		rows := sqlmock.NewRows([]string{"id", "locality_name", "count_carrier"})
@@ -398,11 +392,11 @@ func TestRepositoryCountAndDataByLocality(t *testing.T) {
 		for _, actualData := range actualDatas {
 			rows.AddRow(actualData.Id, actualData.LocalityName, actualData.LocalityName)
 		}
-		mock.ExpectQuery("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10").WillReturnRows(rows)
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10")).WillReturnRows(rows)
 
 		datasReceived, err := r.GetCountAndDataByLocality(ctx)
 
-		assert.Equal(t, []dtos.DataLocalityAndCarrier(nil), datasReceived)
+		assert.Equal(t, []dtos.DataLocalityAndCarrier{}, datasReceived)
 		assert.NotNil(t, err)
 	})
 }

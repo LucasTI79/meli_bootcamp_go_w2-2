@@ -401,42 +401,42 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 		assert.Equal(t, responseFound, responseFound)
 
 	})
-	// t.Run("get_all_carriers_to_count", func(t *testing.T) {
-	// 	responsesFounds := &[]dtos.DataLocalityAndCarrier{
-	// 		{
-	// 			Id:           1,
-	// 			LocalityName: "Teste",
-	// 			CountCarrier: 23,
-	// 		}, {
-	// 			Id:           2,
-	// 			LocalityName: "Teste2",
-	// 			CountCarrier: 6,
-	// 		},
-	// 	}
-	// 	carrierServiceMock := new(mocks.CarrierServiceMock)
-	// 	carrierServiceMock.On("GetCountAndDataByLocalityId", mock.AnythingOfType("*context.Context")).Return(responsesFounds, nil)
-	// 	handler := carrier_handler.NewCarrier(carrierServiceMock)
+	t.Run("get_all_carriers_to_count", func(t *testing.T) {
+		responsesFounds := &[]dtos.DataLocalityAndCarrier{
+			{
+				Id:           1,
+				LocalityName: "Teste",
+				CountCarrier: 23,
+			}, {
+				Id:           2,
+				LocalityName: "Teste2",
+				CountCarrier: 6,
+			},
+		}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("GetCountAndDataByLocality", mock.AnythingOfType("*context.Context")).Return(responsesFounds, nil)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
-	// 	gin.SetMode(gin.TestMode)
-	// 	r := gin.Default()
-	// 	r.POST("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
 
-	// 	req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries/", nil)
-	// 	res := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries", nil)
+		res := httptest.NewRecorder()
 
-	// 	r.ServeHTTP(res, req)
+		r.ServeHTTP(res, req)
 
-	// 	body, _ := ioutil.ReadAll(res.Body)
+		body, _ := ioutil.ReadAll(res.Body)
 
-	// 	var responseDTO struct {
-	// 		Data *[]dtos.DataLocalityAndCarrier `json:"data"`
-	// 	}
+		var responseDTO struct {
+			Data *[]dtos.DataLocalityAndCarrier `json:"data"`
+		}
 
-	// 	json.Unmarshal(body, &responseDTO)
-	// 	// responses := responseDTO.Data
+		json.Unmarshal(body, &responseDTO)
+		responses := responseDTO.Data
 
-	// 	assert.Equal(t, http.StatusOK, res.Code)
-	// 	assert.Equal(t, *responsesFounds, *responsesFounds)
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, *responsesFounds, *responses)
 
-	// })
+	})
 }

@@ -84,9 +84,14 @@ func (r *repository) GetLocalityById(ctx context.Context, localityId int) (domai
 
 func (r *repository) GetCountCarriersByLocalityId(ctx context.Context, localityId int) (int, error) {
 	query := "SELECT COUNT(id) FROM carriers WHERE locality_id = ?"
-	row := r.db.QueryRow(query, localityId)
+	rows, err := r.db.Query(query, localityId)
+	if err != nil {
+		return 0, err
+	}
 	var count int
-	err := row.Scan(&count)
+	for rows.Next() {
+		err = rows.Scan(&count)
+	}
 	if err != nil {
 		return 0, err
 	}
@@ -101,7 +106,6 @@ func (r *repository) GetCountAndDataByLocality(ctx context.Context) ([]dtos.Data
 	}
 
 	var data []dtos.DataLocalityAndCarrier
-
 	for rows.Next() {
 		d := dtos.DataLocalityAndCarrier{}
 		_ = rows.Scan(&d.Id, &d.LocalityName, &d.CountCarrier)
