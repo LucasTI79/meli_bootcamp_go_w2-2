@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"testing"
+
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
