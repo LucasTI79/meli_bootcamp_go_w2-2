@@ -6,9 +6,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers/mocks"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

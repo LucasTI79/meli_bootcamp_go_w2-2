@@ -240,30 +240,6 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, warehouseSaved, expectedWarehouse)
 		assert.Nil(t, err)
 	})
-
-	// t.Run("create_error_get_warehouse", func(t *testing.T) {
-
-	// 	createWarehouseRequestDTO := dtos.WarehouseRequestDTO{
-	// 		Address:            "Rua Teste2",
-	// 		Telephone:          "11938473322",
-	// 		WarehouseCode:      "CX-2281-TCD",
-	// 		MinimumCapacity:    12,
-	// 		MinimumTemperature: 18,
-	// 	}
-
-	// 	ctx := context.TODO()
-
-	// 	warehouseRepositoryMock := new(mocks.WarehouseRepositoryMock)
-	// 	warehouseRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
-	// 	warehouseRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Warehouse")).Return(1, nil)
-	// 	warehouseRepositoryMock.On("GetOne", ctx, mock.AnythingOfType("int")).Return(domain.Warehouse{}, errors.New("error"))
-
-	// 	service := warehouse.NewService(warehouseRepositoryMock)
-	// 	warehouseSaved, err := service.Create(&ctx, createWarehouseRequestDTO)
-
-	// 	assert.Equal(t, errors.New("error"), err)
-	// 	assert.Nil(t, warehouseSaved)
-	// })
 }
 
 func TestUpdate(t *testing.T) {

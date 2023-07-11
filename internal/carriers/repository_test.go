@@ -1,4 +1,4 @@
-package mocks
+package carriers_test
 
 import (
 	"context"
@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/stretchr/testify/assert"
 )
@@ -374,9 +374,9 @@ func TestRepositoryCountAndDataByLocality(t *testing.T) {
 		rows := sqlmock.NewRows([]string{"id", "locality_name", "count_carrier"})
 
 		for _, actualData := range actualDatas {
-			rows.AddRow(actualData.Id, actualData.LocalityName, actualData.LocalityName)
+			rows.AddRow(actualData.Id, actualData.LocalityName, actualData.CountCarrier)
 		}
-		mock.ExpectQuery("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10").WillReturnRows(rows)
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10")).WillReturnRows(rows)
 
 		datasReceived, err := r.GetCountAndDataByLocality(ctx)
 
@@ -390,14 +390,11 @@ func TestRepositoryCountAndDataByLocality(t *testing.T) {
 
 		rows := sqlmock.NewRows([]string{"id", "locality_name", "count_carrier"})
 
-		for _, actualData := range actualDatas {
-			rows.AddRow(actualData.Id, actualData.LocalityName, actualData.LocalityName)
-		}
 		mock.ExpectQuery(regexp.QuoteMeta("SELECT l.id, l.locality_name, (SELECT count(id) FROM carriers c where c.locality_id = l.id) AS count_carrier FROM localities l LIMIT 10")).WillReturnRows(rows)
 
 		datasReceived, err := r.GetCountAndDataByLocality(ctx)
 
 		assert.Equal(t, actualDatas, datasReceived)
-		assert.NotNil(t, err)
+		assert.Nil(t, err)
 	})
 }

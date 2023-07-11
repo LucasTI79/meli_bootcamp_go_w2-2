@@ -308,7 +308,7 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=xyz", nil)
 		res := httptest.NewRecorder()
@@ -363,7 +363,7 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
@@ -385,7 +385,7 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
