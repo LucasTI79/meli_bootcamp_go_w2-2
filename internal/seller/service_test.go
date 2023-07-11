@@ -2,6 +2,8 @@ package seller_test
 
 import (
 	"context"
+	"encoding/json"
+	"os"
 	"testing"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/sellers"
@@ -17,20 +19,10 @@ func TestCreate(t *testing.T) {
 	ctx := context.TODO()
 	t.Run("create_success", func(t *testing.T) {
 
-		sellerToCreate := &domain.Seller{
-			// ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "12345",
-		}
-
-		expectedSeller := &domain.Seller{
-			ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "12345",
+		sellersSerialized, _ := os.ReadFile("../../test/resources/valid_seller.json")
+		expectedSeller := &domain.Seller{}
+		if err := json.Unmarshal(sellersSerialized, expectedSeller); err != nil {
+			t.Fatal(err)
 		}
 
 		sellerRepositoryMock := mocks.NewSellerRepositoryMock()
@@ -38,28 +30,26 @@ func TestCreate(t *testing.T) {
 		sellerRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Seller")).Return(1, nil)
 
 		service := seller.NewService(sellerRepositoryMock)
-		newSeller, err := service.Save(&ctx, *sellerToCreate)
+		newSeller, err := service.Save(&ctx, *expectedSeller)
 
-		assert.Equal(t, *expectedSeller, *newSeller)
+		assert.Equal(t, expectedSeller, newSeller)
 		assert.Equal(t, nil, err)
 
 	})
 
 	t.Run("error_creating_duplicated_cid", func(t *testing.T) {
 
-		sellerToCreate := &domain.Seller{
-			// ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "12345",
+		sellersSerialized, _ := os.ReadFile("../../test/resources/valid_seller.json")
+		var sellerToCreate domain.Seller
+		if err := json.Unmarshal(sellersSerialized, &sellerToCreate); err != nil {
+			t.Fatal(err)
 		}
 
 		sellerRepositoryMock := mocks.NewSellerRepositoryMock()
 		sellerRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(true)
 
 		service := seller.NewService(sellerRepositoryMock)
-		_, err := service.Save(&ctx, *sellerToCreate)
+		_, err := service.Save(&ctx, sellerToCreate)
 
 		assert.Equal(t, seller.ErrConflict, err)
 
@@ -67,12 +57,10 @@ func TestCreate(t *testing.T) {
 
 	t.Run("error_creating_seller", func(t *testing.T) {
 
-		sellerToCreate := &domain.Seller{
-			// ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "12345",
+		sellersSerialized, _ := os.ReadFile("../../test/resources/valid_seller.json")
+		var sellerToCreate domain.Seller
+		if err := json.Unmarshal(sellersSerialized, &sellerToCreate); err != nil {
+			t.Fatal(err)
 		}
 
 		sellerRepositoryMock := mocks.NewSellerRepositoryMock()
@@ -80,7 +68,7 @@ func TestCreate(t *testing.T) {
 		sellerRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Seller")).Return(1, assert.AnError)
 
 		service := seller.NewService(sellerRepositoryMock)
-		_, err := service.Save(&ctx, *sellerToCreate)
+		_, err := service.Save(&ctx, sellerToCreate)
 
 		assert.Equal(t, assert.AnError, err)
 
@@ -91,12 +79,10 @@ func TestCreate(t *testing.T) {
 func TestGet(t *testing.T) {
 
 	t.Run("get_find_by_id_existent", func(t *testing.T) {
-		expectedSeller := &domain.Seller{
-			ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "Test",
+		sellersSerialized, _ := os.ReadFile("../../test/resources/valid_seller.json")
+		expectedSeller := &domain.Seller{}
+		if err := json.Unmarshal(sellersSerialized, expectedSeller); err != nil {
+			t.Fatal(err)
 		}
 
 		ctx := context.TODO()
@@ -128,31 +114,21 @@ func TestGet(t *testing.T) {
 
 func TestGetAll(t *testing.T) {
 	t.Run("getAll_find_all", func(t *testing.T) {
-		expectedSellers := &[]domain.Seller{
-			{
-				ID:          1,
-				CID:         1,
-				CompanyName: "Test",
-				Address:     "Test",
-				Telephone:   "12345",
-			},
-			{
-				CID:         1,
-				CompanyName: "Test",
-				Address:     "Test",
-				Telephone:   "12345",
-			},
+		sellersSerialized, _ := os.ReadFile("../../test/resources/valid_sellers.json")
+		var expectedSellers []domain.Seller
+		if err := json.Unmarshal(sellersSerialized, &expectedSellers); err != nil {
+			t.Fatal(err)
 		}
 
 		ctx := context.TODO()
 
 		sellerRepositoryMock := new(mocks.SellerRepositoryMock)
-		sellerRepositoryMock.On("GetAll", ctx).Return(*expectedSellers, nil)
+		sellerRepositoryMock.On("GetAll", ctx).Return(expectedSellers, nil)
 
 		service := seller.NewService(sellerRepositoryMock)
 		sellersReceived, err := service.GetAll(&ctx)
 
-		assert.Equal(t, *expectedSellers, *sellersReceived)
+		assert.Equal(t, expectedSellers, *sellersReceived)
 		assert.Equal(t, nil, err)
 	})
 }
@@ -160,18 +136,16 @@ func TestGetAll(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("delete_ok", func(t *testing.T) {
 
-		sellerToDelete := &domain.Seller{
-			ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "12345",
+		sellerSerialized, _ := os.ReadFile("../../test/resources/valid_seller.json")
+		var sellerToDelete domain.Seller
+		if err := json.Unmarshal(sellerSerialized, &sellerToDelete); err != nil {
+			t.Fatal(err)
 		}
 
 		ctx := context.TODO()
 
 		sellerRepositoryMock := new(mocks.SellerRepositoryMock)
-		sellerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(sellerToDelete, nil)
+		sellerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(&sellerToDelete, nil)
 		sellerRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(nil)
 
 		service := seller.NewService(sellerRepositoryMock)
@@ -195,18 +169,16 @@ func TestDelete(t *testing.T) {
 
 	t.Run("delete_unexpected_error", func(t *testing.T) {
 
-		sellerToDelete := &domain.Seller{
-			ID:          1,
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "12345",
+		sellerSerialized, _ := os.ReadFile("../../test/resources/valid_seller.json")
+		var sellerToDelete domain.Seller
+		if err := json.Unmarshal(sellerSerialized, &sellerToDelete); err != nil {
+			t.Fatal(err)
 		}
 
 		ctx := context.TODO()
 
 		sellerRepositoryMock := new(mocks.SellerRepositoryMock)
-		sellerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(sellerToDelete, nil)
+		sellerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(&sellerToDelete, nil)
 		sellerRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(assert.AnError)
 
 		service := seller.NewService(sellerRepositoryMock)
@@ -225,18 +197,21 @@ func TestUpdate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "12345",
+			LocalityID:  "123",
 		}
 
 		newCID := 2
 		newCompanyName := "Test2"
 		newAddress := "Test2"
 		newTelephone := "67890"
+		newLocalityID := "456"
 
 		updateSellerRequest := &dtos.UpdateSellerRequestDTO{
 			CID:         &newCID,
 			CompanyName: &newCompanyName,
 			Address:     &newAddress,
 			Telephone:   &newTelephone,
+			LocalityID:  &newLocalityID,
 		}
 
 		expectedSeller := &domain.Seller{
@@ -245,6 +220,7 @@ func TestUpdate(t *testing.T) {
 			CompanyName: "Test2",
 			Address:     "Test2",
 			Telephone:   "67890",
+			LocalityID:  "456",
 		}
 
 		ctx := context.TODO()
@@ -267,12 +243,14 @@ func TestUpdate(t *testing.T) {
 		newCompanyName := "Test2"
 		newAddress := "Test2"
 		newTelephone := "67890"
+		newLocalityID := "456"
 
 		updateSellerRequest := &dtos.UpdateSellerRequestDTO{
 			CID:         &newCID,
 			CompanyName: &newCompanyName,
 			Address:     &newAddress,
 			Telephone:   &newTelephone,
+			LocalityID:  &newLocalityID,
 		}
 
 		ctx := context.TODO()
