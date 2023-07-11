@@ -13,6 +13,7 @@ var (
 	ErrConflict            = errors.New("a carriers with this cid already exists")
 	ErrUnprocessableEntity = errors.New("all fields are required")
 	ErrInternalServerError = errors.New("error connecting to server")
+	ErrLocalityNotFound    = errors.New("locality not found")
 )
 
 type Service interface {
@@ -71,7 +72,7 @@ func (s *service) GetAll(c *context.Context) (*[]domain.Carrier, error) {
 func (s *service) GetLocalityById(c *context.Context, localityId int) (*domain.Locality, error) {
 	result, err := s.repository.GetLocalityById(*c, localityId)
 	if err != nil {
-		return nil, ErrNotFound
+		return &domain.Locality{}, ErrLocalityNotFound
 	}
 
 	return &result, nil

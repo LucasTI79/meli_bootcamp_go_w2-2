@@ -324,7 +324,7 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v/localities/reportCarries", handler.GetReportCarriersByLocalities())
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
@@ -334,15 +334,19 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 	})
 
 	t.Run("none_carrier_exist", func(t *testing.T) {
-
+		localityExpected := &domain.Locality{
+			ID:           1,
+			ProvinceName: "Teste",
+			LocalityName: "Teste",
+		}
 		carrierServiceMock := new(mocks.CarrierServiceMock)
-		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context")).Return(domain.Locality{}, nil)
+		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context")).Return(localityExpected, nil)
 		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context")).Return(0, assert.AnError)
 		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
 
 		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
@@ -440,6 +444,45 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, res.Code)
 		assert.Equal(t, *responsesFounds, *responses)
+	})
 
+	t.Run("get_all_carriers_no_content", func(t *testing.T) {
+		responsesFounds := &[]dtos.DataLocalityAndCarrier{}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("GetCountAndDataByLocality", mock.AnythingOfType("*context.Context")).Return(responsesFounds, assert.AnError)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/localities/reportCarries", handler.GetReportCarriersByLocalities())
+
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusNoContent, res.Code)
+	})
+
+	t.Run("none_carrier_exists", func(t *testing.T) {
+		localityExpected := &domain.Locality{
+			ID:           1,
+			ProvinceName: "Teste",
+			LocalityName: "Teste",
+		}
+		carrierServiceMock := new(mocks.CarrierServiceMock)
+		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(localityExpected, nil)
+		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(0, nil)
+		handler := carrier_handler.NewCarrier(carrierServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v/localities/reportCarries", handler.GetReportCarriersByLocalities())
+
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
+		res := httptest.NewRecorder()
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 }

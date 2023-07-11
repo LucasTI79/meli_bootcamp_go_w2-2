@@ -178,7 +178,7 @@ func TestRepositorySave(t *testing.T) {
 
 	t.Run("save_error_rowlsAffected0", func(t *testing.T) {
 
-		expectedCarrier := &domain.Carrier{
+		expectedCarrier := domain.Carrier{
 			ID:          1,
 			CID:         "CID#1",
 			CompanyName: "some name",
@@ -193,7 +193,7 @@ func TestRepositorySave(t *testing.T) {
 		mock.ExpectExec(regexp.QuoteMeta("INSERT INTO carriers(cid, company_name, address, telephone, locality_id) VALUES (?,?,?,?,?)")).
 			WithArgs(expectedCarrier.CID, expectedCarrier.CompanyName, expectedCarrier.Address, expectedCarrier.Telephone, expectedCarrier.LocalityId).
 			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
-		_, err := r.Save(ctx, *expectedCarrier)
+		_, err := r.Save(ctx, expectedCarrier)
 
 		assert.NotNil(t, err)
 	})
@@ -217,6 +217,7 @@ func TestRepositorySave(t *testing.T) {
 		_, err := r.Save(ctx, *expectedCarrier)
 
 		assert.NotNil(t, err)
+
 	})
 }
 
@@ -350,6 +351,24 @@ func TestRepositoryCountCarriersByLocalityId(t *testing.T) {
 
 		assert.Equal(t, 2, carriersReceived)
 		assert.Nil(t, err)
+	})
+	t.Run("get_count_false", func(t *testing.T) {
+
+		expectedCarriers := []domain.Carrier{}
+
+		r := carriers.NewRepository(fields{db}.db)
+
+		rows := sqlmock.NewRows([]string{"COUNT(id)"})
+
+		for _, expectedCarrier := range expectedCarriers {
+			rows.AddRow(expectedCarrier.ID)
+		}
+		mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(id) FROM carriers WHERE locality_id = ?")).WillReturnRows(rows)
+
+		count, error := r.GetCountCarriersByLocalityId(ctx, 67)
+
+		assert.Equal(t, count, 0)
+		assert.Nil(t, error)
 	})
 }
 
