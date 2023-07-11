@@ -2,6 +2,9 @@ package routes
 
 import (
 	"database/sql"
+	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/integrations/database/repositories"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
@@ -53,7 +56,7 @@ func (r *router) setGroup() {
 }
 
 func (r *router) buildSellerRoutes() {
-	repo := seller.NewRepository(r.db)
+	repo := seller.NewSellerRepository(r.db)
 	service := seller.NewService(repo)
 	handler := sellers.NewSeller(service)
 	r.rg.POST("/sellers", handler.Create())
@@ -125,4 +128,18 @@ func (r *router) buildBuyerRoutes() {
 	buyerRoutes.POST("", buyerHandler.Create())
 	buyerRoutes.PATCH(":id", buyerHandler.Update())
 	buyerRoutes.DELETE(":id", buyerHandler.Delete())
+}
+
+func (r *router) buildLocalityRoutes() {
+	localityRepository := repositories.NewLocalityRepository(r.db)
+	localityService := services.NewLocalityService(localityRepository)
+	localityHandler := handlers.NewLocalityHandler(localityService)
+
+	localityRoutes := r.rg.Group("/localities/")
+	localityRoutes.GET(":id", localityHandler.Get())
+	localityRoutes.GET("", localityHandler.GetAll())
+	localityRoutes.POST("", localityHandler.Create())
+	localityRoutes.PATCH(":id", localityHandler.Update())
+	localityRoutes.DELETE(":id", localityHandler.Delete())
+	localityRoutes.GET(":id/reportSellers", localityHandler.CountSellers())
 }

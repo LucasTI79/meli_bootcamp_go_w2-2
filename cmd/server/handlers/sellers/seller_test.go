@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 
 	"github.com/stretchr/testify/assert"
 
@@ -31,6 +32,7 @@ func TestGet(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "Test",
+			LocalityID:  "123",
 		}
 
 		//Configurar o mock do service
@@ -151,12 +153,21 @@ func TestCreate(t *testing.T) {
 			CompanyName: "Test",
 			Address:     "Test",
 			Telephone:   "Test",
+			LocalityID:  "123",
 		}
+
+		newCID := 1
+		newCompanyName := "Test"
+		newAddress := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "Test",
+			CID:         newCID,
+			CompanyName: newCompanyName,
+			Address:     newAddress,
+			Telephone:   newTelephone,
+			LocalityID:  newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -197,11 +208,16 @@ func TestCreate(t *testing.T) {
 
 	//"create_bad_request Quando o JSON tiver um campo incorreto, um código 400 será retornado"
 	t.Run("create_bad_request", func(t *testing.T) {
+		newCompanyName := "Test"
+		newAddress := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         0,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "Test",
+			CompanyName: newCompanyName,
+			Address:     newAddress,
+			Telephone:   newTelephone,
+			LocalityID:  newLocalityID,
 		}
 		//Configurar o mock do service
 		sellerServiceMock := new(mocks.SellerServiceMock)
@@ -227,8 +243,8 @@ func TestCreate(t *testing.T) {
 			Message string `json:"message"`
 		}
 		expectedMensageResponse := expectedMensageResponseDTO{
-			Code:    "bad_request",
-			Message: "Field CID is required: ",
+			Code:    "unprocessable_entity",
+			Message: "Error to read request: Key: 'CreateSellerRequestDTO.CID' Error:Field validation for 'CID' failed on the 'required' tag",
 		}
 
 		//Parsear response
@@ -238,19 +254,26 @@ func TestCreate(t *testing.T) {
 		json.Unmarshal(body, &actualMessageResponse)
 
 		//Validar resultado
-		assert.Equal(t, http.StatusBadRequest, res.Code)
-		assert.Equal(t, expectedMensageResponse, actualMessageResponse) //  "Field CID is required: %s", ""
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+		assert.Equal(t, expectedMensageResponse, actualMessageResponse)
 	})
 	// TODO: Finalizar cobertura para os outros campos da struct relacionada a struct.
 
 	//"create_fail Se o objeto JSON não contiver os campos necessários, um código 422 será retornado"
 	t.Run("create_error_conflict", func(t *testing.T) {
 
+		newCID := 1
+		newCompanyName := "Test"
+		newAddress := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "Test",
+			CID:         newCID,
+			CompanyName: newCompanyName,
+			Address:     newAddress,
+			Telephone:   newTelephone,
+			LocalityID:  newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -288,11 +311,18 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_internal_server_error", func(t *testing.T) {
 
+		newCID := 1
+		newCompanyName := "Test"
+		newAddress := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "Test",
+			CID:         newCID,
+			CompanyName: newCompanyName,
+			Address:     newAddress,
+			Telephone:   newTelephone,
+			LocalityID:  newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -330,11 +360,16 @@ func TestCreate(t *testing.T) {
 
 	t.Run("create_fail_companyName_nil", func(t *testing.T) {
 
+		newCID := 1
+		newAddress := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         1,
-			CompanyName: "",
-			Address:     "Test",
-			Telephone:   "Test",
+			CID:        newCID,
+			Address:    newAddress,
+			Telephone:  newTelephone,
+			LocalityID: newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -357,17 +392,22 @@ func TestCreate(t *testing.T) {
 		r.ServeHTTP(res, req)
 
 		//Validar resultado
-		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 
 	})
 
 	t.Run("create_fail_CID_nil", func(t *testing.T) {
 
+		newCompanyName := "Test"
+		newAddress := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         0,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "Test",
+			CompanyName: newCompanyName,
+			Address:     newAddress,
+			Telephone:   newTelephone,
+			LocalityID:  newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -390,17 +430,22 @@ func TestCreate(t *testing.T) {
 		r.ServeHTTP(res, req)
 
 		//Validar resultado
-		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 
 	})
 
 	t.Run("create_fail_adress_nil", func(t *testing.T) {
 
+		newCID := 1
+		newCompanyName := "Test"
+		newTelephone := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "",
-			Telephone:   "Test",
+			CID:         newCID,
+			CompanyName: newCompanyName,
+			Telephone:   newTelephone,
+			LocalityID:  newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -423,17 +468,22 @@ func TestCreate(t *testing.T) {
 		r.ServeHTTP(res, req)
 
 		//Validar resultado
-		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 
 	})
 
 	t.Run("create_fail_telephone_nil", func(t *testing.T) {
 
+		newCID := 1
+		newCompanyName := "Test"
+		newAddress := "Test"
+		newLocalityID := "123"
+
 		createSellerRequestDTO := dtos.CreateSellerRequestDTO{
-			CID:         1,
-			CompanyName: "Test",
-			Address:     "Test",
-			Telephone:   "",
+			CID:         newCID,
+			CompanyName: newCompanyName,
+			Address:     newAddress,
+			LocalityID:  newLocalityID,
 		}
 
 		//Configurar o mock do service
@@ -456,7 +506,7 @@ func TestCreate(t *testing.T) {
 		r.ServeHTTP(res, req)
 
 		//Validar resultado
-		assert.Equal(t, http.StatusBadRequest, res.Code)
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
 
 	})
 }
@@ -472,6 +522,7 @@ func TestGetAll(t *testing.T) {
 				CompanyName: "Test",
 				Address:     "Test",
 				Telephone:   "Test",
+				LocalityID:  "123",
 			},
 			{
 				ID:          1,
@@ -479,6 +530,7 @@ func TestGetAll(t *testing.T) {
 				CompanyName: "Test",
 				Address:     "Test",
 				Telephone:   "Test",
+				LocalityID:  "123",
 			},
 		}
 		//Configurar o mock do service
@@ -637,12 +689,14 @@ func TestUpdate(t *testing.T) {
 		companyName := "Test"
 		address := "Test"
 		telephone := "Test"
+		localityID := "123"
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
 		updateSellerRequestDTO := dtos.UpdateSellerRequestDTO{
 			CompanyName: &companyName,
 			Address:     &address,
 			Telephone:   &telephone,
+			LocalityID:  &localityID,
 		}
 
 		//Configurar o mock do service
@@ -674,12 +728,14 @@ func TestUpdate(t *testing.T) {
 		companyName := "Test"
 		address := "Test"
 		telephone := "Test"
+		localityID := "123"
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
 		updateSellerRequestDTO := dtos.UpdateSellerRequestDTO{
 			CompanyName: &companyName,
 			Address:     &address,
 			Telephone:   &telephone,
+			LocalityID:  &localityID,
 		}
 
 		//Configurar o mock do service
@@ -711,12 +767,14 @@ func TestUpdate(t *testing.T) {
 		companyName := "Test"
 		address := "Test"
 		telephone := "Test"
+		localityID := "123"
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
 		updateSellerRequestDTO := dtos.UpdateSellerRequestDTO{
 			CompanyName: &companyName,
 			Address:     &address,
 			Telephone:   &telephone,
+			LocalityID:  &localityID,
 		}
 
 		//Configurar o mock do service
@@ -756,12 +814,14 @@ func TestUpdate(t *testing.T) {
 		companyName := "Test"
 		address := "Test"
 		telephone := "Test"
+		localityID := "123"
 
 		//(Poderia utilizar dessa maneira também) -> experirationRate := func (i int) int{return i } (2)
 		updateSellerRequestDTO := dtos.UpdateSellerRequestDTO{
 			CompanyName: &companyName,
 			Address:     &address,
 			Telephone:   &telephone,
+			LocalityID:  &localityID,
 		}
 
 		//Configurar o mock do service
