@@ -352,6 +352,7 @@ func TestRepositoryCountCarriersByLocalityId(t *testing.T) {
 		assert.Nil(t, err)
 	})
 }
+
 func TestRepositoryCountAndDataByLocality(t *testing.T) {
 	type fields struct {
 		db *sql.DB
@@ -396,7 +397,7 @@ func TestRepositoryCountAndDataByLocality(t *testing.T) {
 
 		datasReceived, err := r.GetCountAndDataByLocality(ctx)
 
-		assert.Equal(t, []dtos.DataLocalityAndCarrier{}, datasReceived)
+		assert.Equal(t, actualDatas, datasReceived)
 		assert.NotNil(t, err)
 	})
 }

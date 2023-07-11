@@ -2,11 +2,12 @@ package carriers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"github.com/gin-gonic/gin"
 )
@@ -99,15 +100,18 @@ func CarrierFullRequestValidator(c *gin.Context, req dtos.CarrierRequestDTO) err
 	return nil
 }
 
+// GetReportCarriersByLocalities godoc
+//
+//	@Summary		Get Report Carrier By Localities
+//	@Tags			Carriers
+//	@Description	get report carriers by localities
+//	@Produce		json
+//	@Param			id	path		int		"locality_id"
+//	@Success		200	{object}	[]dtos.DataLocalityAndCarrier
+//	@Router			/api/v1/localities/reportCarries" [get]
 func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		type Response struct {
-			locality_id   int
-			locality_name string
-			carries_count int
-		}
-
 		if c.Query("id") == "" {
 			data, err := carrier.carrierService.GetCountAndDataByLocality(&ctx)
 			if err != nil {
@@ -118,6 +122,7 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 
 		} else {
 			localityId, e := strconv.Atoi(c.Query("id"))
+			fmt.Print(localityId)
 			if e != nil {
 				web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 				return
@@ -132,10 +137,10 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 				web.Error(c, http.StatusNotFound, "none carrier exists with this location_id")
 				return
 			}
-			response := &Response{
-				locality_id:   localityId,
-				locality_name: locality.LocalityName,
-				carries_count: *count,
+			response := &dtos.DataLocalityAndCarrier{
+				Id:           localityId,
+				LocalityName: locality.LocalityName,
+				CountCarrier: *count,
 			}
 			web.Success(c, http.StatusOK, *response)
 		}

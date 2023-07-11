@@ -10,8 +10,8 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
-	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 

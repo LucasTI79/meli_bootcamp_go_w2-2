@@ -164,15 +164,7 @@ func TestCreate(t *testing.T) {
 
 	})
 
-	t.Run("create_error", func(t *testing.T) {
-		expectedCarrier := &domain.Carrier{
-			ID:          1,
-			CID:         "CID#1",
-			CompanyName: "some name",
-			Address:     "corrientes 800",
-			Telephone:   "4567-4567",
-			LocalityId:  6700,
-		}
+	t.Run("create_internal_server_error", func(t *testing.T) {
 		createCarrierRequestDTO := dtos.CarrierRequestDTO{
 			CID:         "CID#1",
 			CompanyName: "some name",
@@ -185,13 +177,13 @@ func TestCreate(t *testing.T) {
 
 		carrieRepositoryMock := new(mocks.CarrierRepositoryMock)
 		carrieRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
-		carrieRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Carrier")).Return(nil, sql.ErrNoRows)
+		carrieRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Carrier")).Return(0, errors.New("error connecting to server"))
 		service := carriers.NewService(carrieRepositoryMock)
 
 		carrieSaved, err := service.Create(&ctx, createCarrierRequestDTO)
 
-		assert.Equal(t, carrieSaved, expectedCarrier)
-		assert.Nil(t, err)
+		assert.Nil(t, carrieSaved)
+		assert.Equal(t, errors.New("error connecting to server"), err)
 	})
 }
 
@@ -224,7 +216,7 @@ func TestGetLocalityById(t *testing.T) {
 		localityReceived, err := service.GetLocalityById(&ctx, 1)
 
 		assert.Nil(t, localityReceived)
-		assert.Equal(t, carriers.ErrNotFound, err)
+		assert.Equal(t, errors.New("carriers not found"), err)
 	})
 	t.Run("get_unexpected_error", func(t *testing.T) {
 

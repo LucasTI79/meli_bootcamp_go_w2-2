@@ -3,15 +3,16 @@ package carriers_test
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	carrier_handler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/carriers/mocks"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/carrier"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -302,16 +303,14 @@ func TestCreate(t *testing.T) {
 
 func TestGetReportCarriersByLocalities(t *testing.T) {
 	t.Run("get_invalid_id", func(t *testing.T) {
-
 		carrierServiceMock := new(mocks.CarrierServiceMock)
-		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Locality{}, assert.AnError)
 		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries/:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries/xyz", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=xyz", nil)
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 
@@ -325,9 +324,9 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v/localities/reportCarries/:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 
@@ -343,26 +342,30 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries/:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 
 		assert.Equal(t, http.StatusNotFound, res.Code)
 	})
 	t.Run("internal_server_error", func(t *testing.T) {
-
+		localityExpected := &domain.Locality{
+			ID:           1,
+			ProvinceName: "Teste",
+			LocalityName: "Teste",
+		}
 		carrierServiceMock := new(mocks.CarrierServiceMock)
-		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Locality{}, nil)
-		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil, assert.AnError)
+		carrierServiceMock.On("GetLocalityById", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(localityExpected, nil)
+		carrierServiceMock.On("GetCountCarriersByLocalityId", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil, errors.New("error"))
 		handler := carrier_handler.NewCarrier(carrierServiceMock)
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries/", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries/", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
 		r.ServeHTTP(res, req)
 
@@ -382,9 +385,9 @@ func TestGetReportCarriersByLocalities(t *testing.T) {
 
 		gin.SetMode(gin.TestMode)
 		r := gin.Default()
-		r.GET("/api/v1/localities/reportCarries/:id", handler.GetReportCarriersByLocalities())
+		r.GET("/api/v1/localities/reportCarries?id=:id", handler.GetReportCarriersByLocalities())
 
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/localities/reportCarries?id=1", nil)
 		res := httptest.NewRecorder()
 
 		r.ServeHTTP(res, req)

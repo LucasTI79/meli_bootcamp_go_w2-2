@@ -104,12 +104,15 @@ func (r *repository) GetCountAndDataByLocality(ctx context.Context) ([]dtos.Data
 	if err != nil {
 		return nil, err
 	}
-
 	var data []dtos.DataLocalityAndCarrier
 	for rows.Next() {
 		d := dtos.DataLocalityAndCarrier{}
 		_ = rows.Scan(&d.Id, &d.LocalityName, &d.CountCarrier)
 		data = append(data, d)
 	}
+	if err != nil {
+		return []dtos.DataLocalityAndCarrier{}, nil
+	}
+
 	return data, nil
 }
