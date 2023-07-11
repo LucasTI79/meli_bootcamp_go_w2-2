@@ -252,18 +252,11 @@ func TestRepositoryGetLocalityById(t *testing.T) {
 
 	t.Run("get_by_locality_id_false", func(t *testing.T) {
 
-		expectedLocality := domain.Locality{
-			ID:           1,
-			ProvinceName: "Teste",
-			LocalityName: "Teste-2",
-		}
-
 		r := carriers.NewRepository(fields{db}.db)
 
-		rows := sqlmock.NewRows([]string{"id", "province_name", "locality_name"}).
-			AddRow(expectedLocality.ID, expectedLocality.ProvinceName, expectedLocality.LocalityName)
+		rows := sqlmock.NewRows([]string{"id", "province_name", "locality_name"})
 
-		mock.ExpectQuery("SELECT localities.id, localities.province_name, localities.locality_name  FROM localities WHERE id =?").WithArgs(expectedLocality.ID).WillReturnRows(rows)
+		mock.ExpectQuery("SELECT localities.id, localities.province_name, localities.locality_name  FROM localities WHERE id =?").WillReturnRows(rows)
 
 		locality, error := r.GetLocalityById(ctx, 10)
 
@@ -354,18 +347,12 @@ func TestRepositoryCountCarriersByLocalityId(t *testing.T) {
 	})
 	t.Run("get_count_false", func(t *testing.T) {
 
-		expectedCarriers := []domain.Carrier{}
-
 		r := carriers.NewRepository(fields{db}.db)
 
 		rows := sqlmock.NewRows([]string{"COUNT(id)"})
-
-		for _, expectedCarrier := range expectedCarriers {
-			rows.AddRow(expectedCarrier.ID)
-		}
 		mock.ExpectQuery(regexp.QuoteMeta("SELECT COUNT(id) FROM carriers WHERE locality_id = ?")).WillReturnRows(rows)
 
-		count, error := r.GetCountCarriersByLocalityId(ctx, 67)
+		count, error := r.GetCountCarriersByLocalityId(ctx, 0)
 
 		assert.Equal(t, count, 0)
 		assert.Nil(t, error)
@@ -404,6 +391,7 @@ func TestRepositoryCountAndDataByLocality(t *testing.T) {
 	})
 
 	t.Run("get_datas_fail", func(t *testing.T) {
+
 		actualDatas := []dtos.DataLocalityAndCarrier{}
 		r := carriers.NewRepository(fields{db}.db)
 

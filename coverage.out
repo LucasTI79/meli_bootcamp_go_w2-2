@@ -80,11 +80,9 @@ github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrie
 github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:121.4,121.39 1 1
 github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:123.9,126.16 3 1
 github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:126.16,129.5 2 1
-github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:130.4,131.18 2 1
-github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:131.18,134.5 2 0
-github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:135.4,136.18 2 1
-github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:136.18,139.5 2 1
-github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:140.4,145.44 2 1
+github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:130.4,132.18 3 1
+github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:132.18,135.5 2 1
+github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers/carrier.go:136.4,141.44 2 1
 github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/employees/employee.go:23.48,27.2 1 1
 github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/employees/employee.go:40.42,41.30 1 1
 github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/employees/employee.go:41.30,43.17 2 1
