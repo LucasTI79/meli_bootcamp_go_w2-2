@@ -2,10 +2,8 @@ package productbatcheshandler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
-	"time"
 
 	dto "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/productbatchesdto"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
@@ -37,22 +35,32 @@ func NewProductBatches(p productbatches.IService) *ProductBatches {
 //	@Router			/api/v1/sections/{id} [get]
 func (p *ProductBatches) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
+
+		result, err := p.productBatchesService.SectionProductsReports()
 		if err != nil {
+			web.Error(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		idParam := c.Request.URL.Query().Get("id")
+		if idParam == "" {
+			web.Success(c, http.StatusOK, result)
+			return
+		}
+		sectionID, err := strconv.Atoi(idParam)
+		if err != nil{
 			web.Error(c, http.StatusBadRequest, err.Error())
 			return
 		}
-		ctx := c.Request.Context()
-		productBatchesResponse, err := p.productBatchesService.Get(&ctx, id)
-		if err != nil {
-			if errors.Is(err, productbatches.ErrNotFound) {
+		result, err = p.productBatchesService.SectionProductsReportsBySection(sectionID)
+		if err != nil{
+			if errors.Is(err, productbatches.ErrNotFoundSection){
 				web.Error(c, http.StatusNotFound, err.Error())
 				return
 			}
-			web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error getting product batches%s", err.Error()))
-			return
+			web.Error(c, http.StatusInternalServerError, err.Error())
 		}
-		web.Success(c, http.StatusOK, productBatchesResponse)
+		web.Success(c, http.StatusOK, result)
 	}
 }
 
@@ -74,30 +82,14 @@ func (p *ProductBatches) Create() gin.HandlerFunc {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-		dueDate, err := time.Parse(time.DateOnly, req.DueDate)
-		if err != nil {
-			web.Error(c, http.StatusBadRequest, err.Error())
-			return
-		}
-		manufacturingDate, err := time.Parse(time.DateOnly, req.ManufacturingDate)
-		if err != nil {
-			web.Error(c, http.StatusBadRequest, err.Error())
-			return
-		}
-		// manufacturingHour, err := time.Parse(time.TimeOnly, req.ManufacturingHour)
-		// if err != nil{
-		// 	web.Error(c, http.StatusBadRequest, err.Error())
-		// 	return
-		// }
-		manufacturingHour := time.Now()
 		productBatchReq := domain.ProductBatches{
 			BatchNumber:        req.BatchNumber,
 			CurrentQuantity:    req.CurrentQuantity,
 			CurrentTemperature: req.CurrentTemperature,
-			DueDate:            dueDate,
+			DueDate:            req.DueDate,
 			InitialQuantity:    req.InitialQuantity,
-			ManufacturingDate:  manufacturingDate,
-			ManufacturingHour:  manufacturingHour,
+			ManufacturingDate:  req.ManufacturingDate,
+			ManufacturingHour:  req.ManufacturingHour,
 			MinimumTemperature: req.MinimumTemperature,
 			ProductID:          req.ProductID,
 			SectionID:          req.SectionID,
@@ -111,7 +103,7 @@ func (p *ProductBatches) Create() gin.HandlerFunc {
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			}
-			web.Error(c, http.StatusInternalServerError, fmt.Sprintf("error saving product batches %s", err.Error()))
+			web.Error(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 		web.Success(c, http.StatusCreated, productBatchRes)

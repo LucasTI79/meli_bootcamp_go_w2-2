@@ -6,51 +6,71 @@ import (
 	"errors"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 )
 
 var (
 	ErrNotFound = errors.New("product Batches not found")
+	ErrNotFoundSection = errors.New("informed section does not exist in the system")
 	ErrConflict = errors.New("product batches with batch_number already exists")
 )
 
 type IService interface {
-	Get(ctx *context.Context, id int) (*domain.ProductBatches, error)
 	Save(ctx *context.Context, product domain.ProductBatches) (*domain.ProductBatches, error)
+	SectionProductsReports() ([]domain.ProductBySection, error)
+	SectionProductsReportsBySection(sectionID int) ([]domain.ProductBySection, error)
+
 }
 type Service struct {
-	productRepository IRepository
+	productBatchRepository IRepository
+	productRepo            product.Repository
+	sectionRepo            section.Repository
 }
 
-func NewService(r IRepository) IService {
+func NewService(r IRepository, productRepo product.Repository, sectionRepo section.Repository) IService {
 	return &Service{
-		productRepository: r,
+		productBatchRepository: r,
+		productRepo:            productRepo,
+		sectionRepo:            sectionRepo,
 	}
 }
 
-func (s *Service) Get(ctx *context.Context, id int) (*domain.ProductBatches, error) {
-	productBatches, err := s.productRepository.Get(*ctx, id)
-	if err != nil {
-		switch err {
+func (s *Service) SectionProductsReports() ([]domain.ProductBySection, error){
+	sectionProductsReports, err := s.productBatchRepository.SectionProductsReports()
+	if err != nil{
+		return sectionProductsReports, err
+	}
+	return sectionProductsReports, nil
+}
+func (s *Service) SectionProductsReportsBySection(sectionID int) ([]domain.ProductBySection, error){
+	sectionProductsBySection, err := s.productBatchRepository.SectionProductsReportsBySection(sectionID)
+	if err != nil{
+		switch err{
 		case sql.ErrNoRows:
-			return nil, ErrNotFound
+			return nil, ErrNotFoundSection
 		default:
 			return nil, err
 		}
 	}
-	return &productBatches, nil
+	return sectionProductsBySection, nil
 }
 
 func (s *Service) Save(ctx *context.Context, product domain.ProductBatches) (*domain.ProductBatches, error) {
-	batchNumberExist := s.productRepository.Exists(*ctx, product.BatchNumber)
-	if batchNumberExist {
-		return nil, ErrConflict
+	batchNumberExist := s.productBatchRepository.ExistsProductBatch(*ctx, product.BatchNumber)
+	productIdExist := s.productRepo.ExistsByID(*ctx, product.ProductID)
+	sectionIdExist := s.sectionRepo.ExistsByID(*ctx, product.SectionID)
+
+	if batchNumberExist || !productIdExist || !sectionIdExist {
+		//return nil, fmt.Errorf("batch_number exists: %t, product_id exists: %t, section_id exists: %t", batchNumberExist, productIdExist, sectionIdExist)
+		return &domain.ProductBatches{}, ErrConflict
 	}
 
-	productBatchesID, err := s.productRepository.Save(*ctx, product)
+	productBatchesID, err := s.productBatchRepository.Save(*ctx, product)
 	if err != nil {
 		return nil, err
 	}
-	savedProductBatches, err := s.productRepository.Get(*ctx, productBatchesID)
+	savedProductBatches, err := s.productBatchRepository.Get(*ctx, productBatchesID)
 	if err != nil {
 		return nil, err
 	}

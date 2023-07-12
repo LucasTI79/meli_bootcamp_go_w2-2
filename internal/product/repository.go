@@ -15,6 +15,7 @@ type Repository interface {
 	Save(ctx context.Context, p domain.Product) (int, error)
 	Update(ctx context.Context, p domain.Product) error
 	Delete(ctx context.Context, id int) error
+	ExistsByID(ctx context.Context, id int) bool
 }
 
 type repository struct {
@@ -61,6 +62,13 @@ func (r *repository) Exists(ctx context.Context, productCode string) bool {
 	query := "SELECT product_code FROM products WHERE product_code=?;"
 	row := r.db.QueryRow(query, productCode)
 	err := row.Scan(&productCode)
+	return err == nil
+}
+
+func (r *repository) ExistsByID(ctx context.Context, id int) bool {
+	query := "SELECT id FROM products WHERE id=?;"
+	row := r.db.QueryRow(query, id)
+	err := row.Scan(&id)
 	return err == nil
 }
 
