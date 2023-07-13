@@ -32,6 +32,12 @@ func (r *SectionRepositoryMock) Exists(ctx context.Context, cardNumberID int) bo
 	return args.Get(0).(bool)
 }
 
+func (r *SectionRepositoryMock) ExistsByID(ctx context.Context, id int) bool{
+	args := r.Called(ctx, id)
+	
+	return args.Get(0).(bool)
+}
+
 func (r *SectionRepositoryMock) Save(ctx context.Context, section domain.Section) (int, error) {
 	args := r.Called(ctx, section)
 

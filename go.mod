@@ -45,6 +45,7 @@ require (
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
 	github.com/go-openapi/spec v0.20.9 // indirect
 	github.com/go-openapi/swag v0.22.4 // indirect
+	github.com/go-playground/assert v1.2.1
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/swaggo/files v1.0.1

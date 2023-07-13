@@ -42,6 +42,19 @@ func (_m *ProductRepositoryMock) Exists(ctx context.Context, productCode string)
 	return r0
 }
 
+func (_m *ProductRepositoryMock) ExistsByID(ctx context.Context, productID int) bool{
+	ret := _m.Called(ctx, productID)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(context.Context, int) bool); ok {
+		r0 = rf(ctx, productID)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
 // Get provides a mock function with given fields: ctx, id
 func (_m *ProductRepositoryMock) Get(ctx context.Context, id int) (domain.Product, error) {
 	ret := _m.Called(ctx, id)

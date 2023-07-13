@@ -94,7 +94,7 @@ func (r *router) buildProductBatchesRoutes() {
 	service := prodBatches.NewService(repo, productRepo, sectionRepo)
 	handler := productbatcheshandler.NewProductBatches(service)
 	r.rg.POST("/product-batch", handler.Create())
-	r.rg.GET("/product-batches/sections/report-products", handler.Get())
+	r.rg.GET("/product-batches/sections/report-products/:id", handler.Get())
 }
 
 func (r *router) buildWarehouseRoutes() {

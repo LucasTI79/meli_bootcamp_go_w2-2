@@ -12,6 +12,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	ErrInvalidID = errors.New("Invalid ID").Error()
+	ErrSectionProductsReports = errors.New("error returning product reports by Section").Error()
+)
+
 type ProductBatches struct {
 	productBatchesService productbatches.IService
 }
@@ -35,32 +40,32 @@ func NewProductBatches(p productbatches.IService) *ProductBatches {
 //	@Router			/api/v1/sections/{id} [get]
 func (p *ProductBatches) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
-		result, err := p.productBatchesService.SectionProductsReports()
-		if err != nil {
-			web.Error(c, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		idParam := c.Request.URL.Query().Get("id")
+		idParam := c.Param("id")
 		if idParam == "" {
+			result, err := p.productBatchesService.SectionProductsReports()
+			if err != nil {
+				web.Error(c, http.StatusInternalServerError, ErrSectionProductsReports)
+				return
+			}
 			web.Success(c, http.StatusOK, result)
 			return
 		}
+		
 		sectionID, err := strconv.Atoi(idParam)
-		if err != nil{
-			web.Error(c, http.StatusBadRequest, err.Error())
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, ErrInvalidID)
 			return
 		}
-		result, err = p.productBatchesService.SectionProductsReportsBySection(sectionID)
-		if err != nil{
-			if errors.Is(err, productbatches.ErrNotFoundSection){
+		sectionProductsReportsBySection, err := p.productBatchesService.SectionProductsReportsBySection(int(sectionID))
+		if err != nil {
+			if errors.Is(err, productbatches.ErrNotFoundSection) {
 				web.Error(c, http.StatusNotFound, err.Error())
 				return
 			}
 			web.Error(c, http.StatusInternalServerError, err.Error())
+			return
 		}
-		web.Success(c, http.StatusOK, result)
+		web.Success(c, http.StatusOK, sectionProductsReportsBySection)
 	}
 }
 
