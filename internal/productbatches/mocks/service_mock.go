@@ -25,3 +25,5 @@ func (p *ProductBatchServiceMock) SectionProductsReportsBySection(sectionID int)
 	args := p.Called(sectionID)
 	return args.Get(0).([]domain.ProductBySection), args.Error(1)
 }
+
+//mockgen -source=../productbatches/repository.go -destination=internal/productbatches/mocks/repository_mock.go -package=mocks

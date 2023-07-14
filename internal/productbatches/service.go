@@ -11,16 +11,15 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("product Batches not found")
+	ErrNotFound        = errors.New("product Batches not found")
 	ErrNotFoundSection = errors.New("informed section does not exist in the system")
-	ErrConflict = errors.New("product batches with batch_number already exists")
+	ErrConflict        = errors.New("product batches with batch_number already exists")
 )
 
 type IService interface {
 	Save(ctx *context.Context, product domain.ProductBatches) (*domain.ProductBatches, error)
 	SectionProductsReports() ([]domain.ProductBySection, error)
 	SectionProductsReportsBySection(sectionID int) ([]domain.ProductBySection, error)
-
 }
 type Service struct {
 	productBatchRepository IRepository
@@ -36,17 +35,17 @@ func NewService(r IRepository, productRepo product.Repository, sectionRepo secti
 	}
 }
 
-func (s *Service) SectionProductsReports() ([]domain.ProductBySection, error){
+func (s *Service) SectionProductsReports() ([]domain.ProductBySection, error) {
 	sectionProductsReports, err := s.productBatchRepository.SectionProductsReports()
-	if err != nil{
+	if err != nil {
 		return sectionProductsReports, err
 	}
 	return sectionProductsReports, nil
 }
-func (s *Service) SectionProductsReportsBySection(sectionID int) ([]domain.ProductBySection, error){
+func (s *Service) SectionProductsReportsBySection(sectionID int) ([]domain.ProductBySection, error) {
 	sectionProductsBySection, err := s.productBatchRepository.SectionProductsReportsBySection(sectionID)
-	if err != nil{
-		switch err{
+	if err != nil {
+		switch err {
 		case sql.ErrNoRows:
 			return nil, ErrNotFoundSection
 		default:

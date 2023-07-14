@@ -7,28 +7,39 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type ProductBatchesRepositoryMock struct {
+type MockIRepository struct {
 	mock.Mock
 }
-
-func NewProductBachesRepositoryMock() *ProductBatchesRepositoryMock {
-	return &ProductBatchesRepositoryMock{}
+func NewProductBatchesRepositoryMock() *MockIRepository {
+	return &MockIRepository{}
 }
 
-func (p *ProductBatchesRepositoryMock) Get(ctx context.Context, id int) (domain.ProductBatches, error) {
-	args := p.Called(ctx, id)
+func (m *MockIRepository) SectionProductsReports() ([]domain.ProductBySection, error) {
+	args := m.Called()
+	return args.Get(0).([]domain.ProductBySection), args.Error(1)
+}
 
+func (m *MockIRepository) SectionProductsReportsBySection(sectionID int) ([]domain.ProductBySection, error) {
+	args := m.Called(sectionID)
+	return args.Get(0).([]domain.ProductBySection), args.Error(1)
+}
+
+func (m *MockIRepository) Save(ctx context.Context, product domain.ProductBatches) (int, error) {
+	args := m.Called(ctx, product)
+	return args.Int(0), args.Error(1)
+}
+
+func (m *MockIRepository) Get(ctx context.Context, id int) (domain.ProductBatches, error) {
+	args := m.Called(ctx, id)
 	return args.Get(0).(domain.ProductBatches), args.Error(1)
 }
 
-func (p *ProductBatchesRepositoryMock) ExistsProductBatch(ctx context.Context, batchNumber int) bool {
-	args := p.Called(ctx, batchNumber)
-
-	return args.Get(0).(bool)
+func (m *MockIRepository) ExistsProductBatch(ctx context.Context, batchNumber int) bool {
+	args := m.Called(ctx, batchNumber)
+	return args.Bool(0)
+}
+func (m *MockIRepository) ExistsByID(ctx context.Context, id int) bool{
+	args := m.Called(ctx, id)
+	return args.Bool(0)
 }
 
-func (p *ProductBatchesRepositoryMock) Save(ctx context.Context, product domain.ProductBatches) (int, error) {
-	args := p.Called(ctx, product)
-
-	return args.Get(0).(int), args.Error(1)
-}

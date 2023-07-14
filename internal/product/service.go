@@ -160,4 +160,3 @@ func (s *service) Update(ctx *context.Context, description *string, expiration_r
 
 	return &existingProduct, nil
 }
-
