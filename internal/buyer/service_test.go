@@ -208,7 +208,6 @@ func TestCreate(t *testing.T) {
 	ctx := context.TODO()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-
 			buyerRepositoryMock := mocks.NewBuyerRepositoryMock()
 
 			buyerRepositoryMock.On(
@@ -282,7 +281,6 @@ func TestDelete(t *testing.T) {
 	ctx := context.TODO()
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-
 			buyerRepositoryMock := mocks.NewBuyerRepositoryMock()
 			buyerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Buyer{}, test.expectedGetError)
 			buyerRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(test.expectedDeleteError)

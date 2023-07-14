@@ -8,7 +8,7 @@ type Product struct {
 	FreezingRate   int     `json:"freezing_rate"`
 	Height         float32 `json:"height"`
 	Length         float32 `json:"length"`
-	Netweight      float32 `json:"netweight"`
+	Netweight      float32 `json:"net_weight"`
 	ProductCode    string  `json:"product_code"`
 	RecomFreezTemp float32 `json:"recommended_freezing_temperature"`
 	Width          float32 `json:"width"`

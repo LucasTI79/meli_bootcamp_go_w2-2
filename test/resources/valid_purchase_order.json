@@ -1,0 +1,10 @@
+{
+  "order_number":  "1",
+  "order_date": "2021-04-04",
+  "tracking_code":  "abcdf123",
+  "buyer_id": 1,
+  "carrier_id":  1,
+  "order_status_id": 1,
+  "warehouse_id":  1,
+  "product_record_id": 1
+}
