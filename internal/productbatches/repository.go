@@ -15,6 +15,12 @@ type IRepository interface {
 	ExistsProductBatch(ctx context.Context, batchNumber int) bool
 }
 
+const (
+	ExistProductBatch = "SELECT batch_number FROM product_batches WHERE batch_number=?"
+	Get               = "SELECT * from product_batches WHERE id=?"
+	//Get               = "SELECT id, batch_number, current_quantity, current_temperature, due_date, initial_quantity, manufacturing_date, manufacturing_hour, minimum_temperature, product_id, section_id FROM product_batches WHERE id=?"
+)
+
 type repository struct {
 	db *sql.DB
 }
@@ -26,14 +32,12 @@ func NewRepository(db *sql.DB) IRepository {
 }
 
 func (r *repository) ExistsProductBatch(ctx context.Context, batchNumber int) bool {
-	query := "SELECT batch_number FROM product_batches WHERE batch_number=?;"
-	row := r.db.QueryRow(query, batchNumber)
+	row := r.db.QueryRow(ExistProductBatch, batchNumber)
 	err := row.Scan(&batchNumber)
 	return err == nil
 }
 func (r *repository) Get(ctx context.Context, id int) (domain.ProductBatches, error) {
-	query := "SELECT * FROM product_batches WHERE id=?;"
-	row := r.db.QueryRow(query, id)
+	row := r.db.QueryRow(Get, id)
 	pb := domain.ProductBatches{}
 	err := row.Scan(&pb.ID, &pb.BatchNumber, &pb.CurrentQuantity, &pb.CurrentTemperature, &pb.DueDate, &pb.InitialQuantity, &pb.ManufacturingDate, &pb.ManufacturingHour, &pb.MinimumTemperature, &pb.ProductID, &pb.SectionID)
 	if err != nil {

@@ -2,7 +2,6 @@ package productbatches_test
 
 import (
 	"context"
-	"database/sql"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -11,102 +10,73 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// var (
-// expected = domain.ProductBatches{
-// 	ID:                 1,
-// 	BatchNumber:        123,
-// 	CurrentQuantity:    10,
-// 	CurrentTemperature: 25.5,
-// 	DueDate:            "2023-07-10",
-// 	InitialQuantity:    100,
-// 	ManufacturingDate:  "2023-07-01",
-// 	ManufacturingHour:  8,
-// 	MinimumTemperature: 20.0,
-// 	ProductID:          456,
-// 	SectionID:          789,
-// }
-// 	payloadPB = domain.ProductBatches{
-// 		BatchNumber:        123,
-// 		CurrentQuantity:    10,
-// 		CurrentTemperature: 25.5,
-// 		DueDate:            "2023-07-10",
-// 		InitialQuantity:    100,
-// 		ManufacturingDate:  "2023-07-01",
-// 		ManufacturingHour:  8,
-// 		MinimumTemperature: 20.0,
-// 		ProductID:          456,
-// 		SectionID:          789,
-// 	}
-// )
-
-func InitDB(t *testing.T) (*sql.DB, sqlmock.Sqlmock, context.Context) {
-	t.Helper()
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatal(err)
-	}
-	ctx := context.TODO()
-	return db, mock, ctx
-}
 func TestRepositoryExistsProductBatch(t *testing.T) {
+
+	expectedPB := domain.ProductBatches{
+		ID:                 1,
+		BatchNumber:        123,
+		CurrentQuantity:    10,
+		CurrentTemperature: 25.5,
+		DueDate:            "2023-07-10",
+		InitialQuantity:    100,
+		ManufacturingDate:  "2023-07-01",
+		ManufacturingHour:  8,
+		MinimumTemperature: 20.0,
+		ProductID:          456,
+		SectionID:          789,
+	}
+
+	db, mock, _ := sqlmock.New()
+	ctx := context.TODO()
+
 	t.Run("exist_productBatch", func(t *testing.T) {
-		expectedPB := domain.ProductBatches{
-			ID:                 1,
-			BatchNumber:        123,
-			CurrentQuantity:    10,
-			CurrentTemperature: 25.5,
-			DueDate:            "2023-07-10",
-			InitialQuantity:    100,
-			ManufacturingDate:  "2023-07-01",
-			ManufacturingHour:  8,
-			MinimumTemperature: 20.0,
-			ProductID:          456,
-			SectionID:          789,
-		}
-		db, mock, ctx := InitDB(t)
+
 		r := productbatches.NewRepository(db)
+
 		rows := sqlmock.NewRows([]string{"batch_number"}).
 			AddRow(expectedPB.BatchNumber)
-		mock.ExpectQuery("SELECT batch_number FROM product_batches WHERE batch_number=?;").WithArgs(expectedPB.BatchNumber).WillReturnRows(rows)
+
+		mock.ExpectQuery(productbatches.ExistProductBatch).
+			WithArgs(expectedPB.BatchNumber).
+			WillReturnRows(rows)
+
 		existsExistsProductBatch := r.ExistsProductBatch(ctx, expectedPB.BatchNumber)
+
 		assert.True(t, existsExistsProductBatch)
 	})
 }
+
 func TestGet(t *testing.T) {
-	db, mock, ctx := InitDB(t)
+
+	expectedPB := domain.ProductBatches{
+		ID:                 1,
+		BatchNumber:        123,
+		CurrentQuantity:    10,
+		CurrentTemperature: 25.5,
+		DueDate:            "2023-07-10",
+		InitialQuantity:    100,
+		ManufacturingDate:  "2023-07-01",
+		ManufacturingHour:  8,
+		MinimumTemperature: 20.0,
+		ProductID:          456,
+		SectionID:          789,
+	}
+
+	db, mock, _ := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+	ctx := context.TODO()
+
 	t.Run("Get", func(t *testing.T) {
-		expectedPB := domain.ProductBatches{
-			ID:                 1,
-			BatchNumber:        123,
-			CurrentQuantity:    10,
-			CurrentTemperature: 25.5,
-			DueDate:            "2023-07-10",
-			InitialQuantity:    100,
-			ManufacturingDate:  "2023-07-01",
-			ManufacturingHour:  8,
-			MinimumTemperature: 20.0,
-			ProductID:          456,
-			SectionID:          789,
-		}
+
 		r := productbatches.NewRepository(db)
-		rows := sqlmock.NewRows([]string{"id"}).
-			AddRow(expectedPB.ID)
-		mock.ExpectQuery("SELECT * FROM product_batches WHERE id=?;").WithArgs(expectedPB.ID).WillReturnRows(rows)
-		id := 1
-		productBatchActual, err := r.Get(ctx, id)
-		assert.Equal(t, productBatchActual, expectedPB)
+
+		rows := sqlmock.NewRows([]string{"id", "batch_number", "current_quantity", "current_temperature", "due_date", "initial_quantity", "manufacturing_date", "manufacturing_hour", "minimum_temperature", "product_id", "section_id"}).
+			AddRow(expectedPB.ID, expectedPB.BatchNumber, expectedPB.CurrentQuantity, expectedPB.CurrentTemperature, expectedPB.DueDate, expectedPB.InitialQuantity, expectedPB.ManufacturingDate, expectedPB.ManufacturingHour, expectedPB.MinimumTemperature, expectedPB.ProductID, expectedPB.SectionID)
+
+		mock.ExpectQuery(productbatches.Get).WithArgs(expectedPB.ID).WillReturnRows(rows)
+
+		productBatchActual, err := r.Get(ctx, expectedPB.ID)
+
+		assert.Equal(t, expectedPB, productBatchActual)
 		assert.Equal(t, err, nil)
 	})
 }
-
-// func (r *repository) Get(ctx context.Context, id int) (domain.ProductBatches, error) {
-// 	query := "SELECT * FROM product_batches WHERE id=?;"
-// 	row := r.db.QueryRow(query, id)
-// 	pb := domain.ProductBatches{}
-// 	err := row.Scan(&pb.ID, &pb.BatchNumber, &pb.CurrentQuantity, &pb.CurrentTemperature, &pb.DueDate, &pb.InitialQuantity, &pb.ManufacturingDate, &pb.ManufacturingHour, &pb.MinimumTemperature, &pb.ProductID, &pb.SectionID)
-// 	if err != nil {
-// 		return domain.ProductBatches{}, err
-// 	}
-
-// 	return pb, nil
-// }
