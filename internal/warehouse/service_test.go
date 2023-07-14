@@ -50,6 +50,19 @@ func TestGet(t *testing.T) {
 		assert.Nil(t, warehouseReceived)
 		assert.Equal(t, warehouse.ErrNotFound, err)
 	})
+	t.Run("get_unexpected_error", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		warehouseRepositoryMock := new(mocks.WarehouseRepositoryMock)
+		warehouseRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Warehouse{}, errors.New("warehouses not found"))
+
+		service := warehouse.NewService(warehouseRepositoryMock)
+		warehouseReceived, err := service.GetOne(&ctx, 1)
+
+		assert.Nil(t, warehouseReceived)
+		assert.Equal(t, errors.New("warehouses not found"), err)
+	})
 }
 
 func TestGetAll(t *testing.T) {
@@ -135,6 +148,18 @@ func TestDelete(t *testing.T) {
 		err := service.Delete(&ctx, 1)
 
 		assert.Equal(t, warehouse.ErrNotFound, err)
+	})
+	t.Run("delete_unexpected_error", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		warehouseRepositoryMock := new(mocks.WarehouseRepositoryMock)
+		warehouseRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(errors.New("warehouses not found"))
+
+		service := warehouse.NewService(warehouseRepositoryMock)
+		err := service.Delete(&ctx, 1)
+
+		assert.Equal(t, errors.New("warehouses not found"), err)
 	})
 }
 
@@ -307,5 +332,36 @@ func TestUpdate(t *testing.T) {
 		warehouseUpdated, err := service.Update(&ctx, 1, updateWarehouseRequestDTO)
 		assert.Nil(t, warehouseUpdated)
 		assert.Error(t, err)
+	})
+	t.Run("update_different_warehouse_code", func(t *testing.T) {
+
+		warehouseCode := "Test1"
+		originalWarehouse := &domain.Warehouse{
+			ID:                 1,
+			Address:            "Rua Teste2",
+			Telephone:          "11938473322",
+			WarehouseCode:      "CX-2281-TCD",
+			MinimumCapacity:    12,
+			MinimumTemperature: 18,
+		}
+		updateWarehouseRequestDTO := dtos.WarehouseRequestDTO{
+			Address:            originalWarehouse.Address,
+			Telephone:          originalWarehouse.Telephone,
+			WarehouseCode:      warehouseCode,
+			MinimumCapacity:    originalWarehouse.MinimumCapacity,
+			MinimumTemperature: originalWarehouse.MinimumTemperature,
+		}
+
+		ctx := context.TODO()
+
+		warehouseRepositoryMock := new(mocks.WarehouseRepositoryMock)
+		warehouseRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalWarehouse, nil)
+		warehouseRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
+
+		service := warehouse.NewService(warehouseRepositoryMock)
+		warehouseUpdated, err := service.Update(&ctx, 1, updateWarehouseRequestDTO)
+
+		assert.Equal(t, warehouse.ErrConflict, err)
+		assert.Nil(t, warehouseUpdated)
 	})
 }

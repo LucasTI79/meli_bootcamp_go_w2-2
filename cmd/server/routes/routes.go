@@ -2,12 +2,14 @@ package routes
 
 import (
 	"database/sql"
+
 	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/integrations/database/repositories"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
@@ -15,6 +17,7 @@ import (
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -52,8 +55,8 @@ func (r *router) MapRoutes() {
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
+	r.buildCarriersRoutes()
 	r.buildProductRecordsRoutes()
-
 }
 
 func (r *router) setGroup() {
@@ -182,4 +185,13 @@ func (r *router) buildProductRecordsRoutes() {
 	r.rg.PATCH("/productRecords/:id", handler.Update())
 	r.rg.GET("/products/reportRecords", handler.NumberRecords())
 
+}
+
+func (r *router) buildCarriersRoutes() {
+	repo := carrier.NewRepository(r.db)
+	service := carrier.NewService(repo)
+	handler := carriers.NewCarrier(service)
+	r.rg.POST("/carriers", handler.Create())
+	r.rg.GET("/carriers", handler.GetAll())
+	r.rg.GET("/localities/reportCarries", handler.GetReportCarriersByLocalities())
 }
