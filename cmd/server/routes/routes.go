@@ -57,6 +57,7 @@ func (r *router) MapRoutes() {
 	r.buildBuyerRoutes()
 	r.buildCarriersRoutes()
 	r.buildProductRecordsRoutes()
+	r.buildPurchaseOrderRoutes()
 }
 
 func (r *router) setGroup() {
