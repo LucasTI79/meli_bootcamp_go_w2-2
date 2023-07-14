@@ -333,7 +333,7 @@ func TestUpdate(t *testing.T) {
 		assert.Nil(t, warehouseUpdated)
 		assert.Error(t, err)
 	})
-	t.Run("update_different_product_code", func(t *testing.T) {
+	t.Run("update_different_warehouse_code", func(t *testing.T) {
 
 		warehouseCode := "Test1"
 		originalWarehouse := &domain.Warehouse{
