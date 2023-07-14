@@ -102,13 +102,13 @@ func CarrierFullRequestValidator(c *gin.Context, req dtos.CarrierRequestDTO) err
 
 // GetReportCarriersByLocalities godoc
 //
-//	@Summary		Get Report Carrier By Localities
+//	@Summary		Get Report Carriers By Localities
 //	@Tags			Carriers
 //	@Description	get report carriers by localities
 //	@Produce		json
 //	@Param			id	path		int		"locality_id"
 //	@Success		200	{object}	[]dtos.DataLocalityAndCarrier
-//	@Router			/api/v1/localities/reportCarries" [get]
+//	@Router			/api/v1/localities/reportCarries [get]
 func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
