@@ -245,3 +245,112 @@ func TestRepositoryDelete(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+func TestRepositorySave(t *testing.T) {
+	type fields struct {
+		db *sql.DB
+	}
+
+	db, mock, _ := sqlmock.New()
+	ctx := context.TODO()
+
+	t.Run("SAVE - OK", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		query := "INSERT INTO sections (section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, id_product_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+
+		id, err := r.Save(ctx, expectedSection)
+		assert.Equal(t, expectedSection.ID, id)
+		assert.Nil(t, err)
+	})
+
+	t.Run("SAVE - Error - Exec", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		query := "INSERT INTO sections (section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, id_product_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID).
+			WillReturnError(sql.ErrNoRows)
+
+		_, err := r.Save(ctx, expectedSection)
+
+		assert.NotNil(t, err)
+	})
+
+	t.Run("SAVE - Error - RowlsAffected0", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		query := "INSERT INTO sections (section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, id_product_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID).
+			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+		_, err := r.Save(ctx, expectedSection)
+
+		assert.NotNil(t, err)
+	})
+	t.Run("SAVE - Error - Prepare", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		query := "INSERT INTO sections (section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, id_product_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID).
+			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+		_, err := r.Save(ctx, expectedSection)
+
+		assert.NotNil(t, err)
+	})
+}
+func TestRepositoryUpdate(t *testing.T) {
+	type fields struct {
+		db *sql.DB
+	}
+
+	db, mock, _ := sqlmock.New()
+	ctx := context.TODO()
+	t.Run("UPDATE - OK", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, id_product_type=? WHERE id=?"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID, expectedSection.ID).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+		err := r.Update(ctx, expectedSection)
+		assert.Nil(t, err)
+	})
+
+	t.Run("UPDATE - Error - Exec", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, id_product_type=? WHERE id=?"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID, expectedSection.ID).
+			WillReturnError(sql.ErrNoRows)
+		err := r.Update(ctx, expectedSection)
+		assert.NotNil(t, err)
+	})
+	t.Run("UPDATE - Error - RowlsAffected0", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, id_product_type=? WHERE id=?"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID, expectedSection.ID).
+			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+		err := r.Update(ctx, expectedSection)
+		assert.NotNil(t, err)
+	})
+	t.Run("UPDATE - Error - Prepare", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, id_product_type=? WHERE id=?"
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.SectionNumber, expectedSection.CurrentTemperature, expectedSection.MinimumTemperature, expectedSection.CurrentCapacity, expectedSection.MinimumCapacity, expectedSection.MaximumCapacity, expectedSection.WarehouseID, expectedSection.ProductTypeID, expectedSection.ID).
+			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+		err := r.Update(ctx, expectedSection)
+
+		assert.NotNil(t, err)
+	})
+}
