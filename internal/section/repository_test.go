@@ -10,6 +10,21 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
 	"github.com/stretchr/testify/assert"
 )
+var(
+
+	expectedSection = domain.Section{
+		ID:                 1,
+		SectionNumber:      10,
+		CurrentTemperature: 10,
+		MinimumTemperature: 10,
+		CurrentCapacity:    10,
+		MinimumCapacity:    10,
+		MaximumCapacity:    10,
+		WarehouseID:        10,
+		ProductTypeID:      10,
+	}
+
+)
 
 func TestRepositoryGet(t *testing.T) {
 	type fields struct {
@@ -46,19 +61,7 @@ func TestRepositoryGet(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("get_non_existent_by_id", func(t *testing.T) {
-
-		expectedSection := &domain.Section{
-			ID:                 1,
-			SectionNumber:      10,
-			CurrentTemperature: 10,
-			MinimumTemperature: 10,
-			CurrentCapacity:    10,
-			MinimumCapacity:    10,
-			MaximumCapacity:    10,
-			WarehouseID:        10,
-			ProductTypeID:      10,
-		}
+	t.Run("GET Not ID", func(t *testing.T) {
 		r := section.NewRepository(fields{db}.db)
 
 		rows := sqlmock.NewRows([]string{"id", "section_number", "current_temperature", "minimum_temperature", "current_capacity", "minimum_capacity", "maximum_capacity",
@@ -137,3 +140,41 @@ func TestRepositoryGet(t *testing.T) {
 			assert.NotNil(t, err)
 		})
 	}
+
+func TestRepositoryExists(t *testing.T) {
+	type fields struct {
+		db *sql.DB
+	}
+
+	db, mock, _ := sqlmock.New()
+	ctx := context.TODO()
+
+	t.Run("EXISTS - True", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		rows := sqlmock.NewRows([]string{"section_number"}).
+			AddRow(expectedSection.SectionNumber)
+		query := "SELECT section_number FROM sections WHERE section_number=?"
+		mock.ExpectQuery(query).
+			WithArgs(expectedSection.SectionNumber).
+			WillReturnRows(rows)
+
+		sectionExists := r.Exists(ctx, expectedSection.SectionNumber)
+
+		assert.True(t, sectionExists)
+	})
+	t.Run("EXISTS - False", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		rows := sqlmock.NewRows([]string{"section_number"}).
+			AddRow(expectedSection.SectionNumber)
+		query := "SELECT section_number FROM sections WHERE section_number=?"
+		mock.ExpectQuery(query).
+			WithArgs(expectedSection.SectionNumber).
+			WillReturnRows(rows)
+
+		sectionExists := r.Exists(ctx, 100)
+
+		assert.False(t, sectionExists)
+	})
+}
