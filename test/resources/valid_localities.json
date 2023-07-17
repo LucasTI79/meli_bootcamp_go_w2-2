@@ -1,0 +1,14 @@
+[
+  {
+    "id": 6700,
+    "country_name": "Argentina",
+    "province_name": "Buenos Aires",
+    "locality_name": "Lujan"
+  },
+  {
+    "id": 7600,
+    "country_name": "Brasil",
+    "province_name": "Rio de Janeiro",
+    "locality_name": "Rio de Janeiro"
+  }
+]

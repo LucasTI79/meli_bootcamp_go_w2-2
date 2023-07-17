@@ -215,7 +215,7 @@ func (p *Product) Update() gin.HandlerFunc {
 			return
 		}
 		var req RequestUpdateProduct
-		if err := c.Bind(&req); err != nil {
+		if err := c.ShouldBindJSON(&req); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
 		}
@@ -238,7 +238,7 @@ func (p *Product) Update() gin.HandlerFunc {
 }
 
 // Method Delete
-// DeleteSections godoc
+// DeleteProducts godoc
 //
 //	@Summary		Delete Product
 //	@Tags			Products

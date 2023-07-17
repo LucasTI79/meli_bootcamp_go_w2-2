@@ -28,7 +28,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Warehouse, error) {
-	query := "SELECT * FROM warehouses"
+	query := "SELECT id, address, telephone, warehouse_code, minimum_capacity, minimum_temperature FROM warehouses"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Warehouse, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Warehouse, error) {
-	query := "SELECT * FROM warehouses WHERE id=?;"
+	query := "SELECT id, address, telephone, warehouse_code, minimum_capacity, minimum_temperature FROM warehouses WHERE id=?"
 	row := r.db.QueryRow(query, id)
 	w := domain.Warehouse{}
 	err := row.Scan(&w.ID, &w.Address, &w.Telephone, &w.WarehouseCode, &w.MinimumCapacity, &w.MinimumTemperature)
@@ -58,7 +58,7 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Warehouse, error) 
 }
 
 func (r *repository) Exists(ctx context.Context, warehouseCode string) bool {
-	query := "SELECT warehouse_code FROM warehouses WHERE warehouse_code=?;"
+	query := "SELECT warehouse_code FROM warehouses WHERE warehouse_code=?"
 	row := r.db.QueryRow(query, warehouseCode)
 	err := row.Scan(&warehouseCode)
 	return err == nil

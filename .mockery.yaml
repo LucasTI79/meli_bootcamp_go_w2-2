@@ -1,0 +1,26 @@
+with-expecter: True
+packages:
+  github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories:
+      interfaces:
+          LocalityRepository:
+              config:
+                outpkg: "mocks"
+                dir: "{{.InterfaceDir}}/mocks/"
+                with-expecter: False
+          PurchaseOrderRepository:
+            config:
+              outpkg: "mocks"
+              dir: "{{.InterfaceDir}}/mocks/"
+              with-expecter: False
+  github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services:
+    interfaces:
+      LocalityService:
+        config:
+          outpkg: "mocks"
+          dir: "{{.InterfaceDir}}/mocks/"
+          with-expecter: False
+      PurchaseOrderService:
+        config:
+          outpkg: "mocks"
+          dir: "{{.InterfaceDir}}/mocks/"
+          with-expecter: False
