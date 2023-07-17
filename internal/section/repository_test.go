@@ -3,6 +3,7 @@ package section_test
 import (
 	"context"
 	"database/sql"
+	"regexp"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -176,5 +177,71 @@ func TestRepositoryExists(t *testing.T) {
 		sectionExists := r.Exists(ctx, 100)
 
 		assert.False(t, sectionExists)
+	})
+}
+func TestRepositoryDelete(t *testing.T) {
+	type fields struct {
+		db *sql.DB
+	}
+
+	db, mock, _ := sqlmock.New()
+	ctx := context.TODO()
+	query := "DELETE FROM sections WHERE id=?"
+	t.Run("DELETE - OK", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		rowsAffected := int64(1)
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.ID).
+			WillReturnResult(sqlmock.NewResult(1, rowsAffected))
+		err := r.Delete(ctx, expectedSection.ID)
+		assert.Nil(t, err)
+	})
+
+	t.Run("DELETE - Error - Exec", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.ID).
+			WillReturnError(sql.ErrNoRows)
+
+		err := r.Delete(ctx, expectedSection.ID)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("DELETE - Error - RowlsAffected0", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(expectedSection.ID).
+			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+		err := r.Delete(ctx, expectedSection.ID)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("DELETE - Error - Prepare", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta(query)).WillReturnError(sql.ErrConnDone)
+		mock.ExpectExec(regexp.QuoteMeta("DELETE FROM products WHERE id=?")).
+			WithArgs(expectedSection.ID).
+			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
+
+		err := r.Delete(ctx, expectedSection.ID)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("DELETE - Error - Not Found", func(t *testing.T) {
+		r := section.NewRepository(fields{db}.db)
+		mock.ExpectPrepare(regexp.QuoteMeta(query))
+		mock.ExpectExec(regexp.QuoteMeta(query)).
+			WithArgs(1).
+			WillReturnResult(sqlmock.NewResult(1, 0))
+
+		err := r.Delete(ctx, expectedSection.ID)
+
+		assert.NotNil(t, err)
 	})
 }
