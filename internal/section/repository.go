@@ -46,7 +46,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Section, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Section, error) {
-	query := "SELECT * FROM sections WHERE id=?;"
+	query := "SELECT id, section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, product_type_id FROM sections WHERE id=?"
 	row := r.db.QueryRow(query, id)
 	s := domain.Section{}
 	err := row.Scan(&s.ID, &s.SectionNumber, &s.CurrentTemperature, &s.MinimumTemperature, &s.CurrentCapacity, &s.MinimumCapacity, &s.MaximumCapacity, &s.WarehouseID, &s.ProductTypeID)
