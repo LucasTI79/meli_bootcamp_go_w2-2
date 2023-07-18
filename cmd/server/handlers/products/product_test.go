@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -226,7 +227,7 @@ func TestCreate(t *testing.T) {
 			SellerID:       1,
 		}
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Create", mock.AnythingOfType("*context.Context")).Return(createProductRequestDTO, product.ErrConflict)
 		handler := products.NewProduct(productServiceMock)
 
@@ -1256,10 +1257,10 @@ func buildProductRequestDTO(description string, expirationRate int, freezinRate 
 	}
 }
 
-func InitServerWithGetProducts(t *testing.T) (*gin.Engine, *mocks.ProductServiceMock, *products.Product) {
+func InitServerWithGetProducts(t *testing.T) (*gin.Engine, *product_mocks.ProductServiceMock, *products.Product) {
 	t.Helper()
 	server := createServer()
-	mockService := new(mocks.ProductServiceMock)
+	mockService := new(product_mocks.ProductServiceMock)
 	handler := products.NewProduct(mockService)
 	return server, mockService, handler
 }

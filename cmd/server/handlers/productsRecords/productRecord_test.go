@@ -14,7 +14,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	mocks2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
+	mocks2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/product_mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord/mocks"
 	"github.com/gin-gonic/gin"
