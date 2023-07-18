@@ -11,3 +11,10 @@ type Section struct {
 	WarehouseID        int `json:"warehouse_id"`
 	ProductTypeID      int `json:"product_type_id"`
 }
+
+type ProductBySection struct {
+	SectionID     int    `json:"section_id"`
+	SectionNumber string `json:"section_number"`
+	ProductsCount int    `json:"products_count"`
+	
+}

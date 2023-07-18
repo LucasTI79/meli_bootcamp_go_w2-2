@@ -1,4 +1,4 @@
-package mocks
+package section_mocks
 
 import (
 	"context"
@@ -29,6 +29,12 @@ func (r *SectionRepositoryMock) Get(ctx context.Context, id int) (domain.Section
 func (r *SectionRepositoryMock) Exists(ctx context.Context, cardNumberID int) bool {
 	args := r.Called(ctx, cardNumberID)
 
+	return args.Get(0).(bool)
+}
+
+func (r *SectionRepositoryMock) ExistsByID(ctx context.Context, id int) bool{
+	args := r.Called(ctx, id)
+	
 	return args.Get(0).(bool)
 }
 

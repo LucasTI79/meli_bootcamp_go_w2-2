@@ -14,7 +14,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/section_mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -73,7 +73,7 @@ func TestGetAll(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		sectionServiceMock := new(mocks.SectionServiceMock)
+		sectionServiceMock := new(section_mocks.SectionServiceMock)
 		sectionServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(expectedSections, nil)
 		handler := sections.NewSection(sectionServiceMock)
 
@@ -106,7 +106,7 @@ func TestGetAll(t *testing.T) {
 		expectedSections := &[]domain.Section{}
 
 		//Configurar o mock do service
-		sectionServiceMock := new(mocks.SectionServiceMock)
+		sectionServiceMock := new(section_mocks.SectionServiceMock)
 		sectionServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(expectedSections, nil)
 		handler := sections.NewSection(sectionServiceMock)
 
@@ -127,7 +127,7 @@ func TestGetAll(t *testing.T) {
 
 	t.Run("READ - ServerInternalError - Should return error 500 when server side error occurs with the database.", func(t *testing.T) {
 		//Definir resultado da consulta
-		sectionServiceMock := new(mocks.SectionServiceMock)
+		sectionServiceMock := new(section_mocks.SectionServiceMock)
 		sectionServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Section{}, assert.AnError)
 		handler := sections.NewSection(sectionServiceMock)
 
@@ -784,10 +784,10 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, response.Code)
 	})
 }
-func InitServerWithGetSections(t *testing.T) (*gin.Engine, *mocks.SectionServiceMock, *sections.Section) {
+func InitServerWithGetSections(t *testing.T) (*gin.Engine, *section_mocks.SectionServiceMock, *sections.Section) {
 	t.Helper()
 	server := createServer()
-	mockService := new(mocks.SectionServiceMock)
+	mockService := new(section_mocks.SectionServiceMock)
 	handler := sections.NewSection(mockService)
 	return server, mockService, handler
 }
