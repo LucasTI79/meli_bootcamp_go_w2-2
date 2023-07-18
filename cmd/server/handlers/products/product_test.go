@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -14,7 +13,7 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/product_mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -40,7 +39,7 @@ func TestGet(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(productFound, nil)
 		handler := products.NewProduct(productServiceMock)
 
@@ -75,7 +74,7 @@ func TestGet(t *testing.T) {
 	t.Run("get_find_by_id_non_existent", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrNotFound)
 		handler := products.NewProduct(productServiceMock)
 
@@ -98,7 +97,7 @@ func TestGet(t *testing.T) {
 	t.Run("get_invalid_id", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.Product{}, product.ErrNotFound)
 		handler := products.NewProduct(productServiceMock)
 
@@ -121,7 +120,7 @@ func TestGet(t *testing.T) {
 	t.Run("get_internal_server_error", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Get", mock.AnythingOfType("*context.Context"),
 			mock.AnythingOfType("int")).Return(&domain.Product{}, assert.AnError)
 		handler := products.NewProduct(productServiceMock)
@@ -177,7 +176,7 @@ func TestCreate(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"), mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"), mock.AnythingOfType("int")).Return(expectedProduct, nil)
 		handler := products.NewProduct(productServiceMock)
 
@@ -246,7 +245,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("", 2, 2, 2.2, 2.2, 2.2, "2222", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -275,7 +274,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 0, 2, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -304,7 +303,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 0, 2.2, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -333,7 +332,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 0, 2.2, 2.2, "22222", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -362,7 +361,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 0, 2.2, "22222", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -391,7 +390,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 0, "22222", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -420,7 +419,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "", 2.2, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -449,7 +448,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 0, 2.2, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -478,7 +477,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 0, 2, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -507,7 +506,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 2.2, 0, 2)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -536,7 +535,7 @@ func TestCreate(t *testing.T) {
 		// Definir resultado da consulta
 		createProductRequestDTO := buildProductRequestDTO("teste", 2, 2, 2.2, 2.2, 2.2, "teste", 2.2, 2.2, 2, 0)
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -577,7 +576,7 @@ func TestCreate(t *testing.T) {
 			SellerID:       1,
 		}
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -619,7 +618,7 @@ func TestCreate(t *testing.T) {
 			SellerID:       1,
 		}
 
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("string"), mock.AnythingOfType("int"),
 			mock.AnythingOfType("int"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"),
 			mock.AnythingOfType("string"), mock.AnythingOfType("float32"), mock.AnythingOfType("float32"), mock.AnythingOfType("int"),
@@ -679,7 +678,7 @@ func TestGetAll(t *testing.T) {
 			},
 		}
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFounds, nil)
 		handler := products.NewProduct(productServiceMock)
 
@@ -713,7 +712,7 @@ func TestGetAll(t *testing.T) {
 	t.Run("getAll_empty_database", func(t *testing.T) {
 		productsFounds := &[]domain.Product{}
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFounds, nil)
 		handler := products.NewProduct(productServiceMock)
 
@@ -736,7 +735,7 @@ func TestGetAll(t *testing.T) {
 	t.Run("getAll_internal_error", func(t *testing.T) {
 		productsFounds := &[]domain.Product{}
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(productsFounds, assert.AnError)
 		handler := products.NewProduct(productServiceMock)
 
@@ -762,7 +761,7 @@ func TestDelete(t *testing.T) {
 	t.Run("delete_non_existent", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(product.ErrNotFound)
 		handler := products.NewProduct(productServiceMock)
 
@@ -785,7 +784,7 @@ func TestDelete(t *testing.T) {
 	t.Run("delete_delete_ok", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
 		handler := products.NewProduct(productServiceMock)
 
@@ -808,7 +807,7 @@ func TestDelete(t *testing.T) {
 	t.Run("delete_error_parsing_id", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
 		handler := products.NewProduct(productServiceMock)
 
@@ -831,7 +830,7 @@ func TestDelete(t *testing.T) {
 	t.Run("delete_error_deleting_product", func(t *testing.T) {
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(assert.AnError)
 		handler := products.NewProduct(productServiceMock)
 
@@ -883,7 +882,7 @@ func TestUpdate(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On(
 			"Update",
 			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
@@ -951,7 +950,7 @@ func TestUpdate(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On(
 			"Update",
 			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
@@ -1019,7 +1018,7 @@ func TestUpdate(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On(
 			"Update",
 			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
@@ -1087,7 +1086,7 @@ func TestUpdate(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On(
 			"Update",
 			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,
@@ -1171,7 +1170,7 @@ func TestUpdate(t *testing.T) {
 		}
 
 		//Configurar o mock do service
-		productServiceMock := new(mocks.ProductServiceMock)
+		productServiceMock := new(product_mocks.ProductServiceMock)
 		productServiceMock.On(
 			"Update",
 			mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything,

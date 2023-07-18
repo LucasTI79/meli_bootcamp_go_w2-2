@@ -12,6 +12,7 @@ type Repository interface {
 	GetAll(ctx context.Context) ([]domain.Section, error)
 	Get(ctx context.Context, id int) (domain.Section, error)
 	Exists(ctx context.Context, sectionNumber int) bool
+	ExistsByID(ctx context.Context, id int) bool
 	Save(ctx context.Context, s domain.Section) (int, error)
 	Update(ctx context.Context, s domain.Section) error
 	Delete(ctx context.Context, id int) error
@@ -61,6 +62,13 @@ func (r *repository) Exists(ctx context.Context, sectionNumber int) bool {
 	query := "SELECT section_number FROM sections WHERE section_number=?;"
 	row := r.db.QueryRow(query, sectionNumber)
 	err := row.Scan(&sectionNumber)
+	return err == nil
+}
+
+func (r *repository) ExistsByID(ctx context.Context, id int) bool {
+	query := "SELECT id FROM sections WHERE id=?;"
+	row := r.db.QueryRow(query, id)
+	err := row.Scan(&id)
 	return err == nil
 }
 

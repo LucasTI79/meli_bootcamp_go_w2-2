@@ -10,7 +10,7 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/product/product_mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -35,7 +35,7 @@ func TestGet(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedProduct, nil)
 
 		service := product.NewService(productRepositoryMock)
@@ -49,7 +49,7 @@ func TestGet(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Product{}, sql.ErrNoRows)
 
 		service := product.NewService(productRepositoryMock)
@@ -63,7 +63,7 @@ func TestGet(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Product{}, errors.New("error"))
 
 		service := product.NewService(productRepositoryMock)
@@ -108,7 +108,7 @@ func TestGetAll(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("GetAll", ctx).Return(*expectedProducts, nil)
 
 		service := product.NewService(productRepositoryMock)
@@ -122,7 +122,7 @@ func TestGetAll(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("GetAll", ctx).Return([]domain.Product{}, errors.New("error"))
 
 		service := product.NewService(productRepositoryMock)
@@ -139,7 +139,7 @@ func TestDelete(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(nil)
 
 		service := product.NewService(productRepositoryMock)
@@ -152,7 +152,7 @@ func TestDelete(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(sql.ErrNoRows)
 
 		service := product.NewService(productRepositoryMock)
@@ -165,7 +165,7 @@ func TestDelete(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(errors.New("error"))
 
 		service := product.NewService(productRepositoryMock)
@@ -194,7 +194,7 @@ func TestCreate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
 
 		service := product.NewService(productRepositoryMock)
@@ -225,7 +225,7 @@ func TestCreate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		productRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Product")).Return(0, errors.New("error"))
 
@@ -257,7 +257,7 @@ func TestCreate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		productRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Product")).Return(1, nil)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Product{}, errors.New("error"))
@@ -303,7 +303,7 @@ func TestCreate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		productRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Product")).Return(1, nil)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedProduct, nil)
@@ -351,7 +351,7 @@ func TestUpdate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		productRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Product")).Return(nil)
@@ -396,7 +396,7 @@ func TestUpdate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		productRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Product")).Return(sql.ErrNoRows)
@@ -441,7 +441,7 @@ func TestUpdate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		productRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Product")).Return(errors.New("error"))
@@ -486,7 +486,7 @@ func TestUpdate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Product{}, errors.New("error"))
 
 		service := product.NewService(productRepositoryMock)
@@ -530,7 +530,7 @@ func TestUpdate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		productRepositoryMock := new(mocks.ProductRepositoryMock)
+		productRepositoryMock := new(product_mocks.ProductRepositoryMock)
 		productRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalProduct, nil)
 		productRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
 

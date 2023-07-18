@@ -1,4 +1,4 @@
-package mocks
+package section_mocks
 
 import (
 	"context"

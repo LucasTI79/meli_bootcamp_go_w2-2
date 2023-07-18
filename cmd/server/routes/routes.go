@@ -9,6 +9,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/integrations/database/repositories"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	productbatcheshandler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/product_batches_handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
@@ -17,6 +18,7 @@ import (
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	prodBatches "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productbatches"
 	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	"github.com/gin-gonic/gin/binding"
@@ -52,6 +54,7 @@ func (r *router) MapRoutes() {
 	r.buildSellerRoutes()
 	r.buildProductRoutes()
 	r.buildSectionRoutes()
+	r.buildProductBatchesRoutes()
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
@@ -95,6 +98,15 @@ func (r *router) buildSectionRoutes() {
 	r.rg.GET("/sections/:id", handler.Get())
 	r.rg.DELETE("/sections/:id", handler.Delete())
 	r.rg.PATCH("/sections/:id", handler.Update())
+}
+func (r *router) buildProductBatchesRoutes() {
+	repo := prodBatches.NewRepository(r.db)
+	productRepo := product.NewRepository(r.db)
+	sectionRepo := section.NewRepository(r.db)
+	service := prodBatches.NewService(repo, productRepo, sectionRepo)
+	handler := productbatcheshandler.NewProductBatches(service)
+	r.rg.POST("/product-batch", handler.Create())
+	r.rg.GET("/product-batches/sections/report-products/:id", handler.Get())
 }
 
 func (r *router) buildWarehouseRoutes() {
