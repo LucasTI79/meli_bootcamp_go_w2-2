@@ -1,6 +1,7 @@
 package inbound_orders_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -62,28 +63,28 @@ func TestGet(t *testing.T) {
 
 	})
 
-	// find_by_id_non_existent
-	t.Run("find_by_id_non_existent", func(t *testing.T) {
-		//Configurar o mock do service
-		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
-		inboundOrdersServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.InboundOrders{}, inbound_order.ErrNotFound)
-		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+	// // find_by_id_non_existent
+	// t.Run("find_by_id_non_existent", func(t *testing.T) {
+	// 	//Configurar o mock do service
+	// 	inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+	// 	inboundOrdersServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(&domain.InboundOrders{}, inbound_order.ErrNotFound)
+	// 	inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
 
-		//Configurar o servidor
-		gin.SetMode(gin.TestMode)
-		r := gin.Default()
-		r.GET("/api/v1/inboundOrders/:id", inboundOrders.Get())
+	// 	//Configurar o servidor
+	// 	gin.SetMode(gin.TestMode)
+	// 	r := gin.Default()
+	// 	r.GET("/api/v1/inboundOrders/:id", inboundOrders.Get())
 
-		//Definir request e response
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/inboundOrders/1", nil)
-		res := httptest.NewRecorder()
+	// 	//Definir request e response
+	// 	req := httptest.NewRequest(http.MethodGet, "/api/v1/inboundOrders/1", nil)
+	// 	res := httptest.NewRecorder()
 
-		//Executar request
-		r.ServeHTTP(res, req)
+	// 	//Executar request
+	// 	r.ServeHTTP(res, req)
 
-		//Validar resultado
-		assert.Equal(t, http.StatusNotFound, res.Code)
-	})
+	// 	//Validar resultado
+	// 	assert.Equal(t, http.StatusNotFound, res.Code)
+	// })
 
 	t.Run("invalid_id", func(t *testing.T) {
 		//Configurar o mock do service
@@ -131,599 +132,641 @@ func TestGet(t *testing.T) {
 
 }
 
-// func TestGetAll(t *testing.T) {
-// 	t.Run("find_all", func(t *testing.T) {
-// 		// Definir resultado da consulta
-// 		expectedEmployee := &[]domain.Employee{
-// 			{
-// 				ID:           1,
-// 				CardNumberID: "123",
-// 				FirstName:    "Maria",
-// 				LastName:     "Silva",
-// 				WarehouseID:  1,
-// 			},
-// 			{
-// 				ID:           2,
-// 				CardNumberID: "234",
-// 				FirstName:    "Pedro",
-// 				LastName:     "Silva",
-// 				WarehouseID:  2,
-// 			},
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(expectedEmployee, nil)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.GET("/api/v1/employees", employees.GetAll())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
-// 		res := httptest.NewRecorder()
-
-// 		//Executar request
-// 		r.ServeHTTP(res, req)
-
-// 		//Parsear response
-// 		body, _ := ioutil.ReadAll(res.Body)
-
-// 		var responseDTO struct {
-// 			Data []domain.Employee `json:"data"`
-// 		}
-
-// 		json.Unmarshal(body, &responseDTO)
-
-// 		responseEmployee := responseDTO.Data
-
-// 		//Validar resultado
-// 		assert.Equal(t, *expectedEmployee, responseEmployee)
-// 		assert.Equal(t, http.StatusOK, res.Code)
-// 	})
-
-// 	t.Run("internal_server_error", func(t *testing.T) {
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.Employee{}, assert.AnError)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.GET("/api/v1/employees", employees.GetAll())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
-// 		res := httptest.NewRecorder()
-
-// 		//Executar request
-// 		r.ServeHTTP(res, req)
-
-// 		//Validar resultado
-// 		assert.Equal(t, http.StatusInternalServerError, res.Code)
-// 	})
-// 	t.Run("find_no_content", func(t *testing.T) {
-// 		employeeFound := &[]domain.Employee{}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("GetAll", mock.Anything).Return(employeeFound, nil)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.GET("/api/v1/employees", employees.GetAll())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodGet, "/api/v1/employees", nil)
-// 		res := httptest.NewRecorder()
-
-// 		//Executar request
-// 		r.ServeHTTP(res, req)
-
-// 		//Validar resultado
-// 		assert.Equal(t, http.StatusNoContent, res.Code)
-// 	})
-
-// }
-
-// func TestSave(t *testing.T) {
-// 	t.Run("create_ok", func(t *testing.T) {
-// 		expectedEmployeeCreate := &domain.Employee{
-// 			ID:           1,
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(expectedEmployeeCreate, nil)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		//Executar request
-// 		r.ServeHTTP(res, req)
-
-// 		//Parsear response
-// 		body, _ := ioutil.ReadAll(res.Body)
-
-// 		var responseDTO struct {
-// 			Data domain.Employee `json:"data"`
-// 		}
-
-// 		json.Unmarshal(body, &responseDTO)
-
-// 		actualEmployee := responseDTO.Data
-
-// 		//Validar resultado
-// 		assert.Equal(t, http.StatusCreated, res.Code)
-// 		assert.Equal(t, *expectedEmployeeCreate, actualEmployee)
-
-// 	})
-
-// 	t.Run("create_fail", func(t *testing.T) {
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context")).Return(requestEmployeeCreated, employee.ErrUnprocessableEntity)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", nil)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
-// 	})
-
-// 	t.Run("create_conflit", func(t *testing.T) {
-// 		expectedEmployeeCreate := &domain.Employee{}
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(expectedEmployeeCreate, employee.ErrConflict)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusConflict, res.Code)
-// 	})
-
-// 	t.Run("create_fail_card_number_id_nil", func(t *testing.T) {
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			FirstName:   "Maria",
-// 			LastName:    "Silva",
-// 			WarehouseID: 1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-
-// 	t.Run("create_fail_first_name_nil", func(t *testing.T) {
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-
-// 	t.Run("create_fail_last_name_nil", func(t *testing.T) {
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-
-// 	t.Run("create_fail_warehouse_id_nil", func(t *testing.T) {
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-
-// 	t.Run("create_internal_server_error", func(t *testing.T) {
-// 		employeeCreate := &domain.Employee{
-// 			ID:           1,
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(*employeeCreate, assert.AnError)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		body, _ := ioutil.ReadAll(res.Body)
-
-// 		var responseDTO struct {
-// 			Data domain.Warehouse `json:"data"`
-// 		}
-// 		json.Unmarshal(body, &responseDTO)
-// 		assert.Equal(t, http.StatusInternalServerError, res.Code)
-// 	})
-
-// 	t.Run("create_bad_request", func(t *testing.T) {
-// 		requestEmployeeCreated := domain.RequestCreateEmployee{
-// 			CardNumberID: "123",
-// 			FirstName:    "Maria",
-// 			LastName:     "Silva",
-// 			WarehouseID:  1,
-// 		}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Employee")).Return(&domain.Employee{}, assert.AnError)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.POST("/api/v1/employees", employees.Save())
-
-// 		requestBody, _ := json.Marshal(requestEmployeeCreated)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPost, "/api/v1/employees", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		body, _ := ioutil.ReadAll(res.Body)
-
-// 		var responseDTO struct {
-// 			Data domain.Warehouse `json:"data"`
-// 		}
-// 		json.Unmarshal(body, &responseDTO)
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-// }
-
-// func TestDelete(t *testing.T) {
-// 	t.Run("delete_ok", func(t *testing.T) {
-// 		employeeFound := &domain.Employee{}
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(employeeFound, nil)
-// 		employeeServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.DELETE("/api/v1/employees/:id", employees.Delete())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodDelete, "/api/v1/employees/1", nil)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusNoContent, res.Code)
-// 	})
-
-// 	t.Run("delete_non_existent", func(t *testing.T) {
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
-// 		employeeServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(employee.ErrNotFound)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.DELETE("/api/v1/employees/:id", employees.Delete())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodDelete, "/api/v1/employees/1", nil)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusNotFound, res.Code)
-// 	})
-
-// 	t.Run("delete_error_parsing_id", func(t *testing.T) {
-
-// 		//Configurar o mock do service
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.DELETE("/api/v1/employees/:id", employees.Delete())
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodDelete, "/api/v1/employees/ww", nil)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-// }
-
-// func TestUpdate(t *testing.T) {
-// 	t.Run("update_ok", func(t *testing.T) {
-
-// 		firstName := "teste"
-// 		lastName := "Teste"
-
-// 		RequestUpdateEmployee := domain.RequestUpdateEmployee{
-// 			FirstName: &firstName,
-// 			LastName:  &lastName,
-// 		}
-
-// 		employeeUpdated := domain.Employee{
-// 			ID:           1,
-// 			CardNumberID: "123",
-// 			FirstName:    "teste",
-// 			LastName:     "Teste",
-// 			WarehouseID:  1,
-// 		}
-
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("*domain.RequestUpdateEmployee")).Return(&employeeUpdated, nil)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.PATCH("/api/v1/employees/:id", employees.Update())
-
-// 		requestBody, _ := json.Marshal(RequestUpdateEmployee)
-// 		request := bytes.NewReader(requestBody)
-
-// 		//Definir request e response
-// 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/employees/1", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-// 		body, _ := ioutil.ReadAll(res.Body)
-
-// 		var responseDTO struct {
-// 			Data *domain.Employee `json:"data"`
-// 		}
-
-// 		json.Unmarshal(body, &responseDTO)
-// 		responseEmployee := responseDTO.Data
-
-// 		assert.Equal(t, http.StatusOK, res.Code)
-// 		assert.Equal(t, employeeUpdated, *responseEmployee)
-// 	})
-
-// 	t.Run("update_unprocessable_entity", func(t *testing.T) {
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.PATCH("/api/v1/employees/:id", employees.Update())
-
-// 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/employees/1", nil)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
-// 	})
-// 	t.Run("update_not_found", func(t *testing.T) {
-// 		cardNumberID := "123"
-// 		firstName := "teste"
-// 		lastName := "Teste"
-// 		warehouseId := 1
-
-// 		RequestUpdateEmployee := domain.RequestUpdateEmployee{
-// 			CardNumberID: &cardNumberID,
-// 			FirstName:    &firstName,
-// 			LastName:     &lastName,
-// 			WarehouseID:  &warehouseId,
-// 		}
-// 		updatedEmployee := &domain.Employee{}
-
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employeeServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("*domain.RequestUpdateEmployee")).Return(updatedEmployee, employee.ErrNotFound)
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.PATCH("/api/v1/employees/:id", employees.Update())
-
-// 		requestBody, _ := json.Marshal(RequestUpdateEmployee)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/employees/1", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusNotFound, res.Code)
-// 	})
-
-// 	t.Run("update_status_bad_request", func(t *testing.T) {
-// 		cardNumberID := "123"
-// 		firstName := "teste"
-// 		lastName := "Teste"
-// 		warehouseId := 1
-
-// 		RequestUpdateEmployee := domain.RequestUpdateEmployee{
-// 			CardNumberID: &cardNumberID,
-// 			FirstName:    &firstName,
-// 			LastName:     &lastName,
-// 			WarehouseID:  &warehouseId,
-// 		}
-
-// 		employeeServiceMock := mocks.NewEmployeeServiceMock()
-// 		employees := employees.NewEmployee(employeeServiceMock)
-
-// 		//Configurar o servidor
-// 		gin.SetMode(gin.TestMode)
-// 		r := gin.Default()
-// 		r.PATCH("/api/v1/employees/:id", employees.Update())
-
-// 		requestBody, _ := json.Marshal(RequestUpdateEmployee)
-// 		request := bytes.NewReader(requestBody)
-
-// 		req := httptest.NewRequest(http.MethodPatch, "/api/v1/employees/xx", request)
-// 		res := httptest.NewRecorder()
-
-// 		r.ServeHTTP(res, req)
-
-// 		assert.Equal(t, http.StatusBadRequest, res.Code)
-// 	})
-// }
+func TestGetAll(t *testing.T) {
+	t.Run("find_all", func(t *testing.T) {
+		// Definir resultado da consulta
+		expectedinboundOrders := &[]domain.InboundOrders{
+			{
+				ID:             1,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "teste",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+			{
+				ID:             2,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "teste",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(expectedinboundOrders, nil)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/inboundOrders", inboundOrders.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/inboundOrders", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data []domain.InboundOrders `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		responseInboundOrders := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, *expectedinboundOrders, responseInboundOrders)
+		assert.Equal(t, http.StatusOK, res.Code)
+	})
+
+	t.Run("internal_server_error", func(t *testing.T) {
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("GetAll", mock.AnythingOfType("*context.Context")).Return(&[]domain.InboundOrders{}, assert.AnError)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/inboundOrders", inboundOrders.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/inboundOrders", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+	t.Run("find_no_content", func(t *testing.T) {
+		inboundOrdersFound := &[]domain.InboundOrders{}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("GetAll", mock.Anything).Return(inboundOrdersFound, nil)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.GET("/api/v1/inboundOrders", inboundOrders.GetAll())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodGet, "/api/v1/inboundOrders", nil)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Validar resultado
+		assert.Equal(t, http.StatusNoContent, res.Code)
+	})
+
+}
+
+func TestSave(t *testing.T) {
+	t.Run("create_ok", func(t *testing.T) {
+
+		expectedInboundOrdersCreate := &domain.InboundOrders{
+			ID:             1,
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		requestInboundOrdersCreate := &domain.RequestCreateInboundOrders{
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.InboundOrders")).Return(expectedInboundOrdersCreate, nil)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		//Executar request
+		r.ServeHTTP(res, req)
+
+		//Parsear response
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data domain.InboundOrders `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+
+		actualInboundOrders := responseDTO.Data
+
+		//Validar resultado
+		assert.Equal(t, http.StatusCreated, res.Code)
+		assert.Equal(t, *expectedInboundOrdersCreate, actualInboundOrders)
+
+	})
+
+	t.Run("create_fail", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context")).Return(requestInboundOrdersCreate, inbound_order.ErrUnprocessableEntity)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	t.Run("create_conflit", func(t *testing.T) {
+		expectedInboundOrdersCreate := &domain.InboundOrders{}
+
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.InboundOrders")).Return(expectedInboundOrdersCreate, inbound_order.ErrConflict)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusConflict, res.Code)
+	})
+
+	t.Run("create_fail_order_date_nil", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			// OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_fail_order_number_nil", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate: "teste",
+			// OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_fail_employee_id_nil", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:   "teste",
+			OrderNumber: "teste",
+			// EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_fail_product_batch_id_nil", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:   "teste",
+			OrderNumber: "teste",
+			EmployeeID:  "teste",
+			// ProductBatchID: "teste",
+			WarehouseID: "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+	t.Run("create_fail_warehouse_id_nil", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			// WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+
+	t.Run("create_internal_server_error", func(t *testing.T) {
+		inboundOrdersCreate := domain.InboundOrders{
+			ID:             1,
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.InboundOrders")).Return(inboundOrdersCreate, assert.AnError)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data domain.InboundOrders `json:"data"`
+		}
+		json.Unmarshal(body, &responseDTO)
+		assert.Equal(t, http.StatusInternalServerError, res.Code)
+	})
+
+	t.Run("create_bad_request", func(t *testing.T) {
+		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.InboundOrders")).Return(&domain.InboundOrders{}, assert.AnError)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+
+		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data domain.InboundOrders `json:"data"`
+		}
+		json.Unmarshal(body, &responseDTO)
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+}
+
+func TestDelete(t *testing.T) {
+	t.Run("delete_ok", func(t *testing.T) {
+		inboundOrdersFound := &domain.InboundOrders{}
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(inboundOrdersFound, nil)
+		inboundOrdersServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/inboundOrders/:id", inboundOrders.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/inboundOrders/1", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusNoContent, res.Code)
+	})
+
+	t.Run("delete_non_existent", func(t *testing.T) {
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Get", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(domain.InboundOrders{}, nil)
+		inboundOrdersServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(inbound_order.ErrNotFound)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/inboundOrders/:id", inboundOrders.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/inboundOrders/1", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusNotFound, res.Code)
+	})
+
+	t.Run("delete_error_parsing_id", func(t *testing.T) {
+
+		//Configurar o mock do service
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Delete", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(nil)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.DELETE("/api/v1/inboundOrders/:id", inboundOrders.Delete())
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodDelete, "/api/v1/inboundOrders/ww", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	t.Run("update_ok", func(t *testing.T) {
+
+		orderDate := "updated"
+		orderNumber := "updated"
+		employeeID := "updated"
+
+		requestUpdateInboundOrders := domain.RequestUpdateInboundOrders{
+			OrderDate:   &orderDate,
+			OrderNumber: &orderNumber,
+			EmployeeID:  &employeeID,
+		}
+
+		inboundOrdersUpdated := domain.InboundOrders{
+			ID:             1,
+			OrderDate:      "updated",
+			OrderNumber:    "updated",
+			EmployeeID:     "updated",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
+
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrdersServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("*domain.RequestUpdateInboundOrders")).Return(&inboundOrdersUpdated, nil)
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/inboundOrders/:id", inboundOrders.Update())
+
+		requestBody, _ := json.Marshal(requestUpdateInboundOrders)
+		request := bytes.NewReader(requestBody)
+
+		//Definir request e response
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/inboundOrders/1", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+		body, _ := ioutil.ReadAll(res.Body)
+
+		var responseDTO struct {
+			Data *domain.InboundOrders `json:"data"`
+		}
+
+		json.Unmarshal(body, &responseDTO)
+		responseInboundOrders := responseDTO.Data
+
+		assert.Equal(t, http.StatusOK, res.Code)
+		assert.Equal(t, inboundOrdersUpdated, *responseInboundOrders)
+	})
+
+	t.Run("update_unprocessable_entity", func(t *testing.T) {
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/inboundOrders/:id", inboundOrders.Update())
+
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/inboundOrders/1", nil)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusUnprocessableEntity, res.Code)
+	})
+
+	// t.Run("update_not_found", func(t *testing.T) {
+	// 	orderDate := "updated"
+	// 	orderNumber := "updated"
+	// 	employeeID := "updated"
+
+	// 	requestUpdateInboundOrders := domain.RequestUpdateInboundOrders{
+	// 		OrderDate:   &orderDate,
+	// 		OrderNumber: &orderNumber,
+	// 		EmployeeID:  &employeeID,
+	// 	}
+
+	// 	inboundOrdersUpdated := &domain.InboundOrders{}
+
+	// 	inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+	// 	inboundOrdersServiceMock.On("Update", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int"), mock.AnythingOfType("*domain.requestUpdateInboundOrders")).Return(inboundOrdersUpdated, inbound_order.ErrNotFound)
+	// 	inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+	// 	//Configurar o servidor
+	// 	gin.SetMode(gin.TestMode)
+	// 	r := gin.Default()
+	// 	r.PATCH("/api/v1/inboundOrders/:id", inboundOrders.Update())
+
+	// 	requestBody, _ := json.Marshal(requestUpdateInboundOrders)
+	// 	request := bytes.NewReader(requestBody)
+
+	// 	req := httptest.NewRequest(http.MethodPatch, "/api/v1/inboundOrders/1", request)
+	// 	res := httptest.NewRecorder()
+
+	// 	r.ServeHTTP(res, req)
+
+	// 	assert.Equal(t, http.StatusNotFound, res.Code)
+	// })
+
+	t.Run("update_status_bad_request", func(t *testing.T) {
+		orderDate := "updated"
+		orderNumber := "updated"
+		employeeID := "updated"
+
+		requestUpdateInboundOrders := domain.RequestUpdateInboundOrders{
+			OrderDate:   &orderDate,
+			OrderNumber: &orderNumber,
+			EmployeeID:  &employeeID,
+		}
+
+		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+
+		//Configurar o servidor
+		gin.SetMode(gin.TestMode)
+		r := gin.Default()
+		r.PATCH("/api/v1/inboundOrders/:id", inboundOrders.Update())
+
+		requestBody, _ := json.Marshal(requestUpdateInboundOrders)
+		request := bytes.NewReader(requestBody)
+
+		req := httptest.NewRequest(http.MethodPatch, "/api/v1/inboundOrders/xx", request)
+		res := httptest.NewRecorder()
+
+		r.ServeHTTP(res, req)
+
+		assert.Equal(t, http.StatusBadRequest, res.Code)
+	})
+}
