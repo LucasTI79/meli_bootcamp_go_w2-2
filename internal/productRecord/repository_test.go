@@ -263,6 +263,28 @@ func TestRepositoryDelete(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
+	t.Run("delete_error_not_found", func(t *testing.T) {
+
+		expectedProductRecord := domain.ProductRecord{
+			ID:             1,
+			LastUpdateDate: "Test",
+			PurchasePrice:  1.1,
+			SalePrice:      1.1,
+			ProductId:      1,
+		}
+
+		r := productRecord.NewRepository(fields{db}.db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta("DELETE FROM product_records WHERE id=?"))
+		mock.ExpectExec(regexp.QuoteMeta("DELETE FROM product_records WHERE id=?")).
+			WithArgs(expectedProductRecord.ID).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		err := r.Delete(ctx, expectedProductRecord.ID)
+
+		assert.NotNil(t, err)
+	})
+
 	t.Run("delete_error_prepare", func(t *testing.T) {
 
 		expectedProductRecord := domain.ProductRecord{
@@ -501,6 +523,43 @@ func TestRepositorySave(t *testing.T) {
 			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
 		_, err := r.Save(ctx, expectedProductRecord)
 
+		assert.NotNil(t, err)
+	})
+}
+
+func TestNumberRecords(t *testing.T) {
+	type fields struct {
+		db *sql.DB
+	}
+
+	db, mock, _ := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+	ctx := context.TODO()
+
+	t.Run("count_numberRecords_ok", func(t *testing.T) {
+		r := productRecord.NewRepository(fields{db}.db)
+
+		rows := sqlmock.NewRows([]string{"count(*)"}).AddRow(1)
+
+		mock.ExpectQuery("SELECT COUNT(*) from product_records where product_id =?").
+			WithArgs(1).
+			WillReturnRows(rows)
+
+		count, err := r.NumberRecords(ctx, 1)
+
+		assert.Equal(t, count, 1)
+		assert.Nil(t, err)
+	})
+
+	t.Run("count_numberRecords_error", func(t *testing.T) {
+		r := productRecord.NewRepository(fields{db}.db)
+
+		mock.ExpectQuery("SELECT COUNT(*) from product_records where product_id =?").
+			WithArgs(1).
+			WillReturnError(sql.ErrNoRows)
+
+		count, err := r.NumberRecords(ctx, 1)
+
+		assert.Equal(t, count, 0)
 		assert.NotNil(t, err)
 	})
 }
