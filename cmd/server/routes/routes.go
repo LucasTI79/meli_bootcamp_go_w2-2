@@ -4,12 +4,14 @@ import (
 	"database/sql"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/inbound_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
+	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
@@ -46,6 +48,7 @@ func (r *router) MapRoutes() {
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
+	r.buildInboundOrdersRoutes()
 }
 
 func (r *router) setGroup() {
@@ -125,4 +128,17 @@ func (r *router) buildBuyerRoutes() {
 	buyerRoutes.POST("", buyerHandler.Create())
 	buyerRoutes.PATCH(":id", buyerHandler.Update())
 	buyerRoutes.DELETE(":id", buyerHandler.Delete())
+}
+
+func (r *router) buildInboundOrdersRoutes() {
+	repo := inbound_order.NewRepository(r.db)
+	service := inbound_order.NewService(repo)
+	handler := inbound_orders.NewInboundOrders(service)
+
+	r.rg.POST("/inbound-orders", handler.Save())
+	r.rg.GET("/inbound-orders", handler.GetAll())
+	r.rg.GET("/inbound-orders/:id", handler.Get())
+	r.rg.PATCH("/inbound-orders/:id", handler.Update())
+	r.rg.DELETE("/inbound-orders/:id", handler.Delete())
+
 }
