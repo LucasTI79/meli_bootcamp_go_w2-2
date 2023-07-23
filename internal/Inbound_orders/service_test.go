@@ -8,6 +8,7 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
+	employee_mocks "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee/mocks"
 	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders/mocks"
 	"github.com/stretchr/testify/assert"
@@ -29,8 +30,10 @@ func TestGet(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*expectedInboundOrders, nil)
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		inboundOrdersReceived, err := service.Get(&ctx, 1)
 
@@ -43,8 +46,10 @@ func TestGet(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, sql.ErrNoRows)
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		inboundOrdersReceived, err := service.Get(&ctx, 1)
 
@@ -77,8 +82,10 @@ func TestGetAll(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("GetAll", ctx).Return(*expectedInboundOrders, nil)
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		inboundOrdersReceived, err := service.GetAll(&ctx)
 
@@ -91,8 +98,10 @@ func TestGetAll(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("GetAll", ctx).Return([]domain.InboundOrders{}, errors.New("error"))
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		inboundOrdersReceived, err := service.GetAll(&ctx)
 
@@ -116,10 +125,12 @@ func TestDelete(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*inboundOrdersDeleted, nil)
 		inboundOrdersRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(nil)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		err := service.Delete(&ctx, 1)
 
@@ -131,9 +142,11 @@ func TestDelete(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, nil)
 		inboundOrdersRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(inbound_order.ErrNotFound)
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		err := service.Delete(&ctx, 1)
 
@@ -144,9 +157,11 @@ func TestDelete(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, inbound_order.ErrNotFound)
 		//inboundOrdersRepositoryMock.On("Delete", ctx, mock.AnythingOfType("int")).Return(employee.ErrNotFound)
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		err := service.Delete(&ctx, 1)
 
@@ -169,9 +184,11 @@ func TestCreate(t *testing.T) {
 	// 	ctx := context.TODO()
 
 	// 	inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+	// 	employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 	// 	inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
 
-	// 	service := inbound_order.NewService(inboundOrdersRepositoryMock)
+	// 	service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 	// 	inboundOrdersSaved, err := service.Save(&ctx, *inboundOrdersCreated)
 
@@ -192,10 +209,13 @@ func TestCreate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
-		inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
+		// inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		inboundOrdersRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.InboundOrders")).Return(0, errors.New("error"))
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		inboundOrdersSaved, err := service.Save(&ctx, *inboundOrdersCreated)
 
@@ -217,10 +237,13 @@ func TestCreate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
-		inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
+		// inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		inboundOrdersRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.InboundOrders")).Return(1, nil)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		inboundOrdersSaved, err := service.Save(&ctx, *expectedInboundOrdersCreated)
 
@@ -262,11 +285,13 @@ func TestUpdate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(*originalInboundOrders, nil)
 		inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		inboundOrdersRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.InboundOrders")).Return(nil)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		updateInbound_order, err := service.Update(&ctx, 1, &requestUpdateInboundOrders)
 
@@ -289,9 +314,11 @@ func TestUpdate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, inbound_order.ErrNotFound)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 
 		_, err := service.Update(&ctx, 1, &requestUpdateInboundOrders)
 
@@ -313,11 +340,13 @@ func TestUpdate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, inbound_order.ErrNotFound)
 		inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		inboundOrdersRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.InboundOrders")).Return(assert.AnError)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 		UpdateInboundOrders, err := service.Update(&ctx, 1, requestUpdateInboundOrders)
 
 		assert.Nil(t, UpdateInboundOrders)
@@ -338,10 +367,12 @@ func TestUpdate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, employee.ErrNotFound)
 		inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 		UpdateInboundOrders, err := service.Update(&ctx, 1, requestUpdateInboundOrders)
 
 		assert.Nil(t, UpdateInboundOrders)
@@ -362,10 +393,12 @@ func TestUpdate(t *testing.T) {
 	// 	ctx := context.TODO()
 
 	// 	inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+	// employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 	// 	inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, nil)
 	// 	inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(true)
 
-	// 	service := inbound_order.NewService(inboundOrdersRepositoryMock)
+	// 	service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 	// 	UpdateInboundOrders, err := service.Update(&ctx, 1, requestUpdateInboundOrders)
 
 	// 	assert.Nil(t, UpdateInboundOrders)
@@ -386,11 +419,13 @@ func TestUpdate(t *testing.T) {
 		ctx := context.TODO()
 
 		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
 		inboundOrdersRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.InboundOrders{}, nil)
 		inboundOrdersRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(false)
 		inboundOrdersRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.InboundOrders")).Return(assert.AnError)
 
-		service := inbound_order.NewService(inboundOrdersRepositoryMock)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
 		UpdateInboundOrders, err := service.Update(&ctx, 1, requestUpdateInboundOrders)
 
 		assert.Nil(t, UpdateInboundOrders)

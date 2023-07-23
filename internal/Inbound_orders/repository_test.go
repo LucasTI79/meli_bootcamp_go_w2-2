@@ -20,32 +20,32 @@ func TestRepositoryGet(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	// t.Run("get_ok", func(t *testing.T) {
-	// 	expectedInboundOrders := domain.InboundOrders{
-	// 		ID:             1,
-	// 		OrderDate:      "teste",
-	// 		OrderNumber:    "teste",
-	// 		EmployeeID:     "teste",
-	// 		ProductBatchID: "teste",
-	// 		WarehouseID:    "teste",
-	// 	}
+	t.Run("get_ok", func(t *testing.T) {
+		expectedInboundOrders := domain.InboundOrders{
+			ID:             1,
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
 
-	// 	r := inbound_order.NewRepository(fields{db}.db)
+		r := inbound_order.NewRepository(fields{db}.db)
 
-	// 	rows := sqlmock.NewRows([]string{"id", "order_date", "order_number", "employee_id", "product_batch_id", "warehouse_id"}).
-	// 		AddRow(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
-	// 			expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID)
+		rows := sqlmock.NewRows([]string{"id", "order_date", "order_number", "employee_id", "product_batch_id", "warehouse_id"}).
+			AddRow(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
+				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID)
 
-	// 	// id, order_date, order_number, employee_id, product_batch_id, warehouse_id
-	// 	mock.ExpectQuery("SELECT * FROM inbound_orders WHERE id=?").
-	// 		WithArgs(expectedInboundOrders.ID).
-	// 		WillReturnRows(rows)
+		// id, order_date, order_number, employee_id, product_batch_id, warehouse_id
+		mock.ExpectQuery("SELECT *. FROM inbound_orders WHERE id=?").
+			WithArgs(expectedInboundOrders.ID).
+			WillReturnRows(rows)
 
-	// 	inboundOrdersReceived, err := r.Get(ctx, 1)
+		inboundOrdersReceived, err := r.Get(ctx, 1)
 
-	// 	assert.Equal(t, expectedInboundOrders, inboundOrdersReceived)
-	// 	assert.Nil(t, err)
-	// })
+		assert.Equal(t, expectedInboundOrders, inboundOrdersReceived)
+		assert.Nil(t, err)
+	})
 
 	t.Run("get_non_existent_by_id", func(t *testing.T) {
 
@@ -83,59 +83,43 @@ func TestRepositoryGetAll(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	// t.Run("get_all_ok", func(t *testing.T) {
+	t.Run("get_all_ok", func(t *testing.T) {
 
-	// 	// expectedProductsRecords := []domain.ProductRecord{
-	// 	// 	{
-	// 	// 		ID:             1,
-	// 	// 		LastUpdateDate: "Test",
-	// 	// 		PurchasePrice:  1.1,
-	// 	// 		SalePrice:      1.1,
-	// 	// 		ProductId:      1,
-	// 	// 	},
-	// 	// 	{
-	// 	// 		LastUpdateDate: "Test",
-	// 	// 		PurchasePrice:  1.1,
-	// 	// 		SalePrice:      1.1,
-	// 	// 		ProductId:      1,
-	// 	// 	},
-	// 	// }
+		expectedInboundOrdersList := []domain.InboundOrders{
+			{
+				ID:             1,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "teste",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+			{
+				ID:             2,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "teste",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+		}
 
-	// 	expectedInboundOrdersList := []domain.InboundOrders{
-	// 		{
-	// 			ID:             1,
-	// 			OrderDate:      "teste",
-	// 			OrderNumber:    "teste",
-	// 			EmployeeID:     "teste",
-	// 			ProductBatchID: "teste",
-	// 			WarehouseID:    "teste",
-	// 		},
-	// 		{
-	// 			ID:             2,
-	// 			OrderDate:      "teste",
-	// 			OrderNumber:    "teste",
-	// 			EmployeeID:     "teste",
-	// 			ProductBatchID: "teste",
-	// 			WarehouseID:    "teste",
-	// 		},
-	// 	}
+		r := inbound_order.NewRepository(fields{db}.db)
 
-	// 	r := inbound_order.NewRepository(fields{db}.db)
+		rows := sqlmock.NewRows([]string{"id", "order_date", "order_number", "employee_id", "product_batch_id", "warehouse_id"})
 
-	// 	rows := sqlmock.NewRows([]string{"id", "order_date", "order_number", "employee_id", "product_batch_id", "warehouse_id"})
+		for _, expectedInboundOrders := range expectedInboundOrdersList {
+			rows.AddRow(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
+				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID)
+		}
+		mock.ExpectQuery("SELECT *. FROM inbound_orders").
+			WillReturnRows(rows)
 
-	// 	for _, expectedInboundOrders := range expectedInboundOrdersList {
-	// 		rows.AddRow(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
-	// 			expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID)
-	// 	}
-	// 	mock.ExpectQuery("SELECT * FROM inbound_orders").
-	// 		WillReturnRows(rows)
+		inboundOrdersReceived, err := r.GetAll(ctx)
 
-	// 	inboundOrdersReceived, err := r.GetAll(ctx)
-
-	// 	assert.Equal(t, expectedInboundOrdersList, inboundOrdersReceived)
-	// 	assert.Nil(t, err)
-	// })
+		assert.Equal(t, expectedInboundOrdersList, inboundOrdersReceived)
+		assert.Nil(t, err)
+	})
 
 	t.Run("get_all_error", func(t *testing.T) {
 
@@ -346,29 +330,29 @@ func TestRepositoryUpdate(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	// t.Run("update_ok", func(t *testing.T) {
+	t.Run("update_ok", func(t *testing.T) {
 
-	// 	expectedInboundOrders := domain.InboundOrders{
-	// 		ID:             1,
-	// 		OrderDate:      "teste",
-	// 		OrderNumber:    "teste",
-	// 		EmployeeID:     "teste",
-	// 		ProductBatchID: "teste",
-	// 		WarehouseID:    "teste",
-	// 	}
+		expectedInboundOrders := domain.InboundOrders{
+			ID:             1,
+			OrderDate:      "teste",
+			OrderNumber:    "teste",
+			EmployeeID:     "teste",
+			ProductBatchID: "teste",
+			WarehouseID:    "teste",
+		}
 
-	// 	r := inbound_order.NewRepository(fields{db}.db)
+		r := inbound_order.NewRepository(fields{db}.db)
 
-	// 	mock.ExpectPrepare(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?"))
-	// 	mock.ExpectExec(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).
-	// 		WithArgs(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
-	// 			expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID).
-	// 		WillReturnResult(sqlmock.NewResult(1, 1))
+		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?"))
+		mock.ExpectExec(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).
+			WithArgs(expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber, expectedInboundOrders.EmployeeID,
+				expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID).
+			WillReturnResult(sqlmock.NewResult(1, 1))
 
-	// 	err := r.Update(ctx, expectedInboundOrders)
+		err := r.Update(ctx, expectedInboundOrders)
 
-	// 	assert.Nil(t, err)
-	// })
+		assert.Nil(t, err)
+	})
 
 	t.Run("update_error_exec", func(t *testing.T) {
 

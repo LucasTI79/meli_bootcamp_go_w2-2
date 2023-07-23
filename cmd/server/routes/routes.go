@@ -132,7 +132,8 @@ func (r *router) buildBuyerRoutes() {
 
 func (r *router) buildInboundOrdersRoutes() {
 	repo := inbound_order.NewRepository(r.db)
-	service := inbound_order.NewService(repo)
+	repoEmployee := employee.NewRepository(r.db)
+	service := inbound_order.NewService(repo, repoEmployee)
 	handler := inbound_orders.NewInboundOrders(service)
 
 	r.rg.POST("/inbound-orders", handler.Save())
