@@ -320,7 +320,7 @@ func TestUpdate(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("update_get_conflit_error", func(t *testing.T) {
+	t.Run("update_get_conflict_error", func(t *testing.T) {
 		newCardNumberID := "2"
 		newFirstName := "Test2"
 		newLastName := "Test2"
@@ -346,7 +346,7 @@ func TestUpdate(t *testing.T) {
 		assert.Error(t, err)
 	})
 
-	t.Run("update_conflit_error_card_number_id", func(t *testing.T) {
+	t.Run("update_conflict_error_card_number_id", func(t *testing.T) {
 		newCardNumberID := "2"
 		newFirstName := "Test2"
 		newLastName := "Test2"
