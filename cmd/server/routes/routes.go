@@ -2,21 +2,24 @@ package routes
 
 import (
 	"database/sql"
+	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
-	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/inbound_orders"
 	productbatcheshandler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/product_batches_handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
+
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
 	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
+	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_order"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
 	prodBatches "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productbatches"
 	"github.com/gin-gonic/gin/binding"
@@ -56,9 +59,12 @@ func (r *router) MapRoutes() {
 	r.buildWarehouseRoutes()
 	r.buildEmployeeRoutes()
 	r.buildBuyerRoutes()
+	r.buildInboundOrdersRoutes()
 	r.buildCarriersRoutes()
 	r.buildProductRecordsRoutes()
 	r.buildPurchaseOrderRoutes()
+	r.buildLocalityRoutes()
+
 }
 
 func (r *router) setGroup() {
@@ -205,4 +211,20 @@ func (r *router) buildCarriersRoutes() {
 	r.rg.POST("/carriers", handler.Create())
 	r.rg.GET("/carriers", handler.GetAll())
 	r.rg.GET("/localities/reportCarries", handler.GetReportCarriersByLocalities())
+}
+
+func (r *router) buildInboundOrdersRoutes() {
+	repo := inbound_order.NewRepository(r.db)
+	repoEmployee := employee.NewRepository(r.db)
+	service := inbound_order.NewService(repo, repoEmployee)
+	handler := inbound_orders.NewInboundOrders(service)
+
+	r.rg.POST("/inbound-orders", handler.Save())
+	r.rg.GET("/inbound-orders", handler.GetAll())
+	r.rg.GET("/inbound-orders/:id", handler.Get())
+	r.rg.PATCH("/inbound-orders/:id", handler.Update())
+	r.rg.DELETE("/inbound-orders/:id", handler.Delete())
+	r.rg.GET("/reportInboundOrders", handler.CountInboundOrders())
+	r.rg.GET("/reportInboundOrders/:id", handler.CountInboundOrdersByID())
+
 }
