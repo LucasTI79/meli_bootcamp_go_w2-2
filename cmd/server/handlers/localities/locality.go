@@ -4,8 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	errors2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"net/http"
 	"strconv"
@@ -14,10 +15,10 @@ import (
 )
 
 type LocalityHandler struct {
-	localityService services.LocalityService
+	localityService locality.LocalityService
 }
 
-func NewLocalityHandler(localityService services.LocalityService) *LocalityHandler {
+func NewLocalityHandler(localityService locality.LocalityService) *LocalityHandler {
 	return &LocalityHandler{
 		localityService,
 	}
@@ -30,7 +31,7 @@ func NewLocalityHandler(localityService services.LocalityService) *LocalityHandl
 //	@Description	Get the details of a Locality
 //	@Produce		json
 //	@Param			id	path		string	true	"ID of Locality to be searched"
-//	@Success		200	{object}	entities.Locality
+//	@Success		200	{object}	domain.Locality
 //	@Failure		400	{object}	web.errorResponse
 //	@Failure		404	{object}	web.errorResponse
 //	@Failure		500	{object}	web.errorResponse
@@ -45,16 +46,16 @@ func (handler *LocalityHandler) Get() gin.HandlerFunc {
 		}
 
 		ctx := c.Request.Context()
-		if locality, err := handler.localityService.Get(&ctx, id); err != nil {
+		if localityFound, err := handler.localityService.Get(&ctx, id); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
 			}
 			return
 		} else {
-			web.Response(c, http.StatusOK, locality)
+			web.Response(c, http.StatusOK, localityFound)
 			return
 		}
 
@@ -68,7 +69,7 @@ func (handler *LocalityHandler) Get() gin.HandlerFunc {
 //	@Description	Get the details of all localities on the database.
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	web.response{data=[]entities.Locality}
+//	@Success		200	{object}	web.response{data=[]domain.Locality}
 //	@Failure		500	{object}	web.errorResponse
 //	@Router			/api/v1/localities [get]
 func (handler *LocalityHandler) GetAll() gin.HandlerFunc {
@@ -96,15 +97,15 @@ func (handler *LocalityHandler) GetAll() gin.HandlerFunc {
 //	@Description	Save a locality on the database.
 //	@Accept			json
 //	@Produce		json
-//	@Param			Seller	body		entities.Locality	true	"Locality to Create"
-//	@Success		201		{object}	entities.Locality
+//	@Param			Seller	body		domain.Locality	true	"Locality to Create"
+//	@Success		201		{object}	domain.Locality
 //	@Failure		422		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
 //	@Router			/api/v1/localities [post]
 func (handler *LocalityHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		var createLocalityRequest entities.Locality
+		var createLocalityRequest domain.Locality
 		if err := c.ShouldBindJSON(&createLocalityRequest); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
@@ -113,7 +114,7 @@ func (handler *LocalityHandler) Create() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if createdLocality, err := handler.localityService.Create(&ctx, createLocalityRequest); err != nil {
 			switch err {
-			case services.ErrConflict:
+			case errors2.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
@@ -136,7 +137,7 @@ func (handler *LocalityHandler) Create() gin.HandlerFunc {
 //	@Produce		json
 //	@Param			id		path		string						true	"ID of Locality to be updated"
 //	@Param			Locality	body		dtos.UpdateLocalityRequestDTO	true	"Updated Locality details"
-//	@Success		200		{object}	entities.Locality
+//	@Success		200		{object}	domain.Locality
 //	@Failure		400		{object}	web.errorResponse
 //	@Failure		404		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
@@ -159,9 +160,9 @@ func (handler *LocalityHandler) Update() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if updatedLocality, err := handler.localityService.Update(&ctx, id, updateLocalityRequest); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
-			case services.ErrConflict:
+			case errors2.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -199,7 +200,7 @@ func (handler *LocalityHandler) Delete() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if err := handler.localityService.Delete(&ctx, id); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -236,10 +237,10 @@ func (handler *LocalityHandler) CountSellers() gin.HandlerFunc {
 
 		ctx := c.Request.Context()
 
-		locality, err := handler.localityService.Get(&ctx, id)
+		localityFound, err := handler.localityService.Get(&ctx, id)
 		if err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -254,8 +255,8 @@ func (handler *LocalityHandler) CountSellers() gin.HandlerFunc {
 		}
 
 		response := dtos.GetNumberOfSellersResponseDTO{
-			LocalityID:   locality.ID,
-			LocalityName: locality.LocalityName,
+			LocalityID:   localityFound.ID,
+			LocalityName: localityFound.LocalityName,
 			SellersCount: count,
 		}
 

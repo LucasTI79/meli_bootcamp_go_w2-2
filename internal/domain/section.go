@@ -16,5 +16,4 @@ type ProductBySection struct {
 	SectionID     int    `json:"section_id"`
 	SectionNumber string `json:"section_number"`
 	ProductsCount int    `json:"products_count"`
-	
 }

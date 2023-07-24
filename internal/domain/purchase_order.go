@@ -1,4 +1,4 @@
-package entities
+package domain
 
 type PurchaseOrder struct {
 	ID              int    `json:"id" extensions:"x-order=0"`

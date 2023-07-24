@@ -4,9 +4,9 @@ package mocks
 
 import (
 	context "context"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	entities "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -40,23 +40,23 @@ func (_m *MockLocalityService) CountSellers(ctx *context.Context, id int) (int, 
 	return r0, r1
 }
 
-// Create provides a mock function with given fields: ctx, locality
-func (_m *MockLocalityService) Create(ctx *context.Context, locality entities.Locality) (entities.Locality, error) {
-	ret := _m.Called(ctx, locality)
+// Create provides a mock function with given fields: ctx, _a1
+func (_m *MockLocalityService) Create(ctx *context.Context, _a1 domain.Locality) (domain.Locality, error) {
+	ret := _m.Called(ctx, _a1)
 
-	var r0 entities.Locality
+	var r0 domain.Locality
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*context.Context, entities.Locality) (entities.Locality, error)); ok {
-		return rf(ctx, locality)
+	if rf, ok := ret.Get(0).(func(*context.Context, domain.Locality) (domain.Locality, error)); ok {
+		return rf(ctx, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(*context.Context, entities.Locality) entities.Locality); ok {
-		r0 = rf(ctx, locality)
+	if rf, ok := ret.Get(0).(func(*context.Context, domain.Locality) domain.Locality); ok {
+		r0 = rf(ctx, _a1)
 	} else {
-		r0 = ret.Get(0).(entities.Locality)
+		r0 = ret.Get(0).(domain.Locality)
 	}
 
-	if rf, ok := ret.Get(1).(func(*context.Context, entities.Locality) error); ok {
-		r1 = rf(ctx, locality)
+	if rf, ok := ret.Get(1).(func(*context.Context, domain.Locality) error); ok {
+		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -79,18 +79,18 @@ func (_m *MockLocalityService) Delete(ctx *context.Context, id int) error {
 }
 
 // Get provides a mock function with given fields: ctx, id
-func (_m *MockLocalityService) Get(ctx *context.Context, id int) (entities.Locality, error) {
+func (_m *MockLocalityService) Get(ctx *context.Context, id int) (domain.Locality, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 entities.Locality
+	var r0 domain.Locality
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*context.Context, int) (entities.Locality, error)); ok {
+	if rf, ok := ret.Get(0).(func(*context.Context, int) (domain.Locality, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(*context.Context, int) entities.Locality); ok {
+	if rf, ok := ret.Get(0).(func(*context.Context, int) domain.Locality); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(entities.Locality)
+		r0 = ret.Get(0).(domain.Locality)
 	}
 
 	if rf, ok := ret.Get(1).(func(*context.Context, int) error); ok {
@@ -103,19 +103,19 @@ func (_m *MockLocalityService) Get(ctx *context.Context, id int) (entities.Local
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *MockLocalityService) GetAll(ctx *context.Context) ([]entities.Locality, error) {
+func (_m *MockLocalityService) GetAll(ctx *context.Context) ([]domain.Locality, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []entities.Locality
+	var r0 []domain.Locality
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*context.Context) ([]entities.Locality, error)); ok {
+	if rf, ok := ret.Get(0).(func(*context.Context) ([]domain.Locality, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(*context.Context) []entities.Locality); ok {
+	if rf, ok := ret.Get(0).(func(*context.Context) []domain.Locality); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entities.Locality)
+			r0 = ret.Get(0).([]domain.Locality)
 		}
 	}
 
@@ -129,18 +129,18 @@ func (_m *MockLocalityService) GetAll(ctx *context.Context) ([]entities.Locality
 }
 
 // Update provides a mock function with given fields: ctx, id, updateLocalityRequest
-func (_m *MockLocalityService) Update(ctx *context.Context, id int, updateLocalityRequest dtos.UpdateLocalityRequestDTO) (entities.Locality, error) {
+func (_m *MockLocalityService) Update(ctx *context.Context, id int, updateLocalityRequest dtos.UpdateLocalityRequestDTO) (domain.Locality, error) {
 	ret := _m.Called(ctx, id, updateLocalityRequest)
 
-	var r0 entities.Locality
+	var r0 domain.Locality
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*context.Context, int, dtos.UpdateLocalityRequestDTO) (entities.Locality, error)); ok {
+	if rf, ok := ret.Get(0).(func(*context.Context, int, dtos.UpdateLocalityRequestDTO) (domain.Locality, error)); ok {
 		return rf(ctx, id, updateLocalityRequest)
 	}
-	if rf, ok := ret.Get(0).(func(*context.Context, int, dtos.UpdateLocalityRequestDTO) entities.Locality); ok {
+	if rf, ok := ret.Get(0).(func(*context.Context, int, dtos.UpdateLocalityRequestDTO) domain.Locality); ok {
 		r0 = rf(ctx, id, updateLocalityRequest)
 	} else {
-		r0 = ret.Get(0).(entities.Locality)
+		r0 = ret.Get(0).(domain.Locality)
 	}
 
 	if rf, ok := ret.Get(1).(func(*context.Context, int, dtos.UpdateLocalityRequestDTO) error); ok {

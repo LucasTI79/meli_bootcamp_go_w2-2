@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
+	errors2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"net/http"
 	"strconv"
@@ -13,10 +14,10 @@ import (
 )
 
 type PurchaseOrderHandler struct {
-	purchaseOrderService services.PurchaseOrderService
+	purchaseOrderService purchaseOrder.PurchaseOrderService
 }
 
-func NewPurchaseOrderHandler(purchaseOrderService services.PurchaseOrderService) *PurchaseOrderHandler {
+func NewPurchaseOrderHandler(purchaseOrderService purchaseOrder.PurchaseOrderService) *PurchaseOrderHandler {
 	return &PurchaseOrderHandler{
 		purchaseOrderService,
 	}
@@ -46,7 +47,7 @@ func (handler *PurchaseOrderHandler) Get() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if purchaseOrder, err := handler.purchaseOrderService.Get(&ctx, id); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -114,7 +115,7 @@ func (handler *PurchaseOrderHandler) Create() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if createdPurchaseOrder, err := handler.purchaseOrderService.Create(&ctx, createPurchaseOrderRequest); err != nil {
 			switch err {
-			case services.ErrConflict:
+			case errors2.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
@@ -160,9 +161,9 @@ func (handler *PurchaseOrderHandler) Update() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if updatedPurchaseOrder, err := handler.purchaseOrderService.Update(&ctx, id, updatePurchaseOrderRequest); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
-			case services.ErrConflict:
+			case errors2.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -200,7 +201,7 @@ func (handler *PurchaseOrderHandler) Delete() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if err := handler.purchaseOrderService.Delete(&ctx, id); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())

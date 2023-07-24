@@ -26,7 +26,7 @@ func (repository *BuyerRepositoryMock) Get(ctx context.Context, id int) (domain.
 	return args.Get(0).(domain.Buyer), args.Error(1)
 }
 
-func (repository *BuyerRepositoryMock) Exists(ctx context.Context, cardNumberID string) bool {
+func (repository *BuyerRepositoryMock) CardNumberExists(ctx context.Context, cardNumberID string) bool {
 	args := repository.Called(ctx, cardNumberID)
 
 	return args.Get(0).(bool)

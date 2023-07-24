@@ -81,6 +81,18 @@ func Test_repository_GetAll(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error getting sellers", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewSellerRepository(db)
+
+		_, err := r.GetAll(ctx)
+
+		assert.Equal(t, true, err != nil)
+
+	})
 }
 
 func Test_repository_Get(t *testing.T) {
@@ -147,6 +159,19 @@ func Test_repository_Get(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error getting locality", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		mock.ExpectQuery(GetSellerByID).WithArgs(999).WillReturnError(sql.ErrNoRows)
+
+		r := NewSellerRepository(db)
+
+		_, err := r.Get(ctx, 999)
+
+		assert.Equal(t, true, err != nil)
+	})
 }
 
 func Test_repository_Exists(t *testing.T) {
@@ -275,6 +300,39 @@ func Test_repository_Save(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error preparing query", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewSellerRepository(db)
+
+		_, err := r.Save(ctx, validSeller)
+
+		assert.Equal(t, true, err != nil)
+	})
+
+	t.Run("Error executing query", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		mock.ExpectPrepare(regexp.QuoteMeta(SaveSeller))
+		mock.ExpectExec(regexp.QuoteMeta(SaveSeller)).
+			WithArgs(
+				validSeller.CID,
+				validSeller.CompanyName,
+				validSeller.Address,
+				validSeller.Telephone,
+				validSeller.LocalityID,
+			).
+			WillReturnError(sql.ErrNoRows)
+
+		r := NewSellerRepository(db)
+
+		_, err := r.Save(ctx, validSeller)
+
+		assert.Equal(t, true, err != nil)
+	})
 }
 
 func Test_repository_Update(t *testing.T) {
@@ -335,6 +393,40 @@ func Test_repository_Update(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error preparing query", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewSellerRepository(db)
+
+		err := r.Update(ctx, validSeller)
+
+		assert.Equal(t, true, err != nil)
+	})
+
+	t.Run("Error executing query", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		mock.ExpectPrepare(regexp.QuoteMeta(UpdateSeller))
+		mock.ExpectExec(regexp.QuoteMeta(UpdateSeller)).
+			WithArgs(
+				validSeller.CID,
+				validSeller.CompanyName,
+				validSeller.Address,
+				validSeller.Telephone,
+				validSeller.LocalityID,
+				validSeller.ID,
+			).
+			WillReturnError(sql.ErrNoRows)
+
+		r := NewSellerRepository(db)
+
+		err := r.Update(ctx, validSeller)
+
+		assert.Equal(t, true, err != nil)
+	})
 }
 
 func Test_repository_Delete(t *testing.T) {
@@ -400,4 +492,34 @@ func Test_repository_Delete(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error preparing query", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewSellerRepository(db)
+
+		err := r.Delete(ctx, 6700)
+
+		assert.Equal(t, true, err != nil)
+	})
+
+	t.Run("Error executing query", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		mock.ExpectPrepare(regexp.QuoteMeta(DeleteSellerByID))
+		mock.ExpectExec(regexp.QuoteMeta(DeleteSellerByID)).
+			WithArgs(
+				6700,
+			).
+			WillReturnError(sql.ErrNoRows)
+
+		r := NewSellerRepository(db)
+
+		err := r.Delete(ctx, 6700)
+
+		assert.Equal(t, true, err != nil)
+
+	})
 }

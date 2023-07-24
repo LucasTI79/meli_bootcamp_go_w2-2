@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	entities "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -67,18 +67,18 @@ func (_m *MockLocalityRepository) Exists(ctx context.Context, id int) bool {
 }
 
 // Get provides a mock function with given fields: ctx, id
-func (_m *MockLocalityRepository) Get(ctx context.Context, id int) (entities.Locality, error) {
+func (_m *MockLocalityRepository) Get(ctx context.Context, id int) (domain.Locality, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 entities.Locality
+	var r0 domain.Locality
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (entities.Locality, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) (domain.Locality, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) entities.Locality); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) domain.Locality); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(entities.Locality)
+		r0 = ret.Get(0).(domain.Locality)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
@@ -91,19 +91,19 @@ func (_m *MockLocalityRepository) Get(ctx context.Context, id int) (entities.Loc
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *MockLocalityRepository) GetAll(ctx context.Context) ([]entities.Locality, error) {
+func (_m *MockLocalityRepository) GetAll(ctx context.Context) ([]domain.Locality, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []entities.Locality
+	var r0 []domain.Locality
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]entities.Locality, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]domain.Locality, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []entities.Locality); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []domain.Locality); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entities.Locality)
+			r0 = ret.Get(0).([]domain.Locality)
 		}
 	}
 
@@ -117,21 +117,21 @@ func (_m *MockLocalityRepository) GetAll(ctx context.Context) ([]entities.Locali
 }
 
 // Save provides a mock function with given fields: ctx, locality
-func (_m *MockLocalityRepository) Save(ctx context.Context, locality entities.Locality) (int, error) {
+func (_m *MockLocalityRepository) Save(ctx context.Context, locality domain.Locality) (int, error) {
 	ret := _m.Called(ctx, locality)
 
 	var r0 int
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.Locality) (int, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Locality) (int, error)); ok {
 		return rf(ctx, locality)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, entities.Locality) int); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Locality) int); ok {
 		r0 = rf(ctx, locality)
 	} else {
 		r0 = ret.Get(0).(int)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, entities.Locality) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, domain.Locality) error); ok {
 		r1 = rf(ctx, locality)
 	} else {
 		r1 = ret.Error(1)
@@ -141,11 +141,11 @@ func (_m *MockLocalityRepository) Save(ctx context.Context, locality entities.Lo
 }
 
 // Update provides a mock function with given fields: ctx, locality
-func (_m *MockLocalityRepository) Update(ctx context.Context, locality entities.Locality) error {
+func (_m *MockLocalityRepository) Update(ctx context.Context, locality domain.Locality) error {
 	ret := _m.Called(ctx, locality)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.Locality) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.Locality) error); ok {
 		r0 = rf(ctx, locality)
 	} else {
 		r0 = ret.Error(0)

@@ -1,7 +1,7 @@
 package dtos
 
 import (
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
 type CreatePurchaseOrderRequestDTO struct {
@@ -15,8 +15,8 @@ type CreatePurchaseOrderRequestDTO struct {
 	ProductRecordID int    `json:"product_record_id"  binding:"required"`
 }
 
-func (dto *CreatePurchaseOrderRequestDTO) ToDomain() entities.PurchaseOrder {
-	return entities.PurchaseOrder{
+func (dto *CreatePurchaseOrderRequestDTO) ToDomain() domain.PurchaseOrder {
+	return domain.PurchaseOrder{
 		OrderNumber:     dto.OrderNumber,
 		OrderDate:       dto.OrderDate,
 		TrackingCode:    dto.TrackingCode,

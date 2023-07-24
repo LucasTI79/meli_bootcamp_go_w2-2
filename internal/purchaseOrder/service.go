@@ -1,51 +1,45 @@
-package services
+package purchaseOrder
 
 import (
 	"context"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
-//// Errors
-//var (
-//	ErrNotFound = errors.New("purchaseOrder not found")
-//	ErrConflict = errors.New("ID already exists")
-//)
-
 type PurchaseOrderService interface {
-	Get(ctx *context.Context, id int) (entities.PurchaseOrder, error)
-	GetAll(ctx *context.Context) ([]entities.PurchaseOrder, error)
-	Create(ctx *context.Context, purchaseOrder entities.PurchaseOrder) (entities.PurchaseOrder, error)
-	Update(ctx *context.Context, id int, updatePurchaseOrderRequest dtos.UpdatePurchaseOrderRequestDTO) (entities.PurchaseOrder, error)
+	Get(ctx *context.Context, id int) (domain.PurchaseOrder, error)
+	GetAll(ctx *context.Context) ([]domain.PurchaseOrder, error)
+	Create(ctx *context.Context, purchaseOrder domain.PurchaseOrder) (domain.PurchaseOrder, error)
+	Update(ctx *context.Context, id int, updatePurchaseOrderRequest dtos.UpdatePurchaseOrderRequestDTO) (domain.PurchaseOrder, error)
 	Delete(ctx *context.Context, id int) error
 	CountByBuyerID(ctx *context.Context, buyerID int) (int, error)
 }
 
 type purchaseOrderService struct {
-	purchaseOrderRepository repositories.PurchaseOrderRepository
-	buyerRepository         buyer.Repository
+	purchaseOrderRepository PurchaseOrderRepository
+	buyerRepository         buyer.BuyerRepository
 }
 
-func NewPurchaseOrderService(r repositories.PurchaseOrderRepository, buyerRepository buyer.Repository) PurchaseOrderService {
+func NewPurchaseOrderService(r PurchaseOrderRepository, buyerRepository buyer.BuyerRepository) PurchaseOrderService {
 	return &purchaseOrderService{
 		purchaseOrderRepository: r,
 		buyerRepository:         buyerRepository,
 	}
 }
 
-func (service *purchaseOrderService) Get(ctx *context.Context, id int) (entities.PurchaseOrder, error) {
+func (service *purchaseOrderService) Get(ctx *context.Context, id int) (domain.PurchaseOrder, error) {
 	purchaseOrder, err := service.purchaseOrderRepository.Get(*ctx, id)
 	if err != nil {
-		return entities.PurchaseOrder{}, err
+		return domain.PurchaseOrder{}, err
 	}
 
 	return purchaseOrder, nil
 }
 
-func (service *purchaseOrderService) GetAll(ctx *context.Context) ([]entities.PurchaseOrder, error) {
-	localities := make([]entities.PurchaseOrder, 0)
+func (service *purchaseOrderService) GetAll(ctx *context.Context) ([]domain.PurchaseOrder, error) {
+	localities := make([]domain.PurchaseOrder, 0)
 
 	localities, err := service.purchaseOrderRepository.GetAll(*ctx)
 	if err != nil {
@@ -55,15 +49,15 @@ func (service *purchaseOrderService) GetAll(ctx *context.Context) ([]entities.Pu
 	return localities, nil
 }
 
-func (service *purchaseOrderService) Create(ctx *context.Context, purchaseOrder entities.PurchaseOrder) (entities.PurchaseOrder, error) {
+func (service *purchaseOrderService) Create(ctx *context.Context, purchaseOrder domain.PurchaseOrder) (domain.PurchaseOrder, error) {
 	existingPurchaseOrder := service.purchaseOrderRepository.Exists(*ctx, purchaseOrder.ID)
 	if existingPurchaseOrder {
-		return entities.PurchaseOrder{}, ErrConflict
+		return domain.PurchaseOrder{}, errors.ErrConflict
 	}
 
 	id, err := service.purchaseOrderRepository.Save(*ctx, purchaseOrder)
 	if err != nil {
-		return entities.PurchaseOrder{}, err
+		return domain.PurchaseOrder{}, err
 	}
 
 	purchaseOrder.ID = id
@@ -71,15 +65,15 @@ func (service *purchaseOrderService) Create(ctx *context.Context, purchaseOrder 
 	return purchaseOrder, nil
 }
 
-func (service *purchaseOrderService) Update(ctx *context.Context, id int, updatePurchaseOrderRequest dtos.UpdatePurchaseOrderRequestDTO) (entities.PurchaseOrder, error) {
+func (service *purchaseOrderService) Update(ctx *context.Context, id int, updatePurchaseOrderRequest dtos.UpdatePurchaseOrderRequestDTO) (domain.PurchaseOrder, error) {
 	existingPurchaseOrder, err := service.purchaseOrderRepository.Get(*ctx, id)
 	if err != nil {
-		return entities.PurchaseOrder{}, err
+		return domain.PurchaseOrder{}, err
 	}
 
 	existingPurchaseOrderSearch := service.purchaseOrderRepository.Exists(*ctx, id)
 	if existingPurchaseOrderSearch {
-		return entities.PurchaseOrder{}, ErrConflict
+		return domain.PurchaseOrder{}, errors.ErrConflict
 	}
 
 	if updatePurchaseOrderRequest.OrderNumber != nil {
@@ -115,7 +109,7 @@ func (service *purchaseOrderService) Update(ctx *context.Context, id int, update
 	}
 
 	if err = service.purchaseOrderRepository.Update(*ctx, existingPurchaseOrder); err != nil {
-		return entities.PurchaseOrder{}, err
+		return domain.PurchaseOrder{}, err
 	}
 
 	return existingPurchaseOrder, nil

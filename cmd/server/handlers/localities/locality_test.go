@@ -7,9 +7,9 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services/mocks"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -23,7 +23,7 @@ import (
 func TestGet(t *testing.T) {
 
 	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var validLocality entities.Locality
+	var validLocality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &validLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -33,7 +33,7 @@ func TestGet(t *testing.T) {
 		id               string
 		expectedGetCalls int
 		expectedGetError error
-		expectedLocality entities.Locality
+		expectedLocality domain.Locality
 		expectedCode     int
 	}{
 		{
@@ -48,8 +48,8 @@ func TestGet(t *testing.T) {
 			name:             "Error finding locality",
 			id:               "999",
 			expectedGetCalls: 1,
-			expectedGetError: services.ErrNotFound,
-			expectedLocality: entities.Locality{},
+			expectedGetError: errors.ErrNotFound,
+			expectedLocality: domain.Locality{},
 			expectedCode:     http.StatusNotFound,
 		},
 		{
@@ -57,7 +57,7 @@ func TestGet(t *testing.T) {
 			id:               "1",
 			expectedGetCalls: 1,
 			expectedGetError: assert.AnError,
-			expectedLocality: entities.Locality{},
+			expectedLocality: domain.Locality{},
 			expectedCode:     http.StatusInternalServerError,
 		},
 		{
@@ -96,7 +96,7 @@ func TestGet(t *testing.T) {
 				//Parsear response
 				body, _ := io.ReadAll(res.Body)
 
-				var response entities.Locality
+				var response domain.Locality
 
 				json.Unmarshal(body, &response)
 
@@ -112,17 +112,17 @@ func TestGet(t *testing.T) {
 func TestGetAll(t *testing.T) {
 
 	localitiesSerialized, _ := os.ReadFile("../../../../test/resources/valid_localities.json")
-	var validLocalities []entities.Locality
+	var validLocalities []domain.Locality
 	if err := json.Unmarshal(localitiesSerialized, &validLocalities); err != nil {
 		t.Fatal(err)
 	}
 
 	tests := []struct {
 		name                 string
-		expectedGetAllResult []entities.Locality
+		expectedGetAllResult []domain.Locality
 		expectedGetAllError  error
 		expectedGetAllCalls  int
-		expectedResponse     []entities.Locality
+		expectedResponse     []domain.Locality
 		expectedCode         int
 	}{
 		{
@@ -135,18 +135,18 @@ func TestGetAll(t *testing.T) {
 		},
 		{
 			name:                 "Success empty database",
-			expectedGetAllResult: []entities.Locality{},
+			expectedGetAllResult: []domain.Locality{},
 			expectedGetAllError:  nil,
 			expectedGetAllCalls:  1,
-			expectedResponse:     []entities.Locality{},
+			expectedResponse:     []domain.Locality{},
 			expectedCode:         http.StatusNoContent,
 		},
 		{
 			name:                 "Error getting all expectedLocalities",
-			expectedGetAllResult: []entities.Locality{},
+			expectedGetAllResult: []domain.Locality{},
 			expectedGetAllError:  assert.AnError,
 			expectedGetAllCalls:  1,
-			expectedResponse:     []entities.Locality{},
+			expectedResponse:     []domain.Locality{},
 			expectedCode:         http.StatusInternalServerError,
 		},
 	}
@@ -179,7 +179,7 @@ func TestGetAll(t *testing.T) {
 				//Parsear response
 				body, _ := io.ReadAll(res.Body)
 				var responseDTO struct {
-					Data []entities.Locality `json:"data"`
+					Data []domain.Locality `json:"data"`
 				}
 				json.Unmarshal(body, &responseDTO)
 
@@ -211,7 +211,7 @@ func TestDelete(t *testing.T) {
 		{
 			name:                "Error deleting inexistent locality",
 			id:                  "1",
-			expectedDeleteError: services.ErrNotFound,
+			expectedDeleteError: errors.ErrNotFound,
 			expectedDeleteCalls: 1,
 			expectedCode:        http.StatusNotFound,
 		},
@@ -261,18 +261,18 @@ func TestDelete(t *testing.T) {
 func TestCreate(t *testing.T) {
 
 	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var locality entities.Locality
+	var locality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)
 	}
 
 	tests := []struct {
 		name                  string
-		createLocalityRequest entities.Locality
-		expectedCreateResult  entities.Locality
+		createLocalityRequest domain.Locality
+		expectedCreateResult  domain.Locality
 		expectedCreateError   error
 		expectedCreateCalls   int
-		expectedResponse      entities.Locality
+		expectedResponse      domain.Locality
 		expectedCode          int
 	}{
 		{
@@ -287,25 +287,25 @@ func TestCreate(t *testing.T) {
 		{
 			name:                  "Error creating locality with duplicated id",
 			createLocalityRequest: locality,
-			expectedCreateResult:  entities.Locality{},
-			expectedCreateError:   services.ErrConflict,
+			expectedCreateResult:  domain.Locality{},
+			expectedCreateError:   errors.ErrConflict,
 			expectedCreateCalls:   1,
-			expectedResponse:      entities.Locality{},
+			expectedResponse:      domain.Locality{},
 			expectedCode:          http.StatusConflict,
 		},
 		{
 			name:                  "Error creating locality",
 			createLocalityRequest: locality,
-			expectedCreateResult:  entities.Locality{},
+			expectedCreateResult:  domain.Locality{},
 			expectedCreateError:   assert.AnError,
 			expectedCreateCalls:   1,
-			expectedResponse:      entities.Locality{},
+			expectedResponse:      domain.Locality{},
 			expectedCode:          http.StatusInternalServerError,
 		},
 		{
 			name:                  "Error invalid locality",
-			createLocalityRequest: entities.Locality{},
-			expectedResponse:      entities.Locality{},
+			createLocalityRequest: domain.Locality{},
+			expectedResponse:      domain.Locality{},
 			expectedCode:          http.StatusUnprocessableEntity,
 		},
 	}
@@ -313,7 +313,7 @@ func TestCreate(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			localityServiceMock := mocks.NewMockLocalityService(t)
-			localityServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("entities.Locality")).Return(test.expectedCreateResult, test.expectedCreateError)
+			localityServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.Locality")).Return(test.expectedCreateResult, test.expectedCreateError)
 
 			localityHandler := handlers.NewLocalityHandler(localityServiceMock)
 
@@ -343,7 +343,7 @@ func TestCreate(t *testing.T) {
 				body, _ := io.ReadAll(res.Body)
 
 				var response struct {
-					Data entities.Locality `json:"data"`
+					Data domain.Locality `json:"data"`
 				}
 
 				json.Unmarshal(body, &response)
@@ -363,7 +363,7 @@ func TestUpdate(t *testing.T) {
 		LocalityName: func(s string) *string { return &s }("São Paulo"),
 	}
 
-	localityUpdated := entities.Locality{
+	localityUpdated := domain.Locality{
 		ID:           1,
 		CountryName:  "Brasil",
 		ProvinceName: "São Paulo",
@@ -374,10 +374,10 @@ func TestUpdate(t *testing.T) {
 		name                  string
 		id                    string
 		updateLocalityRequest interface{}
-		expectedUpdateResult  entities.Locality
+		expectedUpdateResult  domain.Locality
 		expectedUpdateError   error
 		expectedUpdateCalls   int
-		expectedResponse      entities.Locality
+		expectedResponse      domain.Locality
 		expectedCode          int
 	}{
 		{
@@ -394,8 +394,8 @@ func TestUpdate(t *testing.T) {
 			name:                  "Error updating inexisting locality",
 			id:                    "1",
 			updateLocalityRequest: updateLocalityRequest,
-			expectedUpdateResult:  entities.Locality{},
-			expectedUpdateError:   services.ErrNotFound,
+			expectedUpdateResult:  domain.Locality{},
+			expectedUpdateError:   errors.ErrNotFound,
 			expectedUpdateCalls:   1,
 			expectedCode:          http.StatusNotFound,
 		},
@@ -403,8 +403,8 @@ func TestUpdate(t *testing.T) {
 			name:                  "Error updating locality with duplicated card number id",
 			id:                    "1",
 			updateLocalityRequest: updateLocalityRequest,
-			expectedUpdateResult:  entities.Locality{},
-			expectedUpdateError:   services.ErrConflict,
+			expectedUpdateResult:  domain.Locality{},
+			expectedUpdateError:   errors.ErrConflict,
 			expectedUpdateCalls:   1,
 			expectedCode:          http.StatusConflict,
 		},
@@ -412,7 +412,7 @@ func TestUpdate(t *testing.T) {
 			name:                  "Error updating locality",
 			id:                    "1",
 			updateLocalityRequest: updateLocalityRequest,
-			expectedUpdateResult:  entities.Locality{},
+			expectedUpdateResult:  domain.Locality{},
 			expectedUpdateError:   assert.AnError,
 			expectedUpdateCalls:   1,
 			expectedCode:          http.StatusInternalServerError,
@@ -461,7 +461,7 @@ func TestUpdate(t *testing.T) {
 			if test.expectedCode == http.StatusOK {
 				//Parsear response
 				body, _ := io.ReadAll(res.Body)
-				var localityResponse entities.Locality
+				var localityResponse domain.Locality
 				json.Unmarshal(body, &localityResponse)
 
 				// Valida o response
@@ -474,7 +474,7 @@ func TestUpdate(t *testing.T) {
 
 func TestGetNumberOfSellers(t *testing.T) {
 	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var validLocality entities.Locality
+	var validLocality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &validLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -488,7 +488,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 	tests := []struct {
 		name                       string
 		id                         int
-		expectedGetResult          entities.Locality
+		expectedGetResult          domain.Locality
 		expectedGetError           error
 		expectedGetCalls           int
 		expectedCountSellersResult int
@@ -512,8 +512,8 @@ func TestGetNumberOfSellers(t *testing.T) {
 		{
 			name:                       "Error Locality not found",
 			id:                         validLocality.ID,
-			expectedGetResult:          entities.Locality{},
-			expectedGetError:           services.ErrNotFound,
+			expectedGetResult:          domain.Locality{},
+			expectedGetError:           errors.ErrNotFound,
 			expectedGetCalls:           1,
 			expectedCountSellersResult: 0,
 			expectedCountSellersError:  nil,
@@ -524,7 +524,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 		{
 			name:                       "Internal error finding Locality",
 			id:                         validLocality.ID,
-			expectedGetResult:          entities.Locality{},
+			expectedGetResult:          domain.Locality{},
 			expectedGetError:           assert.AnError,
 			expectedGetCalls:           1,
 			expectedCountSellersResult: 0,
