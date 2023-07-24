@@ -26,11 +26,11 @@ func NewLocalityHandler(localityService locality.LocalityService) *LocalityHandl
 
 // Get is the handler to search for a locality and return their details.
 //
-//	@Summary		Get Buyer
+//	@Summary		Get Locality
 //	@Tags			Localities
-//	@Description	Get the details of a Buyer
+//	@Description	Get the details of a Locality
 //	@Produce		json
-//	@Param			id	path		string	true	"ID of Buyer to be searched"
+//	@Param			id	path		string	true	"ID of Locality to be searched"
 //	@Success		200	{object}	domain.Locality
 //	@Failure		400	{object}	web.errorResponse
 //	@Failure		404	{object}	web.errorResponse
@@ -92,7 +92,7 @@ func (handler *LocalityHandler) GetAll() gin.HandlerFunc {
 
 // Create is the handler to create a locality.
 //
-//	@Summary		Create Buyer
+//	@Summary		Create Locality
 //	@Tags			Localities
 //	@Description	Save a locality on the database.
 //	@Accept			json
@@ -130,13 +130,13 @@ func (handler *LocalityHandler) Create() gin.HandlerFunc {
 
 // Update is the handler to update a locality details.
 //
-//	@Summary		Update Buyer
+//	@Summary		Update Locality
 //	@Tags			Localities
-//	@Description	Update the details of a Buyer
+//	@Description	Update the details of a Locality
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string						true	"ID of Buyer to be updated"
-//	@Param			Buyer	body		dtos.UpdateLocalityRequestDTO	true	"Updated Buyer details"
+//	@Param			id		path		string						true	"ID of Locality to be updated"
+//	@Param			Locality	body		dtos.UpdateLocalityRequestDTO	true	"Updated Locality details"
 //	@Success		200		{object}	domain.Locality
 //	@Failure		400		{object}	web.errorResponse
 //	@Failure		404		{object}	web.errorResponse
@@ -177,12 +177,12 @@ func (handler *LocalityHandler) Update() gin.HandlerFunc {
 
 // Delete is the handler to delete a locality.
 //
-//	@Summary		Delete Buyer
+//	@Summary		Delete Locality
 //	@Tags			Localities
 //	@Description	Delete Localities
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path	string	true	"ID of a Buyer to be excluded"
+//	@Param			id	path	string	true	"ID of a Locality to be excluded"
 //	@Success		204
 //	@Failure		400	{object}	web.errorResponse
 //	@Failure		404	{object}	web.errorResponse
@@ -220,7 +220,7 @@ func (handler *LocalityHandler) Delete() gin.HandlerFunc {
 //	@Description	search for a locality and return the number of sellers.
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string						true	"ID of Buyer to be searched"
+//	@Param			id		path		string						true	"ID of Locality to be searched"
 //	@Success		200		{object}	web.response{data=dtos.GetNumberOfSellersResponseDTO}
 //	@Failure		400		{object}	web.errorResponse
 //	@Failure		404		{object}	web.errorResponse

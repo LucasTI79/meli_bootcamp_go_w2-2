@@ -498,7 +498,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 		expectedCode               int
 	}{
 		{
-			name:                       "Valid Buyer",
+			name:                       "Valid Locality",
 			id:                         validLocality.ID,
 			expectedGetResult:          validLocality,
 			expectedGetError:           nil,
@@ -510,7 +510,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 			expectedCode:               http.StatusOK,
 		},
 		{
-			name:                       "Error Buyer not found",
+			name:                       "Error Locality not found",
 			id:                         validLocality.ID,
 			expectedGetResult:          domain.Locality{},
 			expectedGetError:           errors.ErrNotFound,
@@ -522,7 +522,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 			expectedCode:               http.StatusNotFound,
 		},
 		{
-			name:                       "Internal error finding Buyer",
+			name:                       "Internal error finding Locality",
 			id:                         validLocality.ID,
 			expectedGetResult:          domain.Locality{},
 			expectedGetError:           assert.AnError,
