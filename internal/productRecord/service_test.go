@@ -407,3 +407,33 @@ func TestUpdate(t *testing.T) {
 		assert.Nil(t, productRecordUpdate)
 	})
 }
+
+func TestGetNumberRecords(t *testing.T) {
+	t.Run("numberRecords_ok", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		productRecordRepositoryMock := new(mocks.ProductRecordRepositoryMock)
+		productRecordRepositoryMock.On("NumberRecords", ctx, mock.AnythingOfType("int")).Return(1, nil)
+
+		service := productRecord.NewService(productRecordRepositoryMock)
+		count, err := service.NumberRecords(&ctx, 1)
+
+		assert.Equal(t, 1, count)
+		assert.Nil(t, err)
+	})
+
+	t.Run("numberRecords_error", func(t *testing.T) {
+
+		ctx := context.TODO()
+
+		productRecordRepositoryMock := new(mocks.ProductRecordRepositoryMock)
+		productRecordRepositoryMock.On("NumberRecords", ctx, mock.AnythingOfType("int")).Return(0, assert.AnError)
+
+		service := productRecord.NewService(productRecordRepositoryMock)
+		count, err := service.NumberRecords(&ctx, 1)
+
+		assert.Equal(t, 0, count)
+		assert.NotNil(t, err)
+	})
+}

@@ -236,6 +236,77 @@ func TestRepositoryExists(t *testing.T) {
 	})
 }
 
+func TestRepositoryExistsByID(t *testing.T) {
+	type fields struct {
+		db *sql.DB
+	}
+
+	db, mock, _ := sqlmock.New()
+	ctx := context.TODO()
+
+	t.Run("exists_byID_true", func(t *testing.T) {
+
+		expectedProduct := domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		r := product.NewRepository(fields{db}.db)
+
+		rows := sqlmock.NewRows([]string{"id"}).
+			AddRow(expectedProduct.ID)
+
+		mock.ExpectQuery("SELECT id FROM products WHERE id=?").
+			WithArgs(expectedProduct.ID).
+			WillReturnRows(rows)
+
+		productExists := r.ExistsByID(ctx, expectedProduct.ID)
+
+		assert.True(t, productExists)
+	})
+
+	t.Run("exists_byID_false", func(t *testing.T) {
+
+		expectedProduct := domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		r := product.NewRepository(fields{db}.db)
+
+		rows := sqlmock.NewRows([]string{"id"}).
+			AddRow(expectedProduct.ProductCode)
+
+		mock.ExpectQuery("SELECT id FROM products WHERE id=?").
+			WithArgs(expectedProduct.ProductCode).
+			WillReturnRows(rows)
+
+		productExists := r.ExistsByID(ctx, 99)
+
+		assert.False(t, productExists)
+	})
+}
+
 func TestRepositoryDelete(t *testing.T) {
 	type fields struct {
 		db *sql.DB
@@ -332,6 +403,35 @@ func TestRepositoryDelete(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 
+	t.Run("delete_error_not_found", func(t *testing.T) {
+
+		expectedProduct := domain.Product{
+			ID:             1,
+			Description:    "Test",
+			ExpirationRate: 1,
+			FreezingRate:   1,
+			Height:         1.1,
+			Length:         1.1,
+			Netweight:      1.1,
+			ProductCode:    "Test",
+			RecomFreezTemp: 1.1,
+			Width:          1.1,
+			ProductTypeID:  1,
+			SellerID:       1,
+		}
+
+		r := product.NewRepository(fields{db}.db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta("DELETE FROM products WHERE id=?"))
+		mock.ExpectExec(regexp.QuoteMeta("DELETE FROM products WHERE id=?")).
+			WithArgs(expectedProduct.ID).
+			WillReturnResult(sqlmock.NewResult(0, 0))
+
+		err := r.Delete(ctx, expectedProduct.ID)
+
+		assert.NotNil(t, err)
+	})
+
 	t.Run("delete_error_prepare", func(t *testing.T) {
 
 		expectedProduct := domain.Product{
@@ -355,34 +455,6 @@ func TestRepositoryDelete(t *testing.T) {
 		mock.ExpectExec(regexp.QuoteMeta("DELETE FROM products WHERE id=?")).
 			WithArgs(expectedProduct.ID).
 			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
-
-		err := r.Delete(ctx, expectedProduct.ID)
-
-		assert.NotNil(t, err)
-	})
-
-	t.Run("delete_error_not_found", func(t *testing.T) {
-
-		expectedProduct := domain.Product{
-			ID:             1,
-			Description:    "Test",
-			ExpirationRate: 1,
-			FreezingRate:   1,
-			Height:         1.1,
-			Length:         1.1,
-			Netweight:      1.1,
-			ProductCode:    "Test",
-			RecomFreezTemp: 1.1,
-			Width:          1.1,
-			ProductTypeID:  1,
-			SellerID:       1,
-		}
-
-		r := product.NewRepository(fields{db}.db)
-		mock.ExpectPrepare(regexp.QuoteMeta("DELETE FROM products WHERE id=?"))
-		mock.ExpectExec(regexp.QuoteMeta("DELETE FROM products WHERE id=?")).
-			WithArgs(1).
-			WillReturnResult(sqlmock.NewResult(1, 0))
 
 		err := r.Delete(ctx, expectedProduct.ID)
 
