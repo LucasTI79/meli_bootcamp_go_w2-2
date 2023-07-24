@@ -98,7 +98,7 @@ func TestGetAll(t *testing.T) {
 
 	tests := []struct {
 		name string
-		//Mocking repository.GetAll
+		//Mocking buyerRepository.GetAll
 		expectedGetAllResult []domain.Buyer
 		expectedGetAllError  error
 		expectedGetAllCalls  int
@@ -160,10 +160,10 @@ func TestCreate(t *testing.T) {
 	tests := []struct {
 		name               string
 		createBuyerRequest *dtos.CreateBuyerRequestDTO
-		// Mocking repository.Exists
+		// Mocking buyerRepository.CardNumberExists
 		expectedExistsResult bool
 		expectedExistsCalls  int
-		// Mocking repository.Save
+		// Mocking buyerRepository.Save
 		expectedSaveResult int
 		expectedSaveError  error
 		expectedSaveCalls  int
@@ -211,7 +211,7 @@ func TestCreate(t *testing.T) {
 			buyerRepositoryMock := mocks.NewBuyerRepositoryMock()
 
 			buyerRepositoryMock.On(
-				"Exists",
+				"CardNumberExists",
 				ctx,
 				mock.AnythingOfType("string"),
 			).Return(
@@ -233,7 +233,7 @@ func TestCreate(t *testing.T) {
 			assert.Equal(t, *test.expectedBuyer, *createdBuyer)
 			assert.Equal(t, test.expectedError, err)
 
-			buyerRepositoryMock.AssertNumberOfCalls(t, "Exists", test.expectedExistsCalls)
+			buyerRepositoryMock.AssertNumberOfCalls(t, "CardNumberExists", test.expectedExistsCalls)
 			buyerRepositoryMock.AssertNumberOfCalls(t, "Save", test.expectedSaveCalls)
 		})
 	}
@@ -396,7 +396,7 @@ func TestUpdate(t *testing.T) {
 			buyerService := buyer.NewService(buyerRepositoryMock)
 
 			buyerRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(test.expectedGetResult, test.expectedGetError)
-			buyerRepositoryMock.On("Exists", ctx, mock.AnythingOfType("string")).Return(test.expectedExistsResult)
+			buyerRepositoryMock.On("CardNumberExists", ctx, mock.AnythingOfType("string")).Return(test.expectedExistsResult)
 			buyerRepositoryMock.On("Update", ctx, mock.AnythingOfType("domain.Buyer")).Return(test.expectedUpdateError)
 
 			newBuyer, err := buyerService.Update(&ctx, test.id, test.updateBuyerRequest)
@@ -405,7 +405,7 @@ func TestUpdate(t *testing.T) {
 			assert.Equal(t, test.expectedError, err)
 
 			buyerRepositoryMock.AssertNumberOfCalls(t, "Get", test.expectedGetCalls)
-			buyerRepositoryMock.AssertNumberOfCalls(t, "Exists", test.expectedExistsCalls)
+			buyerRepositoryMock.AssertNumberOfCalls(t, "CardNumberExists", test.expectedExistsCalls)
 			buyerRepositoryMock.AssertNumberOfCalls(t, "Update", test.expectedUpdateCalls)
 		})
 	}

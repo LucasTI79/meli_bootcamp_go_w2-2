@@ -7,7 +7,7 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -22,7 +22,7 @@ import (
 func TestGet(t *testing.T) {
 
 	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_order.json")
-	var validPurchaseOrder entities.PurchaseOrder
+	var validPurchaseOrder domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &validPurchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +32,7 @@ func TestGet(t *testing.T) {
 		id                    string
 		expectedGetCalls      int
 		expectedGetError      error
-		expectedPurchaseOrder entities.PurchaseOrder
+		expectedPurchaseOrder domain.PurchaseOrder
 		expectedCode          int
 	}{
 		{
@@ -48,7 +48,7 @@ func TestGet(t *testing.T) {
 			id:                    "999",
 			expectedGetCalls:      1,
 			expectedGetError:      errors.ErrNotFound,
-			expectedPurchaseOrder: entities.PurchaseOrder{},
+			expectedPurchaseOrder: domain.PurchaseOrder{},
 			expectedCode:          http.StatusNotFound,
 		},
 		{
@@ -56,7 +56,7 @@ func TestGet(t *testing.T) {
 			id:                    "1",
 			expectedGetCalls:      1,
 			expectedGetError:      assert.AnError,
-			expectedPurchaseOrder: entities.PurchaseOrder{},
+			expectedPurchaseOrder: domain.PurchaseOrder{},
 			expectedCode:          http.StatusInternalServerError,
 		},
 		{
@@ -95,7 +95,7 @@ func TestGet(t *testing.T) {
 				//Parsear response
 				body, _ := io.ReadAll(res.Body)
 
-				var response entities.PurchaseOrder
+				var response domain.PurchaseOrder
 
 				json.Unmarshal(body, &response)
 
@@ -111,17 +111,17 @@ func TestGet(t *testing.T) {
 func TestGetAll(t *testing.T) {
 
 	purchaseOrdersSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_orders.json")
-	var validPurchaseOrders []entities.PurchaseOrder
+	var validPurchaseOrders []domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrdersSerialized, &validPurchaseOrders); err != nil {
 		t.Fatal(err)
 	}
 
 	tests := []struct {
 		name                 string
-		expectedGetAllResult []entities.PurchaseOrder
+		expectedGetAllResult []domain.PurchaseOrder
 		expectedGetAllError  error
 		expectedGetAllCalls  int
-		expectedResponse     []entities.PurchaseOrder
+		expectedResponse     []domain.PurchaseOrder
 		expectedCode         int
 	}{
 		{
@@ -134,18 +134,18 @@ func TestGetAll(t *testing.T) {
 		},
 		{
 			name:                 "Success empty database",
-			expectedGetAllResult: []entities.PurchaseOrder{},
+			expectedGetAllResult: []domain.PurchaseOrder{},
 			expectedGetAllError:  nil,
 			expectedGetAllCalls:  1,
-			expectedResponse:     []entities.PurchaseOrder{},
+			expectedResponse:     []domain.PurchaseOrder{},
 			expectedCode:         http.StatusNoContent,
 		},
 		{
 			name:                 "Error getting all",
-			expectedGetAllResult: []entities.PurchaseOrder{},
+			expectedGetAllResult: []domain.PurchaseOrder{},
 			expectedGetAllError:  assert.AnError,
 			expectedGetAllCalls:  1,
-			expectedResponse:     []entities.PurchaseOrder{},
+			expectedResponse:     []domain.PurchaseOrder{},
 			expectedCode:         http.StatusInternalServerError,
 		},
 	}
@@ -178,7 +178,7 @@ func TestGetAll(t *testing.T) {
 				//Parsear response
 				body, _ := io.ReadAll(res.Body)
 				var responseDTO struct {
-					Data []entities.PurchaseOrder `json:"data"`
+					Data []domain.PurchaseOrder `json:"data"`
 				}
 				json.Unmarshal(body, &responseDTO)
 
@@ -260,18 +260,18 @@ func TestDelete(t *testing.T) {
 func TestCreate(t *testing.T) {
 
 	purchaseOrderSerialized, _ := os.ReadFile("../../../../test/resources/valid_purchase_order.json")
-	var purchaseOrder entities.PurchaseOrder
+	var purchaseOrder domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &purchaseOrder); err != nil {
 		t.Fatal(err)
 	}
 
 	tests := []struct {
 		name                       string
-		createPurchaseOrderRequest entities.PurchaseOrder
-		expectedCreateResult       entities.PurchaseOrder
+		createPurchaseOrderRequest domain.PurchaseOrder
+		expectedCreateResult       domain.PurchaseOrder
 		expectedCreateError        error
 		expectedCreateCalls        int
-		expectedResponse           entities.PurchaseOrder
+		expectedResponse           domain.PurchaseOrder
 		expectedCode               int
 	}{
 		{
@@ -286,25 +286,25 @@ func TestCreate(t *testing.T) {
 		{
 			name:                       "Error creating purchaseOrder with duplicated id",
 			createPurchaseOrderRequest: purchaseOrder,
-			expectedCreateResult:       entities.PurchaseOrder{},
+			expectedCreateResult:       domain.PurchaseOrder{},
 			expectedCreateError:        errors.ErrConflict,
 			expectedCreateCalls:        1,
-			expectedResponse:           entities.PurchaseOrder{},
+			expectedResponse:           domain.PurchaseOrder{},
 			expectedCode:               http.StatusConflict,
 		},
 		{
 			name:                       "Error creating purchaseOrder",
 			createPurchaseOrderRequest: purchaseOrder,
-			expectedCreateResult:       entities.PurchaseOrder{},
+			expectedCreateResult:       domain.PurchaseOrder{},
 			expectedCreateError:        assert.AnError,
 			expectedCreateCalls:        1,
-			expectedResponse:           entities.PurchaseOrder{},
+			expectedResponse:           domain.PurchaseOrder{},
 			expectedCode:               http.StatusInternalServerError,
 		},
 		{
 			name:                       "Error invalid purchaseOrder",
-			createPurchaseOrderRequest: entities.PurchaseOrder{},
-			expectedResponse:           entities.PurchaseOrder{},
+			createPurchaseOrderRequest: domain.PurchaseOrder{},
+			expectedResponse:           domain.PurchaseOrder{},
 			expectedCode:               http.StatusUnprocessableEntity,
 		},
 	}
@@ -312,7 +312,7 @@ func TestCreate(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			purchaseOrderServiceMock := mocks.NewMockPurchaseOrderService(t)
-			purchaseOrderServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("entities.PurchaseOrder")).Return(test.expectedCreateResult, test.expectedCreateError)
+			purchaseOrderServiceMock.On("Create", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.PurchaseOrder")).Return(test.expectedCreateResult, test.expectedCreateError)
 
 			purchaseOrderHandler := purchase_orders.NewPurchaseOrderHandler(purchaseOrderServiceMock)
 
@@ -342,7 +342,7 @@ func TestCreate(t *testing.T) {
 				body, _ := io.ReadAll(res.Body)
 
 				var response struct {
-					Data entities.PurchaseOrder `json:"data"`
+					Data domain.PurchaseOrder `json:"data"`
 				}
 
 				json.Unmarshal(body, &response)
@@ -377,7 +377,7 @@ func TestUpdate(t *testing.T) {
 		ProductRecordID: &newProductRecordID,
 	}
 
-	purchaseOrderUpdated := entities.PurchaseOrder{
+	purchaseOrderUpdated := domain.PurchaseOrder{
 		ID:              1,
 		OrderNumber:     newOrderNumber,
 		OrderDate:       newOrderDate,
@@ -393,10 +393,10 @@ func TestUpdate(t *testing.T) {
 		name                       string
 		id                         string
 		updatePurchaseOrderRequest interface{}
-		expectedUpdateResult       entities.PurchaseOrder
+		expectedUpdateResult       domain.PurchaseOrder
 		expectedUpdateError        error
 		expectedUpdateCalls        int
-		expectedResponse           entities.PurchaseOrder
+		expectedResponse           domain.PurchaseOrder
 		expectedCode               int
 	}{
 		{
@@ -413,7 +413,7 @@ func TestUpdate(t *testing.T) {
 			name:                       "Error updating inexisting purchaseOrder",
 			id:                         "1",
 			updatePurchaseOrderRequest: updatePurchaseOrderRequest,
-			expectedUpdateResult:       entities.PurchaseOrder{},
+			expectedUpdateResult:       domain.PurchaseOrder{},
 			expectedUpdateError:        errors.ErrNotFound,
 			expectedUpdateCalls:        1,
 			expectedCode:               http.StatusNotFound,
@@ -422,7 +422,7 @@ func TestUpdate(t *testing.T) {
 			name:                       "Error updating purchaseOrder with duplicated card number id",
 			id:                         "1",
 			updatePurchaseOrderRequest: updatePurchaseOrderRequest,
-			expectedUpdateResult:       entities.PurchaseOrder{},
+			expectedUpdateResult:       domain.PurchaseOrder{},
 			expectedUpdateError:        errors.ErrConflict,
 			expectedUpdateCalls:        1,
 			expectedCode:               http.StatusConflict,
@@ -431,7 +431,7 @@ func TestUpdate(t *testing.T) {
 			name:                       "Error updating purchaseOrder",
 			id:                         "1",
 			updatePurchaseOrderRequest: updatePurchaseOrderRequest,
-			expectedUpdateResult:       entities.PurchaseOrder{},
+			expectedUpdateResult:       domain.PurchaseOrder{},
 			expectedUpdateError:        assert.AnError,
 			expectedUpdateCalls:        1,
 			expectedCode:               http.StatusInternalServerError,
@@ -480,7 +480,7 @@ func TestUpdate(t *testing.T) {
 			if test.expectedCode == http.StatusOK {
 				//Parsear response
 				body, _ := io.ReadAll(res.Body)
-				var purchaseOrderResponse entities.PurchaseOrder
+				var purchaseOrderResponse domain.PurchaseOrder
 				json.Unmarshal(body, &purchaseOrderResponse)
 
 				// Valida o response

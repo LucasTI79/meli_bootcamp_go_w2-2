@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "card_number_id": "1234567890",
+    "first_name": "Roberto",
+    "last_name": "Pêra"
+  },
+  {
+    "id": 2,
+    "card_number_id": "09876543210",
+    "first_name": "Flecha",
+    "last_name": "Pêra"
+  }
+]

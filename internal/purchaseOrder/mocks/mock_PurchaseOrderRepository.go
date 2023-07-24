@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 
-	entities "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -67,18 +67,18 @@ func (_m *MockPurchaseOrderRepository) Exists(ctx context.Context, id int) bool 
 }
 
 // Get provides a mock function with given fields: ctx, id
-func (_m *MockPurchaseOrderRepository) Get(ctx context.Context, id int) (entities.PurchaseOrder, error) {
+func (_m *MockPurchaseOrderRepository) Get(ctx context.Context, id int) (domain.PurchaseOrder, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 entities.PurchaseOrder
+	var r0 domain.PurchaseOrder
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, int) (entities.PurchaseOrder, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) (domain.PurchaseOrder, error)); ok {
 		return rf(ctx, id)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, int) entities.PurchaseOrder); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int) domain.PurchaseOrder); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Get(0).(entities.PurchaseOrder)
+		r0 = ret.Get(0).(domain.PurchaseOrder)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, int) error); ok {
@@ -91,19 +91,19 @@ func (_m *MockPurchaseOrderRepository) Get(ctx context.Context, id int) (entitie
 }
 
 // GetAll provides a mock function with given fields: ctx
-func (_m *MockPurchaseOrderRepository) GetAll(ctx context.Context) ([]entities.PurchaseOrder, error) {
+func (_m *MockPurchaseOrderRepository) GetAll(ctx context.Context) ([]domain.PurchaseOrder, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []entities.PurchaseOrder
+	var r0 []domain.PurchaseOrder
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) ([]entities.PurchaseOrder, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) ([]domain.PurchaseOrder, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) []entities.PurchaseOrder); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) []domain.PurchaseOrder); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]entities.PurchaseOrder)
+			r0 = ret.Get(0).([]domain.PurchaseOrder)
 		}
 	}
 
@@ -117,21 +117,21 @@ func (_m *MockPurchaseOrderRepository) GetAll(ctx context.Context) ([]entities.P
 }
 
 // Save provides a mock function with given fields: ctx, _a1
-func (_m *MockPurchaseOrderRepository) Save(ctx context.Context, _a1 entities.PurchaseOrder) (int, error) {
+func (_m *MockPurchaseOrderRepository) Save(ctx context.Context, _a1 domain.PurchaseOrder) (int, error) {
 	ret := _m.Called(ctx, _a1)
 
 	var r0 int
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.PurchaseOrder) (int, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.PurchaseOrder) (int, error)); ok {
 		return rf(ctx, _a1)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, entities.PurchaseOrder) int); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.PurchaseOrder) int); ok {
 		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Get(0).(int)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, entities.PurchaseOrder) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, domain.PurchaseOrder) error); ok {
 		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
@@ -141,11 +141,11 @@ func (_m *MockPurchaseOrderRepository) Save(ctx context.Context, _a1 entities.Pu
 }
 
 // Update provides a mock function with given fields: ctx, _a1
-func (_m *MockPurchaseOrderRepository) Update(ctx context.Context, _a1 entities.PurchaseOrder) error {
+func (_m *MockPurchaseOrderRepository) Update(ctx context.Context, _a1 domain.PurchaseOrder) error {
 	ret := _m.Called(ctx, _a1)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, entities.PurchaseOrder) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.PurchaseOrder) error); ok {
 		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Error(0)

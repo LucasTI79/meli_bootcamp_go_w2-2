@@ -7,34 +7,42 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
-// Repository encapsulates the storage of a buyer.
-type Repository interface {
+// BuyerRepository encapsulates the storage of a buyer.
+type BuyerRepository interface {
 	GetAll(ctx context.Context) ([]domain.Buyer, error)
 	Get(ctx context.Context, id int) (domain.Buyer, error)
-	Exists(ctx context.Context, cardNumberID string) bool
+	CardNumberExists(ctx context.Context, cardNumberID string) bool
 	Save(ctx context.Context, b domain.Buyer) (int, error)
 	Update(ctx context.Context, b domain.Buyer) error
 	Delete(ctx context.Context, id int) error
 }
 
-type repository struct {
+const (
+	GetAllBuyers    = "SELECT buyers.id, buyers.card_number_id, buyers.first_name, buyers.last_name FROM buyers"
+	GetBuyerByID    = "SELECT buyers.id, buyers.card_number_id, buyers.first_name, buyers.last_name FROM buyers WHERE id = ?"
+	ExistsBuyerByID = "SELECT buyers.card_number_id FROM buyers WHERE cardNumberID=?"
+	SaveBuyer       = "INSERT INTO buyers(card_number_id,first_name,last_name) VALUES (?,?,?)"
+	UpdateBuyer     = "UPDATE buyers SET card_number_id=?,first_name=?,last_name=?  WHERE id=?"
+	DeleteBuyerByID = "DELETE FROM buyers WHERE id = ?"
+)
+
+type buyerRepository struct {
 	db *sql.DB
 }
 
-func NewRepository(db *sql.DB) Repository {
-	return &repository{
+func NewBuyerRepository(db *sql.DB) BuyerRepository {
+	return &buyerRepository{
 		db: db,
 	}
 }
 
-func (r *repository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
-	query := "SELECT * FROM buyers"
-	rows, err := r.db.Query(query)
+func (r *buyerRepository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
+	buyers := make([]domain.Buyer, 0)
+
+	rows, err := r.db.Query(GetAllBuyers)
 	if err != nil {
 		return nil, err
 	}
-
-	var buyers []domain.Buyer
 
 	for rows.Next() {
 		b := domain.Buyer{}
@@ -45,9 +53,8 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Buyer, error) {
 	return buyers, nil
 }
 
-func (r *repository) Get(ctx context.Context, id int) (domain.Buyer, error) {
-	query := "SELECT * FROM buyers WHERE id = ?;"
-	row := r.db.QueryRow(query, id)
+func (r *buyerRepository) Get(ctx context.Context, id int) (domain.Buyer, error) {
+	row := r.db.QueryRow(GetBuyerByID, id)
 	b := domain.Buyer{}
 	err := row.Scan(&b.ID, &b.CardNumberID, &b.FirstName, &b.LastName)
 	if err != nil {
@@ -57,16 +64,15 @@ func (r *repository) Get(ctx context.Context, id int) (domain.Buyer, error) {
 	return b, nil
 }
 
-func (r *repository) Exists(ctx context.Context, cardNumberID string) bool {
-	query := "SELECT card_number_id FROM buyers WHERE card_number_id=?;"
-	row := r.db.QueryRow(query, cardNumberID)
-	err := row.Scan(&cardNumberID)
+func (r *buyerRepository) CardNumberExists(ctx context.Context, cardNumberID string) bool {
+	row := r.db.QueryRow(ExistsBuyerByID, cardNumberID)
+	var foundId string
+	err := row.Scan(&foundId)
 	return err == nil
 }
 
-func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
-	query := "INSERT INTO buyers(card_number_id,first_name,last_name) VALUES (?,?,?)"
-	stmt, err := r.db.Prepare(query)
+func (r *buyerRepository) Save(ctx context.Context, b domain.Buyer) (int, error) {
+	stmt, err := r.db.Prepare(SaveBuyer)
 	if err != nil {
 		return 0, err
 	}
@@ -84,14 +90,13 @@ func (r *repository) Save(ctx context.Context, b domain.Buyer) (int, error) {
 	return int(id), nil
 }
 
-func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
-	query := "UPDATE buyers SET first_name=?, last_name=?  WHERE id=?"
-	stmt, err := r.db.Prepare(query)
+func (r *buyerRepository) Update(ctx context.Context, b domain.Buyer) error {
+	stmt, err := r.db.Prepare(UpdateBuyer)
 	if err != nil {
 		return err
 	}
 
-	res, err := stmt.Exec(&b.FirstName, &b.LastName, &b.ID)
+	res, err := stmt.Exec(&b.CardNumberID, &b.FirstName, &b.LastName, &b.ID)
 	if err != nil {
 		return err
 	}
@@ -104,9 +109,8 @@ func (r *repository) Update(ctx context.Context, b domain.Buyer) error {
 	return nil
 }
 
-func (r *repository) Delete(ctx context.Context, id int) error {
-	query := "DELETE FROM buyers WHERE id = ?"
-	stmt, err := r.db.Prepare(query)
+func (r *buyerRepository) Delete(ctx context.Context, id int) error {
+	stmt, err := r.db.Prepare(DeleteBuyerByID)
 	if err != nil {
 		return err
 	}

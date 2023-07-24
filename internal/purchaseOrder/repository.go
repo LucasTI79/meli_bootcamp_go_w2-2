@@ -4,15 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
 type PurchaseOrderRepository interface {
-	GetAll(ctx context.Context) ([]entities.PurchaseOrder, error)
-	Get(ctx context.Context, id int) (entities.PurchaseOrder, error)
+	GetAll(ctx context.Context) ([]domain.PurchaseOrder, error)
+	Get(ctx context.Context, id int) (domain.PurchaseOrder, error)
 	Exists(ctx context.Context, id int) bool
-	Save(ctx context.Context, purchaseOrder entities.PurchaseOrder) (int, error)
-	Update(ctx context.Context, purchaseOrder entities.PurchaseOrder) error
+	Save(ctx context.Context, purchaseOrder domain.PurchaseOrder) (int, error)
+	Update(ctx context.Context, purchaseOrder domain.PurchaseOrder) error
 	Delete(ctx context.Context, id int) error
 	CountByBuyerID(ctx context.Context, buyerID int) (int, error)
 }
@@ -37,8 +37,8 @@ func NewPurchaseOrderRepository(db *sql.DB) PurchaseOrderRepository {
 	}
 }
 
-func (r *purchaseOrderRepository) GetAll(ctx context.Context) ([]entities.PurchaseOrder, error) {
-	localities := make([]entities.PurchaseOrder, 0)
+func (r *purchaseOrderRepository) GetAll(ctx context.Context) ([]domain.PurchaseOrder, error) {
+	localities := make([]domain.PurchaseOrder, 0)
 
 	rows, err := r.db.Query(GetAllPurchaseOrders)
 	if err != nil {
@@ -46,7 +46,7 @@ func (r *purchaseOrderRepository) GetAll(ctx context.Context) ([]entities.Purcha
 	}
 
 	for rows.Next() {
-		purchaseOrder := entities.PurchaseOrder{}
+		purchaseOrder := domain.PurchaseOrder{}
 		err := rows.Scan(&purchaseOrder.ID, &purchaseOrder.OrderNumber, &purchaseOrder.OrderDate, &purchaseOrder.TrackingCode, &purchaseOrder.BuyerID, &purchaseOrder.CarrierID, &purchaseOrder.OrderStatusID, &purchaseOrder.WarehouseID, &purchaseOrder.ProductRecordID)
 		if err != nil {
 			return localities, err
@@ -58,12 +58,12 @@ func (r *purchaseOrderRepository) GetAll(ctx context.Context) ([]entities.Purcha
 	return localities, rows.Err()
 }
 
-func (r *purchaseOrderRepository) Get(ctx context.Context, id int) (entities.PurchaseOrder, error) {
+func (r *purchaseOrderRepository) Get(ctx context.Context, id int) (domain.PurchaseOrder, error) {
 	row := r.db.QueryRow(GetPurchaseOrderByID, id)
-	purchaseOrder := entities.PurchaseOrder{}
+	purchaseOrder := domain.PurchaseOrder{}
 	err := row.Scan(&purchaseOrder.ID, &purchaseOrder.OrderNumber, &purchaseOrder.OrderDate, &purchaseOrder.TrackingCode, &purchaseOrder.BuyerID, &purchaseOrder.CarrierID, &purchaseOrder.OrderStatusID, &purchaseOrder.WarehouseID, &purchaseOrder.ProductRecordID)
 	if err != nil {
-		return entities.PurchaseOrder{}, err
+		return domain.PurchaseOrder{}, err
 	}
 
 	return purchaseOrder, nil
@@ -76,7 +76,7 @@ func (r *purchaseOrderRepository) Exists(ctx context.Context, id int) bool {
 	return err == nil
 }
 
-func (r *purchaseOrderRepository) Save(ctx context.Context, purchaseOrder entities.PurchaseOrder) (int, error) {
+func (r *purchaseOrderRepository) Save(ctx context.Context, purchaseOrder domain.PurchaseOrder) (int, error) {
 	stmt, err := r.db.Prepare(SavePurchaseOrder)
 	if err != nil {
 		return 0, err
@@ -95,7 +95,7 @@ func (r *purchaseOrderRepository) Save(ctx context.Context, purchaseOrder entiti
 	return int(id), nil
 }
 
-func (r *purchaseOrderRepository) Update(ctx context.Context, purchaseOrder entities.PurchaseOrder) error {
+func (r *purchaseOrderRepository) Update(ctx context.Context, purchaseOrder domain.PurchaseOrder) error {
 	stmt, err := r.db.Prepare(UpdatePurchaseOrder)
 	if err != nil {
 		return err

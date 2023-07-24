@@ -24,10 +24,10 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository
+	repository BuyerRepository
 }
 
-func NewService(repository Repository) Service {
+func NewService(repository BuyerRepository) Service {
 	return &service{
 		repository,
 	}
@@ -62,7 +62,7 @@ func (service *service) GetAll(ctx *context.Context) (*[]domain.Buyer, error) {
 func (service *service) Create(ctx *context.Context, createBuyerRequest *dtos.CreateBuyerRequestDTO) (*domain.Buyer, error) {
 	buyer := createBuyerRequest.ToDomain()
 
-	cardNumberAlreadyExists := service.repository.Exists(*ctx, createBuyerRequest.CardNumberID)
+	cardNumberAlreadyExists := service.repository.CardNumberExists(*ctx, createBuyerRequest.CardNumberID)
 	if cardNumberAlreadyExists {
 		return &domain.Buyer{}, ErrCardNumberDuplicated
 	}
@@ -86,7 +86,7 @@ func (service *service) Update(ctx *context.Context, id int, updateBuyerRequest 
 
 	// Sobrescreve os dados do buyer, se houver alteração no request
 	if updateBuyerRequest.CardNumberID != nil {
-		cardNumberAlreadyExists := service.repository.Exists(*ctx, *updateBuyerRequest.CardNumberID)
+		cardNumberAlreadyExists := service.repository.CardNumberExists(*ctx, *updateBuyerRequest.CardNumberID)
 		if cardNumberAlreadyExists {
 			return &domain.Buyer{}, ErrCardNumberDuplicated
 		}

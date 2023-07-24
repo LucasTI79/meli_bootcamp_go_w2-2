@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
 	errors2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"net/http"
@@ -26,12 +26,12 @@ func NewLocalityHandler(localityService locality.LocalityService) *LocalityHandl
 
 // Get is the handler to search for a locality and return their details.
 //
-//	@Summary		Get Locality
+//	@Summary		Get Buyer
 //	@Tags			Localities
-//	@Description	Get the details of a Locality
+//	@Description	Get the details of a Buyer
 //	@Produce		json
-//	@Param			id	path		string	true	"ID of Locality to be searched"
-//	@Success		200	{object}	entities.Locality
+//	@Param			id	path		string	true	"ID of Buyer to be searched"
+//	@Success		200	{object}	domain.Locality
 //	@Failure		400	{object}	web.errorResponse
 //	@Failure		404	{object}	web.errorResponse
 //	@Failure		500	{object}	web.errorResponse
@@ -69,7 +69,7 @@ func (handler *LocalityHandler) Get() gin.HandlerFunc {
 //	@Description	Get the details of all localities on the database.
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	web.response{data=[]entities.Locality}
+//	@Success		200	{object}	web.response{data=[]domain.Locality}
 //	@Failure		500	{object}	web.errorResponse
 //	@Router			/api/v1/localities [get]
 func (handler *LocalityHandler) GetAll() gin.HandlerFunc {
@@ -92,20 +92,20 @@ func (handler *LocalityHandler) GetAll() gin.HandlerFunc {
 
 // Create is the handler to create a locality.
 //
-//	@Summary		Create Locality
+//	@Summary		Create Buyer
 //	@Tags			Localities
 //	@Description	Save a locality on the database.
 //	@Accept			json
 //	@Produce		json
-//	@Param			Seller	body		entities.Locality	true	"Locality to Create"
-//	@Success		201		{object}	entities.Locality
+//	@Param			Seller	body		domain.Locality	true	"Locality to Create"
+//	@Success		201		{object}	domain.Locality
 //	@Failure		422		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
 //	@Router			/api/v1/localities [post]
 func (handler *LocalityHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		var createLocalityRequest entities.Locality
+		var createLocalityRequest domain.Locality
 		if err := c.ShouldBindJSON(&createLocalityRequest); err != nil {
 			web.Error(c, http.StatusUnprocessableEntity, err.Error())
 			return
@@ -130,14 +130,14 @@ func (handler *LocalityHandler) Create() gin.HandlerFunc {
 
 // Update is the handler to update a locality details.
 //
-//	@Summary		Update Locality
+//	@Summary		Update Buyer
 //	@Tags			Localities
-//	@Description	Update the details of a Locality
+//	@Description	Update the details of a Buyer
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string						true	"ID of Locality to be updated"
-//	@Param			Locality	body		dtos.UpdateLocalityRequestDTO	true	"Updated Locality details"
-//	@Success		200		{object}	entities.Locality
+//	@Param			id		path		string						true	"ID of Buyer to be updated"
+//	@Param			Buyer	body		dtos.UpdateLocalityRequestDTO	true	"Updated Buyer details"
+//	@Success		200		{object}	domain.Locality
 //	@Failure		400		{object}	web.errorResponse
 //	@Failure		404		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
@@ -177,12 +177,12 @@ func (handler *LocalityHandler) Update() gin.HandlerFunc {
 
 // Delete is the handler to delete a locality.
 //
-//	@Summary		Delete Locality
+//	@Summary		Delete Buyer
 //	@Tags			Localities
 //	@Description	Delete Localities
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path	string	true	"ID of a Locality to be excluded"
+//	@Param			id	path	string	true	"ID of a Buyer to be excluded"
 //	@Success		204
 //	@Failure		400	{object}	web.errorResponse
 //	@Failure		404	{object}	web.errorResponse
@@ -220,7 +220,7 @@ func (handler *LocalityHandler) Delete() gin.HandlerFunc {
 //	@Description	search for a locality and return the number of sellers.
 //	@Accept			json
 //	@Produce		json
-//	@Param			id		path		string						true	"ID of Locality to be searched"
+//	@Param			id		path		string						true	"ID of Buyer to be searched"
 //	@Success		200		{object}	web.response{data=dtos.GetNumberOfSellersResponseDTO}
 //	@Failure		400		{object}	web.errorResponse
 //	@Failure		404		{object}	web.errorResponse

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"regexp"
@@ -25,7 +25,7 @@ func Test_purchaseOrderRepository_GetAll(t *testing.T) {
 	ctx := context.TODO()
 
 	validPurchaseOrdersSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_orders.json")
-	var validPurchaseOrders []entities.PurchaseOrder
+	var validPurchaseOrders []domain.PurchaseOrder
 	if err := json.Unmarshal(validPurchaseOrdersSerialized, &validPurchaseOrders); err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func Test_purchaseOrderRepository_GetAll(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    []entities.PurchaseOrder
+		want    []domain.PurchaseOrder
 		wantErr bool
 	}{
 		{
@@ -56,7 +56,7 @@ func Test_purchaseOrderRepository_GetAll(t *testing.T) {
 			args: args{
 				ctx: ctx,
 			},
-			want:    []entities.PurchaseOrder{},
+			want:    []domain.PurchaseOrder{},
 			wantErr: true,
 		},
 	}
@@ -98,7 +98,7 @@ func Test_purchaseOrderRepository_Get(t *testing.T) {
 	ctx := context.TODO()
 
 	purchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
-	var validPurchaseOrder entities.PurchaseOrder
+	var validPurchaseOrder domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &validPurchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +107,7 @@ func Test_purchaseOrderRepository_Get(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    entities.PurchaseOrder
+		want    domain.PurchaseOrder
 		wantErr bool
 	}{
 		{
@@ -127,7 +127,7 @@ func Test_purchaseOrderRepository_Get(t *testing.T) {
 				ctx: ctx,
 				id:  999,
 			},
-			want:    entities.PurchaseOrder{},
+			want:    domain.PurchaseOrder{},
 			wantErr: true,
 		},
 	}
@@ -165,7 +165,7 @@ func Test_purchaseOrderRepository_Exists(t *testing.T) {
 	ctx := context.TODO()
 
 	purchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
-	var purchaseOrder entities.PurchaseOrder
+	var purchaseOrder domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &purchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -228,14 +228,14 @@ func Test_purchaseOrderRepository_Save(t *testing.T) {
 
 	type args struct {
 		ctx           context.Context
-		purchaseOrder entities.PurchaseOrder
+		purchaseOrder domain.PurchaseOrder
 	}
 
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
 	purchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
-	var purchaseOrder entities.PurchaseOrder
+	var purchaseOrder domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &purchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -294,14 +294,14 @@ func Test_purchaseOrderRepository_Update(t *testing.T) {
 
 	type args struct {
 		ctx           context.Context
-		purchaseOrder entities.PurchaseOrder
+		purchaseOrder domain.PurchaseOrder
 	}
 
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
 	purchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
-	var purchaseOrder entities.PurchaseOrder
+	var purchaseOrder domain.PurchaseOrder
 	if err := json.Unmarshal(purchaseOrderSerialized, &purchaseOrder); err != nil {
 		t.Fatal(err)
 	}
