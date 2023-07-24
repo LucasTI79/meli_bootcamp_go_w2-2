@@ -11,7 +11,7 @@ import (
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
 
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
-	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders"
+	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_order"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
