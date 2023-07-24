@@ -10,7 +10,7 @@ import (
 type Repository interface {
 	GetAll(ctx context.Context) ([]domain.InboundOrders, error)
 	Get(ctx context.Context, id int) (domain.InboundOrders, error)
-	Exists(ctx context.Context, cardNumberID string) bool
+	Exists(ctx context.Context, id string) bool
 	Save(ctx context.Context, e domain.InboundOrders) (int, error)
 	Update(ctx context.Context, e domain.InboundOrders) error
 	Delete(ctx context.Context, id int) error

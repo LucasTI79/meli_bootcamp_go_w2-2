@@ -13,7 +13,7 @@ import (
 
 var (
 	ErrNotFound = errors.New("inbound orders not found")
-	ErrConflict = errors.New("409 Conflict: Inboud Orders with ID already exists")
+	ErrConflict = errors.New("409 Conflict: Inbound Orders with ID already exists")
 )
 
 type InboundOrders struct {
@@ -147,7 +147,7 @@ func (i *InboundOrders) Save() gin.HandlerFunc {
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
-				web.Error(c, http.StatusBadRequest, "Error to save request: %s", err.Error())
+				web.Error(c, http.StatusInternalServerError, "Error to save request: %s", err.Error())
 				return
 			}
 
@@ -221,5 +221,68 @@ func (i *InboundOrders) Delete() gin.HandlerFunc {
 		}
 
 		web.Success(c, http.StatusNoContent, nil)
+	}
+}
+
+// Method CountInboundOrders
+// ListInboundOrdersCount godoc
+//
+//	@Summary		List InboundOrders Count
+//	@Tags			CountInboundOrders
+//	@Description	get countInboundOrders
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/reportInboundOrders [get]
+func (i *InboundOrders) CountInboundOrders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+		countInboundOrders, err := i.service.CountInboundOrders(&ctx)
+
+		if err != nil {
+			web.Error(c, http.StatusInternalServerError, "Failed to get inbound Orders: %s", err.Error())
+			return
+		}
+
+		if len(countInboundOrders) == 0 {
+			web.Error(c, http.StatusNoContent, "There are no inbound Orders stored: ")
+			return
+		}
+
+		web.Success(c, http.StatusOK, countInboundOrders)
+	}
+}
+
+// Method CountInboundOrdersByID
+// ListInboundOrdersCountBuID godoc
+//
+//	@Summary		List InboundOrders Count by Id
+//	@Tags			CountInboundOrdersByID
+//	@Description	get countInboundOrdersById
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	web.response
+//	@Router			/api/v1/reportInboundOrders/{id} [get]
+func (i *InboundOrders) CountInboundOrdersByID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			web.Error(c, http.StatusBadRequest, "Invalid employee ID: %s", err.Error())
+			return
+		}
+
+		ctx := c.Request.Context()
+		countInboundOrders, err := i.service.CountInboundOrdersByID(&ctx, id)
+
+		if err != nil {
+			if errors.Is(err, ErrNotFound) {
+				web.Error(c, http.StatusNotFound, "InboundOrders not found: %s", err.Error())
+				return
+			}
+			web.Error(c, http.StatusInternalServerError, "Failed to CountInboundOrdersByID: %s", err.Error())
+			return
+		}
+
+		web.Success(c, http.StatusOK, countInboundOrders)
 	}
 }
