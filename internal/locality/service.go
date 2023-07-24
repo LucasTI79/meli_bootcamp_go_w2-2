@@ -1,17 +1,10 @@
-package services
+package locality
 
 import (
 	"context"
-	"errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
+	errors2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
-)
-
-// Errors
-var (
-	ErrNotFound = errors.New("locality not found")
-	ErrConflict = errors.New("ID already exists")
 )
 
 type LocalityService interface {
@@ -24,10 +17,10 @@ type LocalityService interface {
 }
 
 type localityService struct {
-	localityRepository repositories.LocalityRepository
+	localityRepository LocalityRepository
 }
 
-func NewLocalityService(r repositories.LocalityRepository) LocalityService {
+func NewLocalityService(r LocalityRepository) LocalityService {
 	return &localityService{
 		localityRepository: r,
 	}
@@ -56,7 +49,7 @@ func (service *localityService) GetAll(ctx *context.Context) ([]entities.Localit
 func (service *localityService) Create(ctx *context.Context, locality entities.Locality) (entities.Locality, error) {
 	existingLocality := service.localityRepository.Exists(*ctx, locality.ID)
 	if existingLocality {
-		return entities.Locality{}, ErrConflict
+		return entities.Locality{}, errors2.ErrConflict
 	}
 
 	id, err := service.localityRepository.Save(*ctx, locality)
@@ -77,7 +70,7 @@ func (service *localityService) Update(ctx *context.Context, id int, updateLocal
 
 	existingLocalitySearch := service.localityRepository.Exists(*ctx, id)
 	if existingLocalitySearch {
-		return entities.Locality{}, ErrConflict
+		return entities.Locality{}, errors2.ErrConflict
 	}
 
 	if updateLocalityRequest.CountryName != nil {

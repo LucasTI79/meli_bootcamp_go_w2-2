@@ -1,16 +1,21 @@
-package repositories
+package locality
 
 import (
 	"context"
 	"database/sql"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 )
 
-func LocalityTableHeaders() []string {
-	return []string{"id", "country_name", "province_name", "locality_name"}
+type LocalityRepository interface {
+	GetAll(ctx context.Context) ([]entities.Locality, error)
+	Get(ctx context.Context, id int) (entities.Locality, error)
+	Exists(ctx context.Context, id int) bool
+	Save(ctx context.Context, locality entities.Locality) (int, error)
+	Update(ctx context.Context, locality entities.Locality) error
+	Delete(ctx context.Context, id int) error
+	CountSellers(ctx context.Context, id int) (int, error)
 }
 
 const (
@@ -27,7 +32,7 @@ type localityRepository struct {
 	db *sql.DB
 }
 
-func NewLocalityRepository(db *sql.DB) repositories.LocalityRepository {
+func NewLocalityRepository(db *sql.DB) LocalityRepository {
 	return &localityRepository{
 		db: db,
 	}
@@ -127,7 +132,7 @@ func (r *localityRepository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return services.ErrNotFound
+		return errors.ErrNotFound
 	}
 
 	return nil

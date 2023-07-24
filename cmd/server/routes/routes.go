@@ -2,25 +2,23 @@ package routes
 
 import (
 	"database/sql"
-
-	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/integrations/database/repositories"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
-	productbatcheshandler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/product_batches_handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
+	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
+	productbatcheshandler "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/product_batches_handler"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/products"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/productsRecords"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sections"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/sellers"
 	warehouse2 "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/warehouses"
-
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/buyer"
-	prodBatches "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productbatches"
 	carrier "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/carriers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productRecord"
+	prodBatches "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/productbatches"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 
@@ -137,8 +135,8 @@ func (r *router) buildBuyerRoutes() {
 	buyerRepository := buyer.NewRepository(r.db)
 	buyerService := buyer.NewService(buyerRepository)
 
-	purchaseOrdersRepository := repositories.NewPurchaseOrderRepository(r.db)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrdersRepository, buyerRepository)
+	purchaseOrdersRepository := purchaseOrder.NewPurchaseOrderRepository(r.db)
+	purchaseOrderService := purchaseOrder.NewPurchaseOrderService(purchaseOrdersRepository, buyerRepository)
 
 	buyerHandler := buyers.NewBuyerHandler(buyerService, purchaseOrderService)
 
@@ -157,8 +155,8 @@ func (r *router) buildBuyerRoutes() {
 }
 
 func (r *router) buildLocalityRoutes() {
-	localityRepository := repositories.NewLocalityRepository(r.db)
-	localityService := services.NewLocalityService(localityRepository)
+	localityRepository := locality.NewLocalityRepository(r.db)
+	localityService := locality.NewLocalityService(localityRepository)
 	localityHandler := handlers.NewLocalityHandler(localityService)
 
 	localityRoutes := r.rg.Group("/localities/")
@@ -171,9 +169,9 @@ func (r *router) buildLocalityRoutes() {
 }
 
 func (r *router) buildPurchaseOrderRoutes() {
-	purchaseOrderRepository := repositories.NewPurchaseOrderRepository(r.db)
+	purchaseOrderRepository := purchaseOrder.NewPurchaseOrderRepository(r.db)
 	buyerRepository := buyer.NewRepository(r.db)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepository, buyerRepository)
+	purchaseOrderService := purchaseOrder.NewPurchaseOrderService(purchaseOrderRepository, buyerRepository)
 	purchaseOrderHandler := purchase_orders.NewPurchaseOrderHandler(purchaseOrderService)
 
 	purchaseOrderRoutes := r.rg.Group("/purchase-orders/")

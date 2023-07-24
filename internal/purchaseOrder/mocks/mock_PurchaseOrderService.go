@@ -40,23 +40,23 @@ func (_m *MockPurchaseOrderService) CountByBuyerID(ctx *context.Context, buyerID
 	return r0, r1
 }
 
-// Create provides a mock function with given fields: ctx, purchaseOrder
-func (_m *MockPurchaseOrderService) Create(ctx *context.Context, purchaseOrder entities.PurchaseOrder) (entities.PurchaseOrder, error) {
-	ret := _m.Called(ctx, purchaseOrder)
+// Create provides a mock function with given fields: ctx, _a1
+func (_m *MockPurchaseOrderService) Create(ctx *context.Context, _a1 entities.PurchaseOrder) (entities.PurchaseOrder, error) {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 entities.PurchaseOrder
 	var r1 error
 	if rf, ok := ret.Get(0).(func(*context.Context, entities.PurchaseOrder) (entities.PurchaseOrder, error)); ok {
-		return rf(ctx, purchaseOrder)
+		return rf(ctx, _a1)
 	}
 	if rf, ok := ret.Get(0).(func(*context.Context, entities.PurchaseOrder) entities.PurchaseOrder); ok {
-		r0 = rf(ctx, purchaseOrder)
+		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Get(0).(entities.PurchaseOrder)
 	}
 
 	if rf, ok := ret.Get(1).(func(*context.Context, entities.PurchaseOrder) error); ok {
-		r1 = rf(ctx, purchaseOrder)
+		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}

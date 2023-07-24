@@ -1,18 +1,12 @@
-package services
+package purchaseOrder
 
 import (
 	"context"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 )
-
-//// Errors
-//var (
-//	ErrNotFound = errors.New("purchaseOrder not found")
-//	ErrConflict = errors.New("ID already exists")
-//)
 
 type PurchaseOrderService interface {
 	Get(ctx *context.Context, id int) (entities.PurchaseOrder, error)
@@ -24,11 +18,11 @@ type PurchaseOrderService interface {
 }
 
 type purchaseOrderService struct {
-	purchaseOrderRepository repositories.PurchaseOrderRepository
+	purchaseOrderRepository PurchaseOrderRepository
 	buyerRepository         buyer.Repository
 }
 
-func NewPurchaseOrderService(r repositories.PurchaseOrderRepository, buyerRepository buyer.Repository) PurchaseOrderService {
+func NewPurchaseOrderService(r PurchaseOrderRepository, buyerRepository buyer.Repository) PurchaseOrderService {
 	return &purchaseOrderService{
 		purchaseOrderRepository: r,
 		buyerRepository:         buyerRepository,
@@ -58,7 +52,7 @@ func (service *purchaseOrderService) GetAll(ctx *context.Context) ([]entities.Pu
 func (service *purchaseOrderService) Create(ctx *context.Context, purchaseOrder entities.PurchaseOrder) (entities.PurchaseOrder, error) {
 	existingPurchaseOrder := service.purchaseOrderRepository.Exists(*ctx, purchaseOrder.ID)
 	if existingPurchaseOrder {
-		return entities.PurchaseOrder{}, ErrConflict
+		return entities.PurchaseOrder{}, errors.ErrConflict
 	}
 
 	id, err := service.purchaseOrderRepository.Save(*ctx, purchaseOrder)
@@ -79,7 +73,7 @@ func (service *purchaseOrderService) Update(ctx *context.Context, id int, update
 
 	existingPurchaseOrderSearch := service.purchaseOrderRepository.Exists(*ctx, id)
 	if existingPurchaseOrderSearch {
-		return entities.PurchaseOrder{}, ErrConflict
+		return entities.PurchaseOrder{}, errors.ErrConflict
 	}
 
 	if updatePurchaseOrderRequest.OrderNumber != nil {

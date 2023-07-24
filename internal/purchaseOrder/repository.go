@@ -1,13 +1,21 @@
-package repositories
+package purchaseOrder
 
 import (
 	"context"
 	"database/sql"
-
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
 )
+
+type PurchaseOrderRepository interface {
+	GetAll(ctx context.Context) ([]entities.PurchaseOrder, error)
+	Get(ctx context.Context, id int) (entities.PurchaseOrder, error)
+	Exists(ctx context.Context, id int) bool
+	Save(ctx context.Context, purchaseOrder entities.PurchaseOrder) (int, error)
+	Update(ctx context.Context, purchaseOrder entities.PurchaseOrder) error
+	Delete(ctx context.Context, id int) error
+	CountByBuyerID(ctx context.Context, buyerID int) (int, error)
+}
 
 const (
 	GetAllPurchaseOrders    = "SELECT  purchase_orders.id, purchase_orders.order_number, purchase_orders.order_date, purchase_orders.tracking_code, purchase_orders.buyer_id, purchase_orders.carrier_id, purchase_orders.order_status_id, purchase_orders.warehouse_id, purchase_orders.product_record_id FROM purchase_orders"
@@ -23,7 +31,7 @@ type purchaseOrderRepository struct {
 	db *sql.DB
 }
 
-func NewPurchaseOrderRepository(db *sql.DB) repositories.PurchaseOrderRepository {
+func NewPurchaseOrderRepository(db *sql.DB) PurchaseOrderRepository {
 	return &purchaseOrderRepository{
 		db: db,
 	}
@@ -123,7 +131,7 @@ func (r *purchaseOrderRepository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return services.ErrNotFound
+		return errors.ErrNotFound
 	}
 
 	return nil

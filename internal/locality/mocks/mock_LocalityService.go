@@ -40,23 +40,23 @@ func (_m *MockLocalityService) CountSellers(ctx *context.Context, id int) (int, 
 	return r0, r1
 }
 
-// Create provides a mock function with given fields: ctx, locality
-func (_m *MockLocalityService) Create(ctx *context.Context, locality entities.Locality) (entities.Locality, error) {
-	ret := _m.Called(ctx, locality)
+// Create provides a mock function with given fields: ctx, _a1
+func (_m *MockLocalityService) Create(ctx *context.Context, _a1 entities.Locality) (entities.Locality, error) {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 entities.Locality
 	var r1 error
 	if rf, ok := ret.Get(0).(func(*context.Context, entities.Locality) (entities.Locality, error)); ok {
-		return rf(ctx, locality)
+		return rf(ctx, _a1)
 	}
 	if rf, ok := ret.Get(0).(func(*context.Context, entities.Locality) entities.Locality); ok {
-		r0 = rf(ctx, locality)
+		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Get(0).(entities.Locality)
 	}
 
 	if rf, ok := ret.Get(1).(func(*context.Context, entities.Locality) error); ok {
-		r1 = rf(ctx, locality)
+		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}

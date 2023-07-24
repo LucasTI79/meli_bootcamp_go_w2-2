@@ -7,9 +7,9 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -48,7 +48,7 @@ func TestGet(t *testing.T) {
 			name:             "Error finding locality",
 			id:               "999",
 			expectedGetCalls: 1,
-			expectedGetError: services.ErrNotFound,
+			expectedGetError: errors.ErrNotFound,
 			expectedLocality: entities.Locality{},
 			expectedCode:     http.StatusNotFound,
 		},
@@ -211,7 +211,7 @@ func TestDelete(t *testing.T) {
 		{
 			name:                "Error deleting inexistent locality",
 			id:                  "1",
-			expectedDeleteError: services.ErrNotFound,
+			expectedDeleteError: errors.ErrNotFound,
 			expectedDeleteCalls: 1,
 			expectedCode:        http.StatusNotFound,
 		},
@@ -288,7 +288,7 @@ func TestCreate(t *testing.T) {
 			name:                  "Error creating locality with duplicated id",
 			createLocalityRequest: locality,
 			expectedCreateResult:  entities.Locality{},
-			expectedCreateError:   services.ErrConflict,
+			expectedCreateError:   errors.ErrConflict,
 			expectedCreateCalls:   1,
 			expectedResponse:      entities.Locality{},
 			expectedCode:          http.StatusConflict,
@@ -395,7 +395,7 @@ func TestUpdate(t *testing.T) {
 			id:                    "1",
 			updateLocalityRequest: updateLocalityRequest,
 			expectedUpdateResult:  entities.Locality{},
-			expectedUpdateError:   services.ErrNotFound,
+			expectedUpdateError:   errors.ErrNotFound,
 			expectedUpdateCalls:   1,
 			expectedCode:          http.StatusNotFound,
 		},
@@ -404,7 +404,7 @@ func TestUpdate(t *testing.T) {
 			id:                    "1",
 			updateLocalityRequest: updateLocalityRequest,
 			expectedUpdateResult:  entities.Locality{},
-			expectedUpdateError:   services.ErrConflict,
+			expectedUpdateError:   errors.ErrConflict,
 			expectedUpdateCalls:   1,
 			expectedCode:          http.StatusConflict,
 		},
@@ -513,7 +513,7 @@ func TestGetNumberOfSellers(t *testing.T) {
 			name:                       "Error Locality not found",
 			id:                         validLocality.ID,
 			expectedGetResult:          entities.Locality{},
-			expectedGetError:           services.ErrNotFound,
+			expectedGetError:           errors.ErrNotFound,
 			expectedGetCalls:           1,
 			expectedCountSellersResult: 0,
 			expectedCountSellersError:  nil,

@@ -1,11 +1,12 @@
-package services
+package locality
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"os"
@@ -23,7 +24,7 @@ func Test_localityService_GetAll(t *testing.T) {
 	ctx := context.TODO()
 
 	var expectedLocalities []entities.Locality
-	expectedLocalitiesSerialized, _ := os.ReadFile("../../../test/resources/valid_localities.json")
+	expectedLocalitiesSerialized, _ := os.ReadFile("../../test/resources/valid_localities.json")
 	if err := json.Unmarshal(expectedLocalitiesSerialized, &expectedLocalities); err != nil {
 		t.Fatal(err)
 	}
@@ -85,7 +86,7 @@ func Test_localityService_Get(t *testing.T) {
 	ctx := context.TODO()
 
 	var expectedLocality entities.Locality
-	expectedLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	expectedLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	if err := json.Unmarshal(expectedLocalitySerialized, &expectedLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -114,11 +115,11 @@ func Test_localityService_Get(t *testing.T) {
 				ctx:               &ctx,
 				id:                expectedLocality.ID,
 				expectedGetResult: entities.Locality{},
-				expectedGetError:  ErrNotFound,
+				expectedGetError:  errors.ErrNotFound,
 				expectedGetCalls:  1,
 			},
 			want:    entities.Locality{},
-			wantErr: ErrNotFound,
+			wantErr: errors.ErrNotFound,
 		},
 		{
 			name: "Error connecting db",
@@ -164,7 +165,7 @@ func Test_localityService_Create(t *testing.T) {
 	ctx := context.TODO()
 
 	var expectedLocality entities.Locality
-	expectedLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	expectedLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	if err := json.Unmarshal(expectedLocalitySerialized, &expectedLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -201,7 +202,7 @@ func Test_localityService_Create(t *testing.T) {
 				expectedSaveCalls:    0,
 			},
 			want:    entities.Locality{},
-			wantErr: ErrConflict,
+			wantErr: errors.ErrConflict,
 		},
 		{
 			name: "Error saving locality",
@@ -267,7 +268,7 @@ func Test_localityService_Update(t *testing.T) {
 	ctx := context.TODO()
 
 	var originalLocality entities.Locality
-	originalLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	originalLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	err := json.Unmarshal(originalLocalitySerialized, &originalLocality)
 	if err != nil {
 		t.Fatal(err)
@@ -320,11 +321,11 @@ func Test_localityService_Update(t *testing.T) {
 				id:                    originalLocality.ID,
 				updateLocalityRequest: updateLocalityRequest,
 				expectedGetResult:     entities.Locality{},
-				expectedGetError:      ErrNotFound,
+				expectedGetError:      errors.ErrNotFound,
 				expectedGetCalls:      1,
 			},
 			want:    entities.Locality{},
-			wantErr: ErrNotFound,
+			wantErr: errors.ErrNotFound,
 		},
 		{
 			name: "Error duplicated locality_id",
@@ -339,7 +340,7 @@ func Test_localityService_Update(t *testing.T) {
 				expectedExistsCalls:   1,
 			},
 			want:    entities.Locality{},
-			wantErr: ErrConflict,
+			wantErr: errors.ErrConflict,
 		},
 		{
 			name: "Error updating locality",
@@ -395,7 +396,7 @@ func Test_localityService_Delete(t *testing.T) {
 	ctx := context.TODO()
 
 	var expectedLocality entities.Locality
-	expectedLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	expectedLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	if err := json.Unmarshal(expectedLocalitySerialized, &expectedLocality); err != nil {
 		t.Fatal(err)
 	}

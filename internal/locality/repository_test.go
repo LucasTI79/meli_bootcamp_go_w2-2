@@ -1,4 +1,4 @@
-package repositories
+package locality
 
 import (
 	"context"
@@ -24,7 +24,7 @@ func Test_localityRepository_GetAll(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	validLocalitiesSerialized, _ := os.ReadFile("../../../../test/resources/valid_localities.json")
+	validLocalitiesSerialized, _ := os.ReadFile("../../test/resources/valid_localities.json")
 	var validLocalities []entities.Locality
 	if err := json.Unmarshal(validLocalitiesSerialized, &validLocalities); err != nil {
 		t.Fatal(err)
@@ -82,6 +82,60 @@ func Test_localityRepository_GetAll(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error getting locality by id", func(t *testing.T) {
+
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+		db.Close()
+
+		rows := sqlmock.NewRows([]string{"id", "country_name", "province_name", "locality_name"})
+		for _, locality := range validLocalities {
+			rows.AddRow(locality.ID, locality.CountryName, locality.ProvinceName, locality.LocalityName)
+		}
+		//if tt.wantErr {
+		//	rows.RowError(0, sql.ErrNoRows)
+		//}
+
+		mock.ExpectQuery(GetAllLocalities).
+			WithArgs().
+			WillReturnRows(rows)
+
+		_, err := r.GetAll(ctx)
+
+		//assert.Equal(t, tt.want, got)
+		assert.Equal(t, true, err != nil)
+
+	})
+
+	t.Run("Error getting locality by id", func(t *testing.T) {
+
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+		//db.Close()
+
+		//rows := sqlmock.NewRows([]string{"id", "country_name", "province_name", "locality_name"})
+		//for _, locality := range validLocalities {
+		//	rows.AddRow(locality.ID, locality.CountryName, locality.ProvinceName, locality.LocalityName)
+		//}
+		//if tt.wantErr {
+		//rows.RowError(0, sql.ErrNoRows)
+		//}
+
+		//mock.ExpectQuery(GetAllLocalities).
+		//WithArgs().
+		//WillReturnRows(rows)
+
+		_, err := r.GetAll(ctx)
+
+		//assert.Equal(t, tt.want, got)
+		assert.Equal(t, true, err != nil)
+
+	})
 }
 
 func Test_localityRepository_Get(t *testing.T) {
@@ -97,7 +151,7 @@ func Test_localityRepository_Get(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	var validLocality entities.Locality
 	if err := json.Unmarshal(localitySerialized, &validLocality); err != nil {
 		t.Fatal(err)
@@ -164,7 +218,7 @@ func Test_localityRepository_Exists(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	var locality entities.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)
@@ -234,7 +288,7 @@ func Test_localityRepository_Save(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	var locality entities.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)
@@ -259,7 +313,6 @@ func Test_localityRepository_Save(t *testing.T) {
 			want:    locality.ID,
 			wantErr: false,
 		},
-		// TODO Return errors
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -280,6 +333,17 @@ func Test_localityRepository_Save(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error saving locality", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+		db.Close()
+
+		r.Save(ctx, entities.Locality{})
+
+	})
 }
 
 func Test_localityRepository_Update(t *testing.T) {
@@ -295,7 +359,7 @@ func Test_localityRepository_Update(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	var locality entities.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)

@@ -116,23 +116,23 @@ func (_m *MockPurchaseOrderRepository) GetAll(ctx context.Context) ([]entities.P
 	return r0, r1
 }
 
-// Save provides a mock function with given fields: ctx, purchaseOrder
-func (_m *MockPurchaseOrderRepository) Save(ctx context.Context, purchaseOrder entities.PurchaseOrder) (int, error) {
-	ret := _m.Called(ctx, purchaseOrder)
+// Save provides a mock function with given fields: ctx, _a1
+func (_m *MockPurchaseOrderRepository) Save(ctx context.Context, _a1 entities.PurchaseOrder) (int, error) {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 int
 	var r1 error
 	if rf, ok := ret.Get(0).(func(context.Context, entities.PurchaseOrder) (int, error)); ok {
-		return rf(ctx, purchaseOrder)
+		return rf(ctx, _a1)
 	}
 	if rf, ok := ret.Get(0).(func(context.Context, entities.PurchaseOrder) int); ok {
-		r0 = rf(ctx, purchaseOrder)
+		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Get(0).(int)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, entities.PurchaseOrder) error); ok {
-		r1 = rf(ctx, purchaseOrder)
+		r1 = rf(ctx, _a1)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -140,13 +140,13 @@ func (_m *MockPurchaseOrderRepository) Save(ctx context.Context, purchaseOrder e
 	return r0, r1
 }
 
-// Update provides a mock function with given fields: ctx, purchaseOrder
-func (_m *MockPurchaseOrderRepository) Update(ctx context.Context, purchaseOrder entities.PurchaseOrder) error {
-	ret := _m.Called(ctx, purchaseOrder)
+// Update provides a mock function with given fields: ctx, _a1
+func (_m *MockPurchaseOrderRepository) Update(ctx context.Context, _a1 entities.PurchaseOrder) error {
+	ret := _m.Called(ctx, _a1)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, entities.PurchaseOrder) error); ok {
-		r0 = rf(ctx, purchaseOrder)
+		r0 = rf(ctx, _a1)
 	} else {
 		r0 = ret.Error(0)
 	}

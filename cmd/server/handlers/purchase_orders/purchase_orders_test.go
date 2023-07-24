@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -47,7 +47,7 @@ func TestGet(t *testing.T) {
 			name:                  "Error finding purchaseOrder",
 			id:                    "999",
 			expectedGetCalls:      1,
-			expectedGetError:      services.ErrNotFound,
+			expectedGetError:      errors.ErrNotFound,
 			expectedPurchaseOrder: entities.PurchaseOrder{},
 			expectedCode:          http.StatusNotFound,
 		},
@@ -210,7 +210,7 @@ func TestDelete(t *testing.T) {
 		{
 			name:                "Error deleting inexistent purchaseOrder",
 			id:                  "1",
-			expectedDeleteError: services.ErrNotFound,
+			expectedDeleteError: errors.ErrNotFound,
 			expectedDeleteCalls: 1,
 			expectedCode:        http.StatusNotFound,
 		},
@@ -287,7 +287,7 @@ func TestCreate(t *testing.T) {
 			name:                       "Error creating purchaseOrder with duplicated id",
 			createPurchaseOrderRequest: purchaseOrder,
 			expectedCreateResult:       entities.PurchaseOrder{},
-			expectedCreateError:        services.ErrConflict,
+			expectedCreateError:        errors.ErrConflict,
 			expectedCreateCalls:        1,
 			expectedResponse:           entities.PurchaseOrder{},
 			expectedCode:               http.StatusConflict,
@@ -414,7 +414,7 @@ func TestUpdate(t *testing.T) {
 			id:                         "1",
 			updatePurchaseOrderRequest: updatePurchaseOrderRequest,
 			expectedUpdateResult:       entities.PurchaseOrder{},
-			expectedUpdateError:        services.ErrNotFound,
+			expectedUpdateError:        errors.ErrNotFound,
 			expectedUpdateCalls:        1,
 			expectedCode:               http.StatusNotFound,
 		},
@@ -423,7 +423,7 @@ func TestUpdate(t *testing.T) {
 			id:                         "1",
 			updatePurchaseOrderRequest: updatePurchaseOrderRequest,
 			expectedUpdateResult:       entities.PurchaseOrder{},
-			expectedUpdateError:        services.ErrConflict,
+			expectedUpdateError:        errors.ErrConflict,
 			expectedUpdateCalls:        1,
 			expectedCode:               http.StatusConflict,
 		},
