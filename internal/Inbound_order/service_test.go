@@ -9,8 +9,8 @@ import (
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee"
 	employee_mocks "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/employee/mocks"
-	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders/mocks"
+	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_order"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_order/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

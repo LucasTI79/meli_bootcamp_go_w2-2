@@ -8,7 +8,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_orders"
+	inbound_order "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/inbound_order"
 	"github.com/stretchr/testify/assert"
 )
 

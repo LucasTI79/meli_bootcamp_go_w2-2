@@ -1,4 +1,4 @@
-package mocks
+package product_mocks
 
 import (
 	"context"

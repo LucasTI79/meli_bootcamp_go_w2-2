@@ -91,6 +91,10 @@ func (s *service) Update(ctx *context.Context, id int, updateSellerRequest *dtos
 		existingSeller.Telephone = *updateSellerRequest.Telephone
 	}
 
+	if updateSellerRequest.LocalityID != nil {
+		existingSeller.LocalityID = *updateSellerRequest.LocalityID
+	}
+
 	err1 := s.sellerRepository.Update(*ctx, *existingSeller)
 	if err1 != nil {
 		return nil, err1

@@ -8,7 +8,7 @@ import (
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/section/section_mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -192,7 +192,7 @@ func TestCreate(t *testing.T) {
 
 		ctx := context.TODO()
 
-		sectionRepositoryMock := new(mocks.SectionRepositoryMock)
+		sectionRepositoryMock := new(section_mocks.SectionRepositoryMock)
 		sectionRepositoryMock.On("Exists", ctx, mock.AnythingOfType("int")).Return(false)
 		sectionRepositoryMock.On("Save", ctx, mock.AnythingOfType("domain.Section")).Return(0, assert.AnError)
 
@@ -445,8 +445,8 @@ func TestUpdate(t *testing.T) {
 	})
 }
 
-func InitMock() (*mocks.SectionRepositoryMock, section.Service) {
-	sectionRepositoryMock := mocks.NewSectionRepositoryMock()
+func InitMock() (*section_mocks.SectionRepositoryMock, section.Service) {
+	sectionRepositoryMock := section_mocks.NewSectionRepositoryMock()
 	service := section.NewService(sectionRepositoryMock)
 	return sectionRepositoryMock, service
 }

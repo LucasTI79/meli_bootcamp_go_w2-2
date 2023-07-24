@@ -12,6 +12,7 @@ type Repository interface {
 	GetAll(ctx context.Context) ([]domain.Section, error)
 	Get(ctx context.Context, id int) (domain.Section, error)
 	Exists(ctx context.Context, sectionNumber int) bool
+	ExistsByID(ctx context.Context, id int) bool
 	Save(ctx context.Context, s domain.Section) (int, error)
 	Update(ctx context.Context, s domain.Section) error
 	Delete(ctx context.Context, id int) error
@@ -28,7 +29,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 func (r *repository) GetAll(ctx context.Context) ([]domain.Section, error) {
-	query := "SELECT * FROM sections;"
+	query := "SELECT id, section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, product_type_id FROM sections WHERE id=?"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -46,7 +47,7 @@ func (r *repository) GetAll(ctx context.Context) ([]domain.Section, error) {
 }
 
 func (r *repository) Get(ctx context.Context, id int) (domain.Section, error) {
-	query := "SELECT * FROM sections WHERE id=?;"
+	query := "SELECT id, section_number, current_temperature, minimum_temperature, current_capacity, minimum_capacity, maximum_capacity, warehouse_id, product_type_id FROM sections WHERE id=?"
 	row := r.db.QueryRow(query, id)
 	s := domain.Section{}
 	err := row.Scan(&s.ID, &s.SectionNumber, &s.CurrentTemperature, &s.MinimumTemperature, &s.CurrentCapacity, &s.MinimumCapacity, &s.MaximumCapacity, &s.WarehouseID, &s.ProductTypeID)
@@ -61,6 +62,13 @@ func (r *repository) Exists(ctx context.Context, sectionNumber int) bool {
 	query := "SELECT section_number FROM sections WHERE section_number=?;"
 	row := r.db.QueryRow(query, sectionNumber)
 	err := row.Scan(&sectionNumber)
+	return err == nil
+}
+
+func (r *repository) ExistsByID(ctx context.Context, id int) bool {
+	query := "SELECT id FROM sections WHERE id=?;"
+	row := r.db.QueryRow(query, id)
+	err := row.Scan(&id)
 	return err == nil
 }
 
@@ -85,7 +93,7 @@ func (r *repository) Save(ctx context.Context, s domain.Section) (int, error) {
 }
 
 func (r *repository) Update(ctx context.Context, s domain.Section) error {
-	query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, id_product_type=? WHERE id=?;"
+	query := "UPDATE sections SET section_number=?, current_temperature=?, minimum_temperature=?, current_capacity=?, minimum_capacity=?, maximum_capacity=?, warehouse_id=?, id_product_type=? WHERE id=?"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
 		return err
