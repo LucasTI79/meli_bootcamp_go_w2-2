@@ -141,5 +141,7 @@ func (r *router) buildInboundOrdersRoutes() {
 	r.rg.GET("/inbound-orders/:id", handler.Get())
 	r.rg.PATCH("/inbound-orders/:id", handler.Update())
 	r.rg.DELETE("/inbound-orders/:id", handler.Delete())
+	r.rg.GET("/reportInboundOrders", handler.CountInboundOrders())
+	r.rg.GET("/reportInboundOrders/:id", handler.CountInboundOrdersByID())
 
 }

@@ -22,6 +22,8 @@ type Service interface {
 	Save(ctx *context.Context, inboundOrders domain.InboundOrders) (*domain.InboundOrders, error)
 	Update(ctx *context.Context, id int, reqUpdateInboundOrders *domain.RequestUpdateInboundOrders) (*domain.InboundOrders, error)
 	Delete(ctx *context.Context, id int) error
+	CountInboundOrders(ctx *context.Context) ([]domain.EmployeeInboundOrdersCount, error)
+	CountInboundOrdersByID(ctx *context.Context, employeeID int) (domain.EmployeeInboundOrdersCount, error)
 }
 
 type service struct {
@@ -117,16 +119,70 @@ func (s *service) Delete(ctx *context.Context, id int) error {
 	return nil
 }
 
-// funcao funcionando
+func (s *service) CountInboundOrders(ctx *context.Context) ([]domain.EmployeeInboundOrdersCount, error) {
+	allEmployees, err := s.employeeRepository.GetAll(*ctx)
+	if err != nil {
+		return nil, err
+	}
 
-// func (s *service) Save(ctx *context.Context, inboundOrders domain.InboundOrders) (*domain.InboundOrders, error) {
+	allInboundOrders, err := s.inboundOrdersRepository.GetAll(*ctx)
 
-// 	id, err := s.repository.Save(*ctx, inboundOrders)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	inboundOrders.ID = id
+	inboundOrdersCount := []domain.EmployeeInboundOrdersCount{}
 
-// 	return &inboundOrders, nil
-// }
+	count := 0
+	for _, employee := range allEmployees {
+		for _, inboundOrder := range allInboundOrders {
+			inboundOrderEmployeeID, _ := strconv.Atoi(inboundOrder.EmployeeID)
+			if inboundOrderEmployeeID == employee.ID {
+				count++
+			}
+		}
+		employeeCount := domain.EmployeeInboundOrdersCount{
+			ID:                 employee.ID,
+			CardNumberID:       employee.CardNumberID,
+			FirstName:          employee.FirstName,
+			LastName:           employee.LastName,
+			WarehouseID:        employee.WarehouseID,
+			InboundOrdersCount: count,
+		}
+		inboundOrdersCount = append(inboundOrdersCount, employeeCount)
+	}
+
+	return inboundOrdersCount, nil
+}
+
+func (s *service) CountInboundOrdersByID(ctx *context.Context, employeeID int) (domain.EmployeeInboundOrdersCount, error) {
+	employee, err := s.employeeRepository.Get(*ctx, employeeID)
+	if err != nil {
+		return domain.EmployeeInboundOrdersCount{}, err
+	}
+
+	allInboundOrders, err := s.inboundOrdersRepository.GetAll(*ctx)
+
+	if err != nil {
+		return domain.EmployeeInboundOrdersCount{}, err
+	}
+
+	count := 0
+
+	for _, inboundOrder := range allInboundOrders {
+		inboundOrderEmployeeID, _ := strconv.Atoi(inboundOrder.EmployeeID)
+		if inboundOrderEmployeeID == employee.ID {
+			count++
+		}
+	}
+	employeeCount := domain.EmployeeInboundOrdersCount{
+		ID:                 employee.ID,
+		CardNumberID:       employee.CardNumberID,
+		FirstName:          employee.FirstName,
+		LastName:           employee.LastName,
+		WarehouseID:        employee.WarehouseID,
+		InboundOrdersCount: count,
+	}
+
+	return employeeCount, nil
+}

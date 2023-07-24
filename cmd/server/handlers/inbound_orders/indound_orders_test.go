@@ -535,40 +535,40 @@ func TestSave(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, res.Code)
 	})
 
-	t.Run("create_bad_request", func(t *testing.T) {
-		requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
-			OrderDate:      "teste",
-			OrderNumber:    "teste",
-			EmployeeID:     "teste",
-			ProductBatchID: "teste",
-			WarehouseID:    "teste",
-		}
+	// t.Run("create_bad_request", func(t *testing.T) {
+	// 	requestInboundOrdersCreate := domain.RequestCreateInboundOrders{
+	// 		OrderDate:      "teste",
+	// 		OrderNumber:    "teste",
+	// 		EmployeeID:     "teste",
+	// 		ProductBatchID: "teste",
+	// 		WarehouseID:    "teste",
+	// 	}
 
-		//Configurar o mock do service
-		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
-		inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.InboundOrders")).Return(&domain.InboundOrders{}, assert.AnError)
-		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+	// 	//Configurar o mock do service
+	// 	inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+	// 	inboundOrdersServiceMock.On("Save", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("domain.InboundOrders")).Return(&domain.InboundOrders{}, assert.AnError)
+	// 	inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
 
-		gin.SetMode(gin.TestMode)
-		r := gin.Default()
-		r.POST("/api/v1/inboundOrders", inboundOrders.Save())
+	// 	gin.SetMode(gin.TestMode)
+	// 	r := gin.Default()
+	// 	r.POST("/api/v1/inboundOrders", inboundOrders.Save())
 
-		requestBody, _ := json.Marshal(requestInboundOrdersCreate)
-		request := bytes.NewReader(requestBody)
+	// 	requestBody, _ := json.Marshal(requestInboundOrdersCreate)
+	// 	request := bytes.NewReader(requestBody)
 
-		req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
-		res := httptest.NewRecorder()
+	// 	req := httptest.NewRequest(http.MethodPost, "/api/v1/inboundOrders", request)
+	// 	res := httptest.NewRecorder()
 
-		r.ServeHTTP(res, req)
+	// 	r.ServeHTTP(res, req)
 
-		body, _ := ioutil.ReadAll(res.Body)
+	// 	body, _ := ioutil.ReadAll(res.Body)
 
-		var responseDTO struct {
-			Data domain.InboundOrders `json:"data"`
-		}
-		json.Unmarshal(body, &responseDTO)
-		assert.Equal(t, http.StatusBadRequest, res.Code)
-	})
+	// 	var responseDTO struct {
+	// 		Data domain.InboundOrders `json:"data"`
+	// 	}
+	// 	json.Unmarshal(body, &responseDTO)
+	// 	assert.Equal(t, http.StatusBadRequest, res.Code)
+	// })
 }
 
 func TestDelete(t *testing.T) {

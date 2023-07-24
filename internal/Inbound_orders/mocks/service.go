@@ -41,3 +41,13 @@ func (service *InboundOrdersServiceMock) Delete(ctx *context.Context, id int) er
 	args := service.Called(ctx, id)
 	return args.Error(0)
 }
+
+func (service *InboundOrdersServiceMock) CountInboundOrders(ctx *context.Context) ([]domain.EmployeeInboundOrdersCount, error) {
+	args := service.Called(ctx)
+	return args.Get(0).([]domain.EmployeeInboundOrdersCount), args.Error(1)
+}
+
+func (service *InboundOrdersServiceMock) CountInboundOrdersByID(ctx *context.Context, employeeID int) (domain.EmployeeInboundOrdersCount, error) {
+	args := service.Called(ctx, employeeID)
+	return args.Get(0).(domain.EmployeeInboundOrdersCount), args.Error(1)
+}
