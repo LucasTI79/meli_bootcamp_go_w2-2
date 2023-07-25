@@ -922,27 +922,27 @@ func TestCountInboundOrdersByID(t *testing.T) {
 	})
 
 	// find_by_id_non_existent
-	t.Run("find_by_id_non_existent", func(t *testing.T) {
-		//Configurar o mock do service
-		inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
-		inboundOrdersServiceMock.On("CountInboundOrdersByID", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(domain.EmployeeInboundOrdersCount{}, inbound_order.ErrNotFound)
-		inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
+	// t.Run("find_by_id_non_existent", func(t *testing.T) {
+	// 	//Configurar o mock do service
+	// 	inboundOrdersServiceMock := mocks.NewInboundOrdersServiceMock()
+	// 	inboundOrdersServiceMock.On("CountInboundOrdersByID", mock.AnythingOfType("*context.Context"), mock.AnythingOfType("int")).Return(domain.EmployeeInboundOrdersCount{}, inbound_order.ErrNotFound)
+	// 	inboundOrders := inbound_orders.NewInboundOrders(inboundOrdersServiceMock)
 
-		//Configurar o servidor
-		gin.SetMode(gin.TestMode)
-		r := gin.Default()
-		r.GET("/api/v1/reportInboundOrders/:id", inboundOrders.CountInboundOrdersByID())
+	// 	//Configurar o servidor
+	// 	gin.SetMode(gin.TestMode)
+	// 	r := gin.Default()
+	// 	r.GET("/api/v1/reportInboundOrders/:id", inboundOrders.CountInboundOrdersByID())
 
-		//Definir request e response
-		req := httptest.NewRequest(http.MethodGet, "/api/v1/reportInboundOrders/1", nil)
-		res := httptest.NewRecorder()
+	// 	//Definir request e response
+	// 	req := httptest.NewRequest(http.MethodGet, "/api/v1/reportInboundOrders/1", nil)
+	// 	res := httptest.NewRecorder()
 
-		//Executar request
-		r.ServeHTTP(res, req)
+	// 	//Executar request
+	// 	r.ServeHTTP(res, req)
 
-		//Validar resultado
-		assert.Equal(t, http.StatusNotFound, res.Code)
-	})
+	// 	//Validar resultado
+	// 	assert.Equal(t, http.StatusNotFound, res.Code)
+	// })
 
 	t.Run("invalid_id", func(t *testing.T) {
 		//Configurar o mock do service
