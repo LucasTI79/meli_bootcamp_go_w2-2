@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	ErrInvalidID = errors.New("Invalid ID").Error()
+	ErrInvalidID              = errors.New("Invalid ID").Error()
 	ErrSectionProductsReports = errors.New("error returning product reports by Section").Error()
 )
 
@@ -28,16 +28,16 @@ func NewProductBatches(p productbatches.IService) *ProductBatches {
 }
 
 // Method Get
-// GetSections godoc
+// GetSectionProductsReports godoc
 //
-//	@Summary		Get Section
-//	@Tags			Sections
-//	@Description	Get the details of a Section
+//	@Summary		SectionProductsReports / SectionProductsReportsBySection
+//	@Tags			ProductBatch
+//	@Description	Get all products by section / Section Products Reports By Section
 //	@Accept			json
 //	@Produce		json
-//	@Param			id	path		string	true	"ID of Section to be searched"
-//	@Success		200	{object}	web.response
-//	@Router			/api/v1/sections/{id} [get]
+//	@Param			id	path		int	false "ID of a Products Reports to search"
+//	@Success		200	{object}	[]domain.ProductBySection
+//	@Router			/api/v1/sections/reportProducts/{id} [get]
 func (p *ProductBatches) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
@@ -50,7 +50,7 @@ func (p *ProductBatches) Get() gin.HandlerFunc {
 			web.Success(c, http.StatusOK, result)
 			return
 		}
-		
+
 		sectionID, err := strconv.Atoi(idParam)
 		if err != nil {
 			web.Error(c, http.StatusBadRequest, ErrInvalidID)
@@ -70,16 +70,16 @@ func (p *ProductBatches) Get() gin.HandlerFunc {
 }
 
 // Method Create
-// CreateSections godoc
+// CreateProductBatch godoc
 
-// @Summary		Create Section
-// @Tags			Sections
-// @Description	Create section
+// @Summary		Create ProductBatch
+// @Tags			ProductBatch
+// @Description	Create ProductBatch
 // @Accept			json
 // @Produce		json
-// @Param			Section	body		requestCreateSection	true	"Section to Create"
+// @Param			ProductBatch	body		productbatchesdto.CreateProductBatchesDTO	true	"ProductBatch to Create"
 // @Success		201		{object}	web.response
-// @Router			/api/v1/sections [post]
+// @Router			/api/v1/productBatches [post]
 func (p *ProductBatches) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req dto.CreateProductBatchesDTO

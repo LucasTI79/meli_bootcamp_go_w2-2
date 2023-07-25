@@ -5,8 +5,8 @@ import (
 
 	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/integrations/database/repositories"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/buyers"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/carriers"
@@ -110,8 +110,8 @@ func (r *router) buildProductBatchesRoutes() {
 	sectionRepo := section.NewRepository(r.db)
 	service := prodBatches.NewService(repo, productRepo, sectionRepo)
 	handler := productbatcheshandler.NewProductBatches(service)
-	r.rg.POST("/product-batch", handler.Create())
-	r.rg.GET("/product-batches/sections/report-products/:id", handler.Get())
+	r.rg.POST("/productBatches", handler.Create())
+	r.rg.GET("sections/reportProducts/:id", handler.Get())
 }
 
 func (r *router) buildWarehouseRoutes() {
@@ -139,11 +139,11 @@ func (r *router) buildEmployeeRoutes() {
 }
 
 func (r *router) buildBuyerRoutes() {
-	buyerRepository := buyer.NewRepository(r.db)
+	buyerRepository := buyer.NewBuyerRepository(r.db)
 	buyerService := buyer.NewService(buyerRepository)
 
-	purchaseOrdersRepository := repositories.NewPurchaseOrderRepository(r.db)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrdersRepository, buyerRepository)
+	purchaseOrdersRepository := purchaseOrder.NewPurchaseOrderRepository(r.db)
+	purchaseOrderService := purchaseOrder.NewPurchaseOrderService(purchaseOrdersRepository, buyerRepository)
 
 	buyerHandler := buyers.NewBuyerHandler(buyerService, purchaseOrderService)
 
@@ -162,8 +162,8 @@ func (r *router) buildBuyerRoutes() {
 }
 
 func (r *router) buildLocalityRoutes() {
-	localityRepository := repositories.NewLocalityRepository(r.db)
-	localityService := services.NewLocalityService(localityRepository)
+	localityRepository := locality.NewLocalityRepository(r.db)
+	localityService := locality.NewLocalityService(localityRepository)
 	localityHandler := handlers.NewLocalityHandler(localityService)
 
 	localityRoutes := r.rg.Group("/localities/")
@@ -176,9 +176,9 @@ func (r *router) buildLocalityRoutes() {
 }
 
 func (r *router) buildPurchaseOrderRoutes() {
-	purchaseOrderRepository := repositories.NewPurchaseOrderRepository(r.db)
-	buyerRepository := buyer.NewRepository(r.db)
-	purchaseOrderService := services.NewPurchaseOrderService(purchaseOrderRepository, buyerRepository)
+	purchaseOrderRepository := purchaseOrder.NewPurchaseOrderRepository(r.db)
+	buyerRepository := buyer.NewBuyerRepository(r.db)
+	purchaseOrderService := purchaseOrder.NewPurchaseOrderService(purchaseOrderRepository, buyerRepository)
 	purchaseOrderHandler := purchase_orders.NewPurchaseOrderHandler(purchaseOrderService)
 
 	purchaseOrderRoutes := r.rg.Group("/purchase-orders/")

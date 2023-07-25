@@ -3,6 +3,7 @@ package inbound_order
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
@@ -64,6 +65,7 @@ func (r *repository) Exists(ctx context.Context, id string) bool {
 }
 
 func (r *repository) Save(ctx context.Context, i domain.InboundOrders) (int, error) {
+	fmt.Println(i)
 	query := "INSERT INTO inbound_orders(order_date, order_number, employee_id, product_batch_id, warehouse_id) VALUES (?,?,?,?,?)"
 	stmt, err := r.db.Prepare(query)
 	if err != nil {
@@ -90,7 +92,7 @@ func (r *repository) Update(ctx context.Context, i domain.InboundOrders) error {
 		return err
 	}
 
-	res, err := stmt.Exec(&i.OrderDate, &i.OrderNumber, &i.EmployeeID, &i.ProductBatchID, &i.WarehouseID)
+	res, err := stmt.Exec(&i.OrderDate, &i.OrderNumber, &i.EmployeeID, &i.ProductBatchID, &i.WarehouseID, &i.ID)
 	if err != nil {
 		return err
 	}

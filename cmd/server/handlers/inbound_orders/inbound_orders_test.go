@@ -17,6 +17,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+// teste
 func TestGet(t *testing.T) {
 	t.Run("find_by_id_existent", func(t *testing.T) {
 		// Definir resultado da consulta

@@ -14,6 +14,77 @@ definitions:
         type: string
         x-order: "3"
     type: object
+  domain.Carrier:
+    properties:
+      address:
+        type: string
+      cid:
+        type: string
+      company_name:
+        type: string
+      id:
+        type: integer
+      locality_id:
+        type: integer
+      telephone:
+        type: string
+    type: object
+  domain.Locality:
+    properties:
+      country_name:
+        type: string
+      id:
+        type: integer
+      locality_name:
+        type: string
+      province_name:
+        type: string
+    required:
+    - country_name
+    - id
+    - locality_name
+    - province_name
+    type: object
+  domain.ProductBySection:
+    properties:
+      products_count:
+        type: integer
+      section_id:
+        type: integer
+      section_number:
+        type: string
+    type: object
+  domain.PurchaseOrder:
+    properties:
+      buyer_id:
+        type: integer
+        x-order: "4"
+      carrier_id:
+        type: integer
+        x-order: "5"
+      id:
+        type: integer
+        x-order: "0"
+      order_date:
+        format: "2006-01-02"
+        type: string
+        x-order: "2"
+      order_number:
+        type: string
+        x-order: "1"
+      order_status_id:
+        type: integer
+        x-order: "6"
+      product_record_id:
+        type: integer
+        x-order: "8"
+      tracking_code:
+        type: string
+        x-order: "3"
+      warehouse_id:
+        type: integer
+        x-order: "7"
+    type: object
   domain.RequestCreateEmployee:
     properties:
       card_number_id:
@@ -25,6 +96,19 @@ definitions:
       warehouse_id:
         type: integer
     type: object
+  domain.RequestCreateInboundOrders:
+    properties:
+      employee_id:
+        type: string
+      order_date:
+        type: string
+      order_number:
+        type: string
+      product_batch_id:
+        type: string
+      warehouse_id:
+        type: string
+    type: object
   domain.RequestUpdateEmployee:
     properties:
       card_number_id:
@@ -35,6 +119,19 @@ definitions:
         type: string
       warehouse_id:
         type: integer
+    type: object
+  domain.RequestUpdateInboundOrders:
+    properties:
+      employee_id:
+        type: string
+      order_date:
+        type: string
+      order_number:
+        type: string
+      product_batch_id:
+        type: string
+      warehouse_id:
+        type: string
     type: object
   domain.Warehouse:
     properties:
@@ -49,6 +146,19 @@ definitions:
       telephone:
         type: string
       warehouse_code:
+        type: string
+    type: object
+  dtos.CarrierRequestDTO:
+    properties:
+      address:
+        type: string
+      cid:
+        type: string
+      company_name:
+        type: string
+      locality_id:
+        type: integer
+      telephone:
         type: string
     type: object
   dtos.CreateBuyerRequestDTO:
@@ -72,13 +182,42 @@ definitions:
         type: integer
       company_name:
         type: string
+      locality_id:
+        type: string
       telephone:
         type: string
     required:
     - address
     - cid
     - company_name
+    - locality_id
     - telephone
+    type: object
+  dtos.DataLocalityAndCarrier:
+    properties:
+      count_carrier:
+        type: integer
+      id:
+        type: integer
+      locality_name:
+        type: string
+    type: object
+  dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO:
+    properties:
+      buyer_id:
+        type: integer
+      purchase_orders_count:
+        description: LocalityName string `json:"locality_name"`
+        type: integer
+    type: object
+  dtos.GetNumberOfSellersResponseDTO:
+    properties:
+      locality_id:
+        type: integer
+      locality_name:
+        type: string
+      sellers_count:
+        type: integer
     type: object
   dtos.UpdateBuyerRequestDTO:
     properties:
@@ -92,6 +231,34 @@ definitions:
         type: string
         x-order: "2"
     type: object
+  dtos.UpdateLocalityRequestDTO:
+    properties:
+      country_name:
+        type: string
+      locality_name:
+        type: string
+      province_name:
+        type: string
+    type: object
+  dtos.UpdatePurchaseOrderRequestDTO:
+    properties:
+      buyer_id:
+        type: integer
+      carrier_id:
+        type: integer
+      order_date:
+        type: string
+      order_number:
+        type: string
+      order_status_id:
+        type: integer
+      product_record_id:
+        type: integer
+      tracking_code:
+        type: string
+      warehouse_id:
+        type: integer
+    type: object
   dtos.UpdateSellerRequestDTO:
     properties:
       address:
@@ -99,6 +266,8 @@ definitions:
       cid:
         type: integer
       company_name:
+        type: string
+      locality_id:
         type: string
       telephone:
         type: string
@@ -116,7 +285,42 @@ definitions:
       warehouse_code:
         type: string
     type: object
-  handler.requestCreateProduct:
+  productbatchesdto.CreateProductBatchesDTO:
+    properties:
+      batch_number:
+        type: integer
+      current_quantity:
+        type: integer
+      current_temperature:
+        type: number
+      due_date:
+        description: 'Example: "2023-07-06"'
+        type: string
+      initial_quantity:
+        type: integer
+      manufacturing_date:
+        type: string
+      manufacturing_hour:
+        type: integer
+      minimum_temperature:
+        type: number
+      product_id:
+        type: integer
+      section_id:
+        type: integer
+    required:
+    - batch_number
+    - current_quantity
+    - current_temperature
+    - due_date
+    - initial_quantity
+    - manufacturing_date
+    - manufacturing_hour
+    - minimum_temperature
+    - product_id
+    - section_id
+    type: object
+  products.RequestCreateProduct:
     properties:
       description:
         type: string
@@ -141,7 +345,54 @@ definitions:
       width:
         type: number
     type: object
-  handler.requestCreateSection:
+  products.RequestUpdateProduct:
+    properties:
+      description:
+        type: string
+      expiration_rate:
+        type: integer
+      freezing_rate:
+        type: integer
+      height:
+        type: number
+      length:
+        type: number
+      netweight:
+        type: number
+      product_code:
+        type: string
+      product_type_id:
+        type: integer
+      recommended_freezing_temperature:
+        type: number
+      seller_id:
+        type: integer
+      width:
+        type: number
+    type: object
+  productsRecords.RequestCreateProductRecord:
+    properties:
+      last_update_date:
+        type: string
+      product_id:
+        type: integer
+      purchase_price:
+        type: number
+      sale_price:
+        type: number
+    type: object
+  productsRecords.RequestUpdateProductRecord:
+    properties:
+      last_update_date:
+        type: string
+      product_id:
+        type: integer
+      purchase_price:
+        type: number
+      sale_price:
+        type: number
+    type: object
+  sections.CreateSectionRequestDTO:
     properties:
       current_capacity:
         type: integer
@@ -160,32 +411,7 @@ definitions:
       warehouse_id:
         type: integer
     type: object
-  handler.requestUpdateProduct:
-    properties:
-      description:
-        type: string
-      expiration_rate:
-        type: integer
-      freezing_rate:
-        type: integer
-      height:
-        type: number
-      length:
-        type: number
-      netweight:
-        type: number
-      product_code:
-        type: string
-      product_type_id:
-        type: integer
-      recommended_freezing_temperature:
-        type: number
-      seller_id:
-        type: integer
-      width:
-        type: number
-    type: object
-  handler.requestUpdateSection:
+  sections.UpdateSectionRequestDTO:
     properties:
       current_capacity:
         type: integer
@@ -382,6 +608,84 @@ paths:
       summary: Update Buyer
       tags:
       - Buyers
+  /api/v1/buyers/{id}/report-purchase-orders:
+    get:
+      consumes:
+      - application/json
+      description: search for a purchaseOrder and return the number of sellers.
+      parameters:
+      - description: ID of PurchaseOrder to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: CountPurchaseOrders
+      tags:
+      - PurchaseOrders
+  /api/v1/carriers:
+    get:
+      description: get carriers
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Carrier'
+            type: array
+      summary: List carriers
+      tags:
+      - Carriers
+    post:
+      consumes:
+      - application/json
+      description: Create carriers
+      parameters:
+      - description: carrier to create
+        in: body
+        name: Carrier
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CarrierRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Carrier'
+      summary: Create carriers
+      tags:
+      - Carriers
   /api/v1/employees:
     get:
       consumes:
@@ -485,6 +789,347 @@ paths:
       summary: Update Employees
       tags:
       - Employees
+  /api/v1/inbound-orders:
+    get:
+      consumes:
+      - application/json
+      description: getAll inboundOrders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List InboundOrders
+      tags:
+      - InboundOrders
+    post:
+      consumes:
+      - application/json
+      description: Create inboundOrders
+      parameters:
+      - description: InboundOrders to Create
+        in: body
+        name: InboundOrders
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RequestCreateInboundOrders'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create InboundOrders
+      tags:
+      - InboundOrders
+  /api/v1/inbound-orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete InboundOrders
+      parameters:
+      - description: ID of a InboundOrders to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete InboundOrders
+      tags:
+      - InboundOrders
+    get:
+      consumes:
+      - application/json
+      description: Get the details of a InboundOrders
+      parameters:
+      - description: ID of InboundOrders to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get InboundOrders
+      tags:
+      - InboundOrders
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a InboundOrders
+      parameters:
+      - description: ID of InboundOrders to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated InboundOrders details
+        in: body
+        name: InboundOrders
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RequestUpdateInboundOrders'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update InboundOrders
+      tags:
+      - InboundOrders
+  /api/v1/localities:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of all localities on the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.Locality'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: List Localities
+      tags:
+      - Localities
+    post:
+      consumes:
+      - application/json
+      description: Save a locality on the database.
+      parameters:
+      - description: Locality to Create
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Locality'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Locality'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Create Locality
+      tags:
+      - Localities
+  /api/v1/localities/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Localities
+      parameters:
+      - description: ID of a Locality to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Delete Locality
+      tags:
+      - Localities
+    get:
+      description: Get the details of a Locality
+      parameters:
+      - description: ID of Locality to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Locality'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Get Locality
+      tags:
+      - Localities
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a Locality
+      parameters:
+      - description: ID of Locality to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Locality details
+        in: body
+        name: Locality
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateLocalityRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Locality'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Update Locality
+      tags:
+      - Localities
+  /api/v1/localities/count:
+    get:
+      consumes:
+      - application/json
+      description: search for a locality and return the number of sellers.
+      parameters:
+      - description: ID of Locality to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dtos.GetNumberOfSellersResponseDTO'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: CountSellers
+      tags:
+      - Localities
+  /api/v1/localities/reportCarries:
+    get:
+      description: get report carriers by localities
+      parameters:
+      - description: ID of a Locality to search
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dtos.DataLocalityAndCarrier'
+            type: array
+      summary: Get Report Carriers By Localities
+      tags:
+      - Carriers
+  /api/v1/productBatches:
+    post:
+      consumes:
+      - application/json
+      description: Create ProductBatch
+      parameters:
+      - description: ProductBatch to Create
+        in: body
+        name: ProductBatch
+        required: true
+        schema:
+          $ref: '#/definitions/productbatchesdto.CreateProductBatchesDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create ProductBatch
+      tags:
+      - ProductBatch
   /api/v1/products:
     get:
       consumes:
@@ -510,7 +1155,7 @@ paths:
         name: Product
         required: true
         schema:
-          $ref: '#/definitions/handler.requestCreateProduct'
+          $ref: '#/definitions/products.RequestCreateProduct'
       produces:
       - application/json
       responses:
@@ -577,7 +1222,7 @@ paths:
         name: Products
         required: true
         schema:
-          $ref: '#/definitions/handler.requestUpdateProduct'
+          $ref: '#/definitions/products.RequestUpdateProduct'
       produces:
       - application/json
       responses:
@@ -588,6 +1233,289 @@ paths:
       summary: Update Product
       tags:
       - Products
+  /api/v1/productsRecords:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List productsRecords
+      tags:
+      - ProductsRecords
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ProductRecord to Create
+        in: body
+        name: ProductRecord
+        required: true
+        schema:
+          $ref: '#/definitions/productsRecords.RequestCreateProductRecord'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create ProductRecord
+      tags:
+      - ProductsRecords
+  /api/v1/productsRecords/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete ProductRecord
+      parameters:
+      - description: ID of a ProductRecord to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Delete ProductRecord
+      tags:
+      - ProductsRecords
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID of ProductRecord to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Get ProductRecord
+      tags:
+      - ProductsRecords
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID of ProductsRecords to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated ProductRecord details
+        in: body
+        name: ProductsRecords
+        required: true
+        schema:
+          $ref: '#/definitions/productsRecords.RequestUpdateProductRecord'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Update ProductRecord
+      tags:
+      - ProductsRecords
+  /api/v1/purchase-orders:
+    get:
+      consumes:
+      - application/json
+      description: Get the details of all purchase-orders on the database.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/domain.PurchaseOrder'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: List PurchaseOrders
+      tags:
+      - PurchaseOrders
+    post:
+      consumes:
+      - application/json
+      description: Save a purchaseOrder on the database.
+      parameters:
+      - description: PurchaseOrder to Create
+        in: body
+        name: Seller
+        required: true
+        schema:
+          $ref: '#/definitions/domain.PurchaseOrder'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.PurchaseOrder'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Create PurchaseOrder
+      tags:
+      - PurchaseOrders
+  /api/v1/purchase-orders/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete PurchaseOrders
+      parameters:
+      - description: ID of a PurchaseOrder to be excluded
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Delete PurchaseOrder
+      tags:
+      - PurchaseOrders
+    get:
+      description: Get the details of a PurchaseOrder
+      parameters:
+      - description: ID of PurchaseOrder to be searched
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PurchaseOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Get PurchaseOrder
+      tags:
+      - PurchaseOrders
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a PurchaseOrder
+      parameters:
+      - description: ID of PurchaseOrder to be updated
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated PurchaseOrder details
+        in: body
+        name: PurchaseOrder
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdatePurchaseOrderRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.PurchaseOrder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web.errorResponse'
+      summary: Update PurchaseOrder
+      tags:
+      - PurchaseOrders
+  /api/v1/reportInboundOrders:
+    get:
+      consumes:
+      - application/json
+      description: get countInboundOrders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List InboundOrders Count
+      tags:
+      - CountInboundOrders
+  /api/v1/reportInboundOrders/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get countInboundOrdersById
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: List InboundOrders Count by Id
+      tags:
+      - CountInboundOrdersByID
   /api/v1/sections:
     get:
       consumes:
@@ -613,7 +1541,7 @@ paths:
         name: Section
         required: true
         schema:
-          $ref: '#/definitions/handler.requestCreateSection'
+          $ref: '#/definitions/sections.CreateSectionRequestDTO'
       produces:
       - application/json
       responses:
@@ -680,7 +1608,7 @@ paths:
         name: Sections
         required: true
         schema:
-          $ref: '#/definitions/handler.requestUpdateSection'
+          $ref: '#/definitions/sections.UpdateSectionRequestDTO'
       produces:
       - application/json
       responses:
@@ -691,6 +1619,28 @@ paths:
       summary: Update Section
       tags:
       - Sections
+  /api/v1/sections/reportProducts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all products by section / Section Products Reports By Section
+      parameters:
+      - description: ID of a Products Reports to search
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ProductBySection'
+            type: array
+      summary: SectionProductsReports / SectionProductsReportsBySection
+      tags:
+      - ProductBatch
   /api/v1/sellers:
     get:
       consumes:

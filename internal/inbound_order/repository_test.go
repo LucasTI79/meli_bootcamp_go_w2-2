@@ -346,7 +346,7 @@ func TestRepositoryUpdate(t *testing.T) {
 		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?"))
 		mock.ExpectExec(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).
 			WithArgs(expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber, expectedInboundOrders.EmployeeID,
-				expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID).
+				expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID, expectedInboundOrders.ID).
 			WillReturnResult(sqlmock.NewResult(1, 1))
 
 		err := r.Update(ctx, expectedInboundOrders)
@@ -370,7 +370,7 @@ func TestRepositoryUpdate(t *testing.T) {
 		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?"))
 		mock.ExpectExec(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).
 			WithArgs(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
-				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID).
+				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID, expectedInboundOrders.ID).
 			WillReturnError(sql.ErrNoRows)
 
 		err := r.Update(ctx, expectedInboundOrders)
@@ -394,7 +394,7 @@ func TestRepositoryUpdate(t *testing.T) {
 		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?"))
 		mock.ExpectExec(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).
 			WithArgs(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
-				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID).
+				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID, expectedInboundOrders.ID).
 			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
 		err := r.Update(ctx, expectedInboundOrders)
 
@@ -417,7 +417,7 @@ func TestRepositoryUpdate(t *testing.T) {
 		mock.ExpectPrepare(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).WillReturnError(sql.ErrConnDone)
 		mock.ExpectExec(regexp.QuoteMeta("UPDATE inbound_orders SET order_date=?, order_number=?, employee_id=?, product_batch_id=?, warehouse_id=?  WHERE id=?")).
 			WithArgs(expectedInboundOrders.ID, expectedInboundOrders.OrderDate, expectedInboundOrders.OrderNumber,
-				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID).
+				expectedInboundOrders.EmployeeID, expectedInboundOrders.ProductBatchID, expectedInboundOrders.WarehouseID, expectedInboundOrders.ID).
 			WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
 		err := r.Update(ctx, expectedInboundOrders)
 

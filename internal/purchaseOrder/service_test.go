@@ -1,13 +1,13 @@
-package services
+package purchaseOrder
 
 import (
 	"context"
 	"encoding/json"
 	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories/mocks"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	buyer_mock "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/buyer/mocks"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"os"
@@ -17,15 +17,15 @@ import (
 func Test_purchaseOrderService_GetAll(t *testing.T) {
 	type args struct {
 		ctx                  *context.Context
-		expectedGetAllResult []entities.PurchaseOrder
+		expectedGetAllResult []domain.PurchaseOrder
 		expectedGetAllError  error
 		expectedGetAllCalls  int
 	}
 
 	ctx := context.TODO()
 
-	var expectedPurchaseOrders []entities.PurchaseOrder
-	expectedPurchaseOrdersSerialized, _ := os.ReadFile("../../../test/resources/valid_purchase_orders.json")
+	var expectedPurchaseOrders []domain.PurchaseOrder
+	expectedPurchaseOrdersSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_orders.json")
 	if err := json.Unmarshal(expectedPurchaseOrdersSerialized, &expectedPurchaseOrders); err != nil {
 		t.Fatal(err)
 	}
@@ -33,7 +33,7 @@ func Test_purchaseOrderService_GetAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []entities.PurchaseOrder
+		want    []domain.PurchaseOrder
 		wantErr error
 	}{
 		{
@@ -51,11 +51,11 @@ func Test_purchaseOrderService_GetAll(t *testing.T) {
 			name: "Error getting all",
 			args: args{
 				ctx:                  &ctx,
-				expectedGetAllResult: []entities.PurchaseOrder{},
+				expectedGetAllResult: []domain.PurchaseOrder{},
 				expectedGetAllError:  assert.AnError,
 				expectedGetAllCalls:  1,
 			},
-			want:    []entities.PurchaseOrder{},
+			want:    []domain.PurchaseOrder{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -81,15 +81,15 @@ func Test_purchaseOrder_Get(t *testing.T) {
 	type args struct {
 		ctx               *context.Context
 		id                int
-		expectedGetResult entities.PurchaseOrder
+		expectedGetResult domain.PurchaseOrder
 		expectedGetError  error
 		expectedGetCalls  int
 	}
 
 	ctx := context.TODO()
 
-	var expectedPurchaseOrder entities.PurchaseOrder
-	expectedPurchaseOrderSerialized, _ := os.ReadFile("../../../test/resources/valid_purchase_order.json")
+	var expectedPurchaseOrder domain.PurchaseOrder
+	expectedPurchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
 	if err := json.Unmarshal(expectedPurchaseOrderSerialized, &expectedPurchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -97,7 +97,7 @@ func Test_purchaseOrder_Get(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    entities.PurchaseOrder
+		want    domain.PurchaseOrder
 		wantErr error
 	}{
 		{
@@ -117,23 +117,23 @@ func Test_purchaseOrder_Get(t *testing.T) {
 			args: args{
 				ctx:               &ctx,
 				id:                expectedPurchaseOrder.ID,
-				expectedGetResult: entities.PurchaseOrder{},
-				expectedGetError:  ErrNotFound,
+				expectedGetResult: domain.PurchaseOrder{},
+				expectedGetError:  errors.ErrNotFound,
 				expectedGetCalls:  1,
 			},
-			want:    entities.PurchaseOrder{},
-			wantErr: ErrNotFound,
+			want:    domain.PurchaseOrder{},
+			wantErr: errors.ErrNotFound,
 		},
 		{
 			name: "Error connecting db",
 			args: args{
 				ctx:               &ctx,
 				id:                expectedPurchaseOrder.ID,
-				expectedGetResult: entities.PurchaseOrder{},
+				expectedGetResult: domain.PurchaseOrder{},
 				expectedGetError:  assert.AnError,
 				expectedGetCalls:  1,
 			},
-			want:    entities.PurchaseOrder{},
+			want:    domain.PurchaseOrder{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -158,7 +158,7 @@ func Test_purchaseOrder_Get(t *testing.T) {
 func Test_purchaseOrder_Create(t *testing.T) {
 	type args struct {
 		ctx                  *context.Context
-		purchaseOrder        entities.PurchaseOrder
+		purchaseOrder        domain.PurchaseOrder
 		expectedExistsResult bool
 		expectedExistsCalls  int
 		expectedSaveResult   int
@@ -168,8 +168,8 @@ func Test_purchaseOrder_Create(t *testing.T) {
 
 	ctx := context.TODO()
 
-	var expectedPurchaseOrder entities.PurchaseOrder
-	expectedPurchaseOrderSerialized, _ := os.ReadFile("../../../test/resources/valid_purchase_order.json")
+	var expectedPurchaseOrder domain.PurchaseOrder
+	expectedPurchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
 	if err := json.Unmarshal(expectedPurchaseOrderSerialized, &expectedPurchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -177,7 +177,7 @@ func Test_purchaseOrder_Create(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    entities.PurchaseOrder
+		want    domain.PurchaseOrder
 		wantErr error
 	}{
 		{
@@ -205,8 +205,8 @@ func Test_purchaseOrder_Create(t *testing.T) {
 				expectedSaveError:    nil,
 				expectedSaveCalls:    0,
 			},
-			want:    entities.PurchaseOrder{},
-			wantErr: ErrConflict,
+			want:    domain.PurchaseOrder{},
+			wantErr: errors.ErrConflict,
 		},
 		{
 			name: "Error saving purchaseOrder",
@@ -218,7 +218,7 @@ func Test_purchaseOrder_Create(t *testing.T) {
 				expectedSaveError:    assert.AnError,
 				expectedSaveCalls:    1,
 			},
-			want:    entities.PurchaseOrder{},
+			want:    domain.PurchaseOrder{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -237,7 +237,7 @@ func Test_purchaseOrder_Create(t *testing.T) {
 			purchaseOrderRepositoryMock.On(
 				"Save",
 				*tt.args.ctx,
-				mock.AnythingOfType("entities.PurchaseOrder"),
+				mock.AnythingOfType("domain.PurchaseOrder"),
 			).Return(
 				tt.args.expectedSaveResult,
 				tt.args.expectedSaveError,
@@ -261,7 +261,7 @@ func Test_purchaseOrder_Update(t *testing.T) {
 		ctx                        *context.Context
 		id                         int
 		updatePurchaseOrderRequest dtos.UpdatePurchaseOrderRequestDTO
-		expectedGetResult          entities.PurchaseOrder
+		expectedGetResult          domain.PurchaseOrder
 		expectedGetError           error
 		expectedGetCalls           int
 		expectedExistsResult       bool
@@ -272,8 +272,8 @@ func Test_purchaseOrder_Update(t *testing.T) {
 
 	ctx := context.TODO()
 
-	var originalPurchaseOrder entities.PurchaseOrder
-	originalPurchaseOrderSerialized, _ := os.ReadFile("../../../test/resources/valid_purchase_order.json")
+	var originalPurchaseOrder domain.PurchaseOrder
+	originalPurchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
 	err := json.Unmarshal(originalPurchaseOrderSerialized, &originalPurchaseOrder)
 	if err != nil {
 		t.Fatal(err)
@@ -299,7 +299,7 @@ func Test_purchaseOrder_Update(t *testing.T) {
 		ProductRecordID: &newProductRecordID,
 	}
 
-	updatedPurchaseOrder := entities.PurchaseOrder{
+	updatedPurchaseOrder := domain.PurchaseOrder{
 		ID:              originalPurchaseOrder.ID,
 		OrderNumber:     newOrderNumber,
 		OrderDate:       newOrderDate,
@@ -314,7 +314,7 @@ func Test_purchaseOrder_Update(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    entities.PurchaseOrder
+		want    domain.PurchaseOrder
 		wantErr error
 	}{
 		{
@@ -340,12 +340,12 @@ func Test_purchaseOrder_Update(t *testing.T) {
 				ctx:                        &ctx,
 				id:                         originalPurchaseOrder.ID,
 				updatePurchaseOrderRequest: updatePurchaseOrderRequest,
-				expectedGetResult:          entities.PurchaseOrder{},
-				expectedGetError:           ErrNotFound,
+				expectedGetResult:          domain.PurchaseOrder{},
+				expectedGetError:           errors.ErrNotFound,
 				expectedGetCalls:           1,
 			},
-			want:    entities.PurchaseOrder{},
-			wantErr: ErrNotFound,
+			want:    domain.PurchaseOrder{},
+			wantErr: errors.ErrNotFound,
 		},
 		{
 			name: "Error duplicated purchaseOrder_id",
@@ -359,8 +359,8 @@ func Test_purchaseOrder_Update(t *testing.T) {
 				expectedExistsResult:       true,
 				expectedExistsCalls:        1,
 			},
-			want:    entities.PurchaseOrder{},
-			wantErr: ErrConflict,
+			want:    domain.PurchaseOrder{},
+			wantErr: errors.ErrConflict,
 		},
 		{
 			name: "Error updating purchaseOrder",
@@ -376,7 +376,7 @@ func Test_purchaseOrder_Update(t *testing.T) {
 				expectedUpdateError:        assert.AnError,
 				expectedUpdateCalls:        1,
 			},
-			want:    entities.PurchaseOrder{},
+			want:    domain.PurchaseOrder{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -389,7 +389,7 @@ func Test_purchaseOrder_Update(t *testing.T) {
 
 			purchaseOrderRepositoryMock.On("Get", *tt.args.ctx, mock.AnythingOfType("int")).Return(tt.args.expectedGetResult, tt.args.expectedGetError)
 			purchaseOrderRepositoryMock.On("Exists", *tt.args.ctx, mock.AnythingOfType("int")).Return(tt.args.expectedExistsResult)
-			purchaseOrderRepositoryMock.On("Update", *tt.args.ctx, mock.AnythingOfType("entities.PurchaseOrder")).Return(tt.args.expectedUpdateError)
+			purchaseOrderRepositoryMock.On("Update", *tt.args.ctx, mock.AnythingOfType("domain.PurchaseOrder")).Return(tt.args.expectedUpdateError)
 
 			newPurchaseOrder, err := service.Update(tt.args.ctx, tt.args.id, tt.args.updatePurchaseOrderRequest)
 
@@ -408,7 +408,7 @@ func Test_purchaseOrder_Delete(t *testing.T) {
 	type args struct {
 		ctx                 *context.Context
 		id                  int
-		expectedGetResult   entities.PurchaseOrder
+		expectedGetResult   domain.PurchaseOrder
 		expectedGetError    error
 		expectedGetCalls    int
 		expectedDeleteError error
@@ -417,8 +417,8 @@ func Test_purchaseOrder_Delete(t *testing.T) {
 
 	ctx := context.TODO()
 
-	var expectedPurchaseOrder entities.PurchaseOrder
-	expectedPurchaseOrderSerialized, _ := os.ReadFile("../../../test/resources/valid_purchase_order.json")
+	var expectedPurchaseOrder domain.PurchaseOrder
+	expectedPurchaseOrderSerialized, _ := os.ReadFile("../../test/resources/valid_purchase_order.json")
 	if err := json.Unmarshal(expectedPurchaseOrderSerialized, &expectedPurchaseOrder); err != nil {
 		t.Fatal(err)
 	}
@@ -446,7 +446,7 @@ func Test_purchaseOrder_Delete(t *testing.T) {
 			args: args{
 				ctx:                 &ctx,
 				id:                  1,
-				expectedGetResult:   entities.PurchaseOrder{},
+				expectedGetResult:   domain.PurchaseOrder{},
 				expectedGetError:    assert.AnError,
 				expectedGetCalls:    1,
 				expectedDeleteError: nil,
@@ -500,7 +500,7 @@ func Test_purchaseOrderService_CountByPurchaseOrderID(t *testing.T) {
 	ctx := context.TODO()
 
 	var expectedBuyer domain.Buyer
-	expectedBuyerSerialized, _ := os.ReadFile("../../../test/resources/valid_buyer.json")
+	expectedBuyerSerialized, _ := os.ReadFile("../../test/resources/valid_buyer.json")
 	if err := json.Unmarshal(expectedBuyerSerialized, &expectedBuyer); err != nil {
 		t.Fatal(err)
 	}

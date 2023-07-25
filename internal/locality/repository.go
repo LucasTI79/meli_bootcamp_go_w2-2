@@ -1,16 +1,20 @@
-package repositories
+package locality
 
 import (
 	"context"
 	"database/sql"
-
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 )
 
-func LocalityTableHeaders() []string {
-	return []string{"id", "country_name", "province_name", "locality_name"}
+type LocalityRepository interface {
+	GetAll(ctx context.Context) ([]domain.Locality, error)
+	Get(ctx context.Context, id int) (domain.Locality, error)
+	Exists(ctx context.Context, id int) bool
+	Save(ctx context.Context, locality domain.Locality) (int, error)
+	Update(ctx context.Context, locality domain.Locality) error
+	Delete(ctx context.Context, id int) error
+	CountSellers(ctx context.Context, id int) (int, error)
 }
 
 const (
@@ -27,14 +31,14 @@ type localityRepository struct {
 	db *sql.DB
 }
 
-func NewLocalityRepository(db *sql.DB) repositories.LocalityRepository {
+func NewLocalityRepository(db *sql.DB) LocalityRepository {
 	return &localityRepository{
 		db: db,
 	}
 }
 
-func (r *localityRepository) GetAll(ctx context.Context) ([]entities.Locality, error) {
-	localities := make([]entities.Locality, 0)
+func (r *localityRepository) GetAll(ctx context.Context) ([]domain.Locality, error) {
+	localities := make([]domain.Locality, 0)
 
 	rows, err := r.db.Query(GetAllLocalities)
 	if err != nil {
@@ -42,7 +46,7 @@ func (r *localityRepository) GetAll(ctx context.Context) ([]entities.Locality, e
 	}
 
 	for rows.Next() {
-		locality := entities.Locality{}
+		locality := domain.Locality{}
 		err := rows.Scan(&locality.ID, &locality.CountryName, &locality.ProvinceName, &locality.LocalityName)
 		if err != nil {
 			return localities, err
@@ -54,12 +58,12 @@ func (r *localityRepository) GetAll(ctx context.Context) ([]entities.Locality, e
 	return localities, rows.Err()
 }
 
-func (r *localityRepository) Get(ctx context.Context, id int) (entities.Locality, error) {
+func (r *localityRepository) Get(ctx context.Context, id int) (domain.Locality, error) {
 	row := r.db.QueryRow(GetLocalityByID, id)
-	locality := entities.Locality{}
+	locality := domain.Locality{}
 	err := row.Scan(&locality.ID, &locality.CountryName, &locality.ProvinceName, &locality.LocalityName)
 	if err != nil {
-		return entities.Locality{}, err
+		return domain.Locality{}, err
 	}
 
 	return locality, nil
@@ -72,7 +76,7 @@ func (r *localityRepository) Exists(ctx context.Context, id int) bool {
 	return err == nil
 }
 
-func (r *localityRepository) Save(ctx context.Context, locality entities.Locality) (int, error) {
+func (r *localityRepository) Save(ctx context.Context, locality domain.Locality) (int, error) {
 	stmt, err := r.db.Prepare(SaveLocality)
 	if err != nil {
 		return 0, err
@@ -91,7 +95,7 @@ func (r *localityRepository) Save(ctx context.Context, locality entities.Localit
 	return int(id), nil
 }
 
-func (r *localityRepository) Update(ctx context.Context, locality entities.Locality) error {
+func (r *localityRepository) Update(ctx context.Context, locality domain.Locality) error {
 	stmt, err := r.db.Prepare(UpdateLocality)
 	if err != nil {
 		return err
@@ -127,7 +131,7 @@ func (r *localityRepository) Delete(ctx context.Context, id int) error {
 	}
 
 	if affect < 1 {
-		return services.ErrNotFound
+		return errors.ErrNotFound
 	}
 
 	return nil

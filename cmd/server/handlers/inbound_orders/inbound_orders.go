@@ -36,7 +36,7 @@ func NewInboundOrders(i inbound_order.Service) *InboundOrders {
 //	@Produce		json
 //	@Param			id	path		string	true	"ID of InboundOrders to be searched"
 //	@Success		200	{object}	web.response
-//	@Router			/api/v1/inboundOrders/{id} [get]
+//	@Router			/api/v1/inbound-orders/{id} [get]
 func (i *InboundOrders) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -70,7 +70,7 @@ func (i *InboundOrders) Get() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Success		200	{object}	web.response
-//	@Router			/api/v1/inboundOrders [get]
+//	@Router			/api/v1/inbound-orders [get]
 func (i *InboundOrders) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
@@ -100,7 +100,7 @@ func (i *InboundOrders) GetAll() gin.HandlerFunc {
 //	@Produce		json
 //	@Param			InboundOrders	body		domain.RequestCreateInboundOrders	true	"InboundOrders to Create"
 //	@Success		200			{object}	web.response
-//	@Router			/api/v1/inboundOrders [post]
+//	@Router			/api/v1/inbound-orders [post]
 func (i *InboundOrders) Save() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// createEmployee := domain.RequestCreateEmployee{}
@@ -168,7 +168,7 @@ func (i *InboundOrders) Save() gin.HandlerFunc {
 //	@Param			id			path		string							true	"ID of InboundOrders to be updated"
 //	@Param			InboundOrders	body		domain.RequestUpdateInboundOrders	true	"Updated InboundOrders details"
 //	@Success		200			{object}	web.response
-//	@Router			/api/v1/inboundOrders/{id} [patch]
+//	@Router			/api/v1/inbound-orders/{id} [patch]
 func (i *InboundOrders) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -205,7 +205,7 @@ func (i *InboundOrders) Update() gin.HandlerFunc {
 //	@Produce		json
 //	@Param			id	path		string	true	"ID of a InboundOrders to be excluded"
 //	@Success		204	{object}	web.response
-//	@Router			/api/v1/inboundOrders/{id} [delete]
+//	@Router			/api/v1/inbound-orders/{id} [delete]
 func (i *InboundOrders) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))

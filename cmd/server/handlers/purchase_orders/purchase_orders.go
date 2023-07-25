@@ -3,20 +3,22 @@ package purchase_orders
 import (
 	"errors"
 	"fmt"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/services"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 	"net/http"
 	"strconv"
+
+	dtos "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos/purchase_order"
+	errors2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/purchaseOrder"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
 
 	"github.com/gin-gonic/gin"
 )
 
 type PurchaseOrderHandler struct {
-	purchaseOrderService services.PurchaseOrderService
+	purchaseOrderService purchaseOrder.PurchaseOrderService
 }
 
-func NewPurchaseOrderHandler(purchaseOrderService services.PurchaseOrderService) *PurchaseOrderHandler {
+func NewPurchaseOrderHandler(purchaseOrderService purchaseOrder.PurchaseOrderService) *PurchaseOrderHandler {
 	return &PurchaseOrderHandler{
 		purchaseOrderService,
 	}
@@ -29,7 +31,7 @@ func NewPurchaseOrderHandler(purchaseOrderService services.PurchaseOrderService)
 //	@Description	Get the details of a PurchaseOrder
 //	@Produce		json
 //	@Param			id	path		string	true	"ID of PurchaseOrder to be searched"
-//	@Success		200	{object}	entities.PurchaseOrder
+//	@Success		200	{object}	domain.PurchaseOrder
 //	@Failure		400	{object}	web.errorResponse
 //	@Failure		404	{object}	web.errorResponse
 //	@Failure		500	{object}	web.errorResponse
@@ -46,7 +48,7 @@ func (handler *PurchaseOrderHandler) Get() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if purchaseOrder, err := handler.purchaseOrderService.Get(&ctx, id); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -67,7 +69,7 @@ func (handler *PurchaseOrderHandler) Get() gin.HandlerFunc {
 //	@Description	Get the details of all purchase-orders on the database.
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	web.response{data=[]entities.PurchaseOrder}
+//	@Success		200	{object}	web.response{data=[]domain.PurchaseOrder}
 //	@Failure		500	{object}	web.errorResponse
 //	@Router			/api/v1/purchase-orders [get]
 func (handler *PurchaseOrderHandler) GetAll() gin.HandlerFunc {
@@ -95,8 +97,8 @@ func (handler *PurchaseOrderHandler) GetAll() gin.HandlerFunc {
 //	@Description	Save a purchaseOrder on the database.
 //	@Accept			json
 //	@Produce		json
-//	@Param			Seller	body		entities.PurchaseOrder	true	"PurchaseOrder to Create"
-//	@Success		201		{object}	entities.PurchaseOrder
+//	@Param			Seller	body		domain.PurchaseOrder	true	"PurchaseOrder to Create"
+//	@Success		201		{object}	domain.PurchaseOrder
 //	@Failure		422		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
 //	@Router			/api/v1/purchase-orders [post]
@@ -114,7 +116,7 @@ func (handler *PurchaseOrderHandler) Create() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if createdPurchaseOrder, err := handler.purchaseOrderService.Create(&ctx, createPurchaseOrderRequest); err != nil {
 			switch err {
-			case services.ErrConflict:
+			case errors2.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 				return
 			default:
@@ -137,7 +139,7 @@ func (handler *PurchaseOrderHandler) Create() gin.HandlerFunc {
 //	@Produce		json
 //	@Param			id		path		string						true	"ID of PurchaseOrder to be updated"
 //	@Param			PurchaseOrder	body		dtos.UpdatePurchaseOrderRequestDTO	true	"Updated PurchaseOrder details"
-//	@Success		200		{object}	entities.PurchaseOrder
+//	@Success		200		{object}	domain.PurchaseOrder
 //	@Failure		400		{object}	web.errorResponse
 //	@Failure		404		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
@@ -160,9 +162,9 @@ func (handler *PurchaseOrderHandler) Update() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if updatedPurchaseOrder, err := handler.purchaseOrderService.Update(&ctx, id, updatePurchaseOrderRequest); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
-			case services.ErrConflict:
+			case errors2.ErrConflict:
 				web.Error(c, http.StatusConflict, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())
@@ -200,7 +202,7 @@ func (handler *PurchaseOrderHandler) Delete() gin.HandlerFunc {
 		ctx := c.Request.Context()
 		if err := handler.purchaseOrderService.Delete(&ctx, id); err != nil {
 			switch err {
-			case services.ErrNotFound:
+			case errors2.ErrNotFound:
 				web.Error(c, http.StatusNotFound, err.Error())
 			default:
 				web.Error(c, http.StatusInternalServerError, err.Error())

@@ -1,11 +1,12 @@
-package services
+package locality
 
 import (
 	"context"
 	"encoding/json"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/repositories/mocks"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"os"
@@ -15,15 +16,15 @@ import (
 func Test_localityService_GetAll(t *testing.T) {
 	type args struct {
 		ctx                  *context.Context
-		expectedGetAllResult []entities.Locality
+		expectedGetAllResult []domain.Locality
 		expectedGetAllError  error
 		expectedGetAllCalls  int
 	}
 
 	ctx := context.TODO()
 
-	var expectedLocalities []entities.Locality
-	expectedLocalitiesSerialized, _ := os.ReadFile("../../../test/resources/valid_localities.json")
+	var expectedLocalities []domain.Locality
+	expectedLocalitiesSerialized, _ := os.ReadFile("../../test/resources/valid_localities.json")
 	if err := json.Unmarshal(expectedLocalitiesSerialized, &expectedLocalities); err != nil {
 		t.Fatal(err)
 	}
@@ -31,7 +32,7 @@ func Test_localityService_GetAll(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    []entities.Locality
+		want    []domain.Locality
 		wantErr error
 	}{
 		{
@@ -49,11 +50,11 @@ func Test_localityService_GetAll(t *testing.T) {
 			name: "Error getting all",
 			args: args{
 				ctx:                  &ctx,
-				expectedGetAllResult: []entities.Locality{},
+				expectedGetAllResult: []domain.Locality{},
 				expectedGetAllError:  assert.AnError,
 				expectedGetAllCalls:  1,
 			},
-			want:    []entities.Locality{},
+			want:    []domain.Locality{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -77,15 +78,15 @@ func Test_localityService_Get(t *testing.T) {
 	type args struct {
 		ctx               *context.Context
 		id                int
-		expectedGetResult entities.Locality
+		expectedGetResult domain.Locality
 		expectedGetError  error
 		expectedGetCalls  int
 	}
 
 	ctx := context.TODO()
 
-	var expectedLocality entities.Locality
-	expectedLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	var expectedLocality domain.Locality
+	expectedLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	if err := json.Unmarshal(expectedLocalitySerialized, &expectedLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -93,7 +94,7 @@ func Test_localityService_Get(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    entities.Locality
+		want    domain.Locality
 		wantErr error
 	}{
 		{
@@ -113,23 +114,23 @@ func Test_localityService_Get(t *testing.T) {
 			args: args{
 				ctx:               &ctx,
 				id:                expectedLocality.ID,
-				expectedGetResult: entities.Locality{},
-				expectedGetError:  ErrNotFound,
+				expectedGetResult: domain.Locality{},
+				expectedGetError:  errors.ErrNotFound,
 				expectedGetCalls:  1,
 			},
-			want:    entities.Locality{},
-			wantErr: ErrNotFound,
+			want:    domain.Locality{},
+			wantErr: errors.ErrNotFound,
 		},
 		{
 			name: "Error connecting db",
 			args: args{
 				ctx:               &ctx,
 				id:                expectedLocality.ID,
-				expectedGetResult: entities.Locality{},
+				expectedGetResult: domain.Locality{},
 				expectedGetError:  assert.AnError,
 				expectedGetCalls:  1,
 			},
-			want:    entities.Locality{},
+			want:    domain.Locality{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -153,7 +154,7 @@ func Test_localityService_Get(t *testing.T) {
 func Test_localityService_Create(t *testing.T) {
 	type args struct {
 		ctx                  *context.Context
-		locality             entities.Locality
+		locality             domain.Locality
 		expectedExistsResult bool
 		expectedExistsCalls  int
 		expectedSaveResult   int
@@ -163,8 +164,8 @@ func Test_localityService_Create(t *testing.T) {
 
 	ctx := context.TODO()
 
-	var expectedLocality entities.Locality
-	expectedLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	var expectedLocality domain.Locality
+	expectedLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	if err := json.Unmarshal(expectedLocalitySerialized, &expectedLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -172,7 +173,7 @@ func Test_localityService_Create(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    entities.Locality
+		want    domain.Locality
 		wantErr error
 	}{
 		{
@@ -200,8 +201,8 @@ func Test_localityService_Create(t *testing.T) {
 				expectedSaveError:    nil,
 				expectedSaveCalls:    0,
 			},
-			want:    entities.Locality{},
-			wantErr: ErrConflict,
+			want:    domain.Locality{},
+			wantErr: errors.ErrConflict,
 		},
 		{
 			name: "Error saving locality",
@@ -213,7 +214,7 @@ func Test_localityService_Create(t *testing.T) {
 				expectedSaveError:    assert.AnError,
 				expectedSaveCalls:    1,
 			},
-			want:    entities.Locality{},
+			want:    domain.Locality{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -232,7 +233,7 @@ func Test_localityService_Create(t *testing.T) {
 			localityRepositoryMock.On(
 				"Save",
 				*tt.args.ctx,
-				mock.AnythingOfType("entities.Locality"),
+				mock.AnythingOfType("domain.Locality"),
 			).Return(
 				tt.args.expectedSaveResult,
 				tt.args.expectedSaveError,
@@ -255,7 +256,7 @@ func Test_localityService_Update(t *testing.T) {
 		ctx                   *context.Context
 		id                    int
 		updateLocalityRequest dtos.UpdateLocalityRequestDTO
-		expectedGetResult     entities.Locality
+		expectedGetResult     domain.Locality
 		expectedGetError      error
 		expectedGetCalls      int
 		expectedExistsResult  bool
@@ -266,8 +267,8 @@ func Test_localityService_Update(t *testing.T) {
 
 	ctx := context.TODO()
 
-	var originalLocality entities.Locality
-	originalLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	var originalLocality domain.Locality
+	originalLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	err := json.Unmarshal(originalLocalitySerialized, &originalLocality)
 	if err != nil {
 		t.Fatal(err)
@@ -283,7 +284,7 @@ func Test_localityService_Update(t *testing.T) {
 		LocalityName: &newLocalityName,
 	}
 
-	updatedLocality := entities.Locality{
+	updatedLocality := domain.Locality{
 		ID:           originalLocality.ID,
 		CountryName:  newCountryName,
 		ProvinceName: newProvinceName,
@@ -293,7 +294,7 @@ func Test_localityService_Update(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    entities.Locality
+		want    domain.Locality
 		wantErr error
 	}{
 		{
@@ -319,12 +320,12 @@ func Test_localityService_Update(t *testing.T) {
 				ctx:                   &ctx,
 				id:                    originalLocality.ID,
 				updateLocalityRequest: updateLocalityRequest,
-				expectedGetResult:     entities.Locality{},
-				expectedGetError:      ErrNotFound,
+				expectedGetResult:     domain.Locality{},
+				expectedGetError:      errors.ErrNotFound,
 				expectedGetCalls:      1,
 			},
-			want:    entities.Locality{},
-			wantErr: ErrNotFound,
+			want:    domain.Locality{},
+			wantErr: errors.ErrNotFound,
 		},
 		{
 			name: "Error duplicated locality_id",
@@ -338,8 +339,8 @@ func Test_localityService_Update(t *testing.T) {
 				expectedExistsResult:  true,
 				expectedExistsCalls:   1,
 			},
-			want:    entities.Locality{},
-			wantErr: ErrConflict,
+			want:    domain.Locality{},
+			wantErr: errors.ErrConflict,
 		},
 		{
 			name: "Error updating locality",
@@ -355,7 +356,7 @@ func Test_localityService_Update(t *testing.T) {
 				expectedUpdateError:   assert.AnError,
 				expectedUpdateCalls:   1,
 			},
-			want:    entities.Locality{},
+			want:    domain.Locality{},
 			wantErr: assert.AnError,
 		},
 	}
@@ -366,7 +367,7 @@ func Test_localityService_Update(t *testing.T) {
 
 			localityRepositoryMock.On("Get", *tt.args.ctx, mock.AnythingOfType("int")).Return(tt.args.expectedGetResult, tt.args.expectedGetError)
 			localityRepositoryMock.On("Exists", *tt.args.ctx, mock.AnythingOfType("int")).Return(tt.args.expectedExistsResult)
-			localityRepositoryMock.On("Update", *tt.args.ctx, mock.AnythingOfType("entities.Locality")).Return(tt.args.expectedUpdateError)
+			localityRepositoryMock.On("Update", *tt.args.ctx, mock.AnythingOfType("domain.Locality")).Return(tt.args.expectedUpdateError)
 
 			newBuyer, err := service.Update(tt.args.ctx, tt.args.id, tt.args.updateLocalityRequest)
 
@@ -385,7 +386,7 @@ func Test_localityService_Delete(t *testing.T) {
 	type args struct {
 		ctx                 *context.Context
 		id                  int
-		expectedGetResult   entities.Locality
+		expectedGetResult   domain.Locality
 		expectedGetError    error
 		expectedGetCalls    int
 		expectedDeleteError error
@@ -394,8 +395,8 @@ func Test_localityService_Delete(t *testing.T) {
 
 	ctx := context.TODO()
 
-	var expectedLocality entities.Locality
-	expectedLocalitySerialized, _ := os.ReadFile("../../../test/resources/valid_locality.json")
+	var expectedLocality domain.Locality
+	expectedLocalitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
 	if err := json.Unmarshal(expectedLocalitySerialized, &expectedLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -423,7 +424,7 @@ func Test_localityService_Delete(t *testing.T) {
 			args: args{
 				ctx:                 &ctx,
 				id:                  1,
-				expectedGetResult:   entities.Locality{},
+				expectedGetResult:   domain.Locality{},
 				expectedGetError:    assert.AnError,
 				expectedGetCalls:    1,
 				expectedDeleteError: nil,

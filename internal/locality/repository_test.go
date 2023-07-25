@@ -1,11 +1,11 @@
-package repositories
+package locality
 
 import (
 	"context"
 	"database/sql"
 	"encoding/json"
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain/entities"
+	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"regexp"
@@ -24,8 +24,8 @@ func Test_localityRepository_GetAll(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	validLocalitiesSerialized, _ := os.ReadFile("../../../../test/resources/valid_localities.json")
-	var validLocalities []entities.Locality
+	validLocalitiesSerialized, _ := os.ReadFile("../../test/resources/valid_localities.json")
+	var validLocalities []domain.Locality
 	if err := json.Unmarshal(validLocalitiesSerialized, &validLocalities); err != nil {
 		t.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func Test_localityRepository_GetAll(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    []entities.Locality
+		want    []domain.Locality
 		wantErr bool
 	}{
 		{
@@ -56,7 +56,7 @@ func Test_localityRepository_GetAll(t *testing.T) {
 			args: args{
 				ctx: ctx,
 			},
-			want:    []entities.Locality{},
+			want:    []domain.Locality{},
 			wantErr: true,
 		},
 	}
@@ -82,6 +82,46 @@ func Test_localityRepository_GetAll(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error getting locality by id", func(t *testing.T) {
+
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+		db.Close()
+
+		rows := sqlmock.NewRows([]string{"id", "country_name", "province_name", "locality_name"})
+		for _, locality := range validLocalities {
+			rows.AddRow(locality.ID, locality.CountryName, locality.ProvinceName, locality.LocalityName)
+		}
+		//if tt.wantErr {
+		//	rows.RowError(0, sql.ErrNoRows)
+		//}
+
+		mock.ExpectQuery(GetAllLocalities).
+			WithArgs().
+			WillReturnRows(rows)
+
+		_, err := r.GetAll(ctx)
+
+		//assert.Equal(t, tt.want, got)
+		assert.Equal(t, true, err != nil)
+
+	})
+
+	t.Run("Error getting locality by id", func(t *testing.T) {
+
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+
+		_, err := r.GetAll(ctx)
+
+		assert.Equal(t, true, err != nil)
+
+	})
 }
 
 func Test_localityRepository_Get(t *testing.T) {
@@ -97,8 +137,8 @@ func Test_localityRepository_Get(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var validLocality entities.Locality
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
+	var validLocality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &validLocality); err != nil {
 		t.Fatal(err)
 	}
@@ -107,7 +147,7 @@ func Test_localityRepository_Get(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    entities.Locality
+		want    domain.Locality
 		wantErr bool
 	}{
 		{
@@ -127,7 +167,7 @@ func Test_localityRepository_Get(t *testing.T) {
 				ctx: ctx,
 				id:  999,
 			},
-			want:    entities.Locality{},
+			want:    domain.Locality{},
 			wantErr: true,
 		},
 	}
@@ -164,8 +204,8 @@ func Test_localityRepository_Exists(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var locality entities.Locality
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
+	var locality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)
 	}
@@ -177,7 +217,7 @@ func Test_localityRepository_Exists(t *testing.T) {
 		want   bool
 	}{
 		{
-			name: "Exists",
+			name: "CardNumberExists",
 			fields: fields{
 				db: db,
 			},
@@ -228,14 +268,14 @@ func Test_localityRepository_Save(t *testing.T) {
 
 	type args struct {
 		ctx      context.Context
-		locality entities.Locality
+		locality domain.Locality
 	}
 
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var locality entities.Locality
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
+	var locality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)
 	}
@@ -259,7 +299,6 @@ func Test_localityRepository_Save(t *testing.T) {
 			want:    locality.ID,
 			wantErr: false,
 		},
-		// TODO Return errors
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -280,6 +319,38 @@ func Test_localityRepository_Save(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error preparing query", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+		db.Close()
+
+		r.Save(ctx, domain.Locality{})
+
+	})
+
+	t.Run("Error executing query", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta(SaveLocality))
+		mock.ExpectExec(regexp.QuoteMeta(SaveLocality)).
+			WithArgs(
+				locality.CountryName,
+				locality.ProvinceName,
+				locality.LocalityName,
+			).
+			WillReturnError(sql.ErrNoRows)
+
+		got, err := r.Save(ctx, locality)
+
+		assert.Equal(t, 0, got)
+		assert.Equal(t, true, err != nil)
+	})
 }
 
 func Test_localityRepository_Update(t *testing.T) {
@@ -289,14 +360,14 @@ func Test_localityRepository_Update(t *testing.T) {
 
 	type args struct {
 		ctx      context.Context
-		locality entities.Locality
+		locality domain.Locality
 	}
 
 	db, mock, _ := sqlmock.New()
 	ctx := context.TODO()
 
-	localitySerialized, _ := os.ReadFile("../../../../test/resources/valid_locality.json")
-	var locality entities.Locality
+	localitySerialized, _ := os.ReadFile("../../test/resources/valid_locality.json")
+	var locality domain.Locality
 	if err := json.Unmarshal(localitySerialized, &locality); err != nil {
 		t.Fatal(err)
 	}
@@ -318,7 +389,6 @@ func Test_localityRepository_Update(t *testing.T) {
 			},
 			wantErr: false,
 		},
-		//TODO Return errors
 	}
 
 	for _, tt := range tests {
@@ -340,6 +410,38 @@ func Test_localityRepository_Update(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error preparing query", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+
+		err := r.Update(ctx, domain.Locality{})
+
+		assert.Equal(t, true, err != nil)
+	})
+
+	t.Run("Error executing query", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta(UpdateLocality))
+		mock.ExpectExec(regexp.QuoteMeta(UpdateLocality)).
+			WithArgs(
+				locality.CountryName,
+				locality.ProvinceName,
+				locality.LocalityName,
+				locality.ID,
+			).
+			WillReturnError(sql.ErrNoRows)
+
+		err := r.Update(ctx, locality)
+
+		assert.Equal(t, true, err != nil)
+	})
 }
 
 func Test_localityRepository_Delete(t *testing.T) {
@@ -406,6 +508,35 @@ func Test_localityRepository_Delete(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err != nil)
 		})
 	}
+
+	t.Run("Error preparing query", func(t *testing.T) {
+		db, _, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+		db.Close()
+
+		err := r.Delete(ctx, 6700)
+
+		assert.Equal(t, true, err != nil)
+	})
+
+	t.Run("Error executing query", func(t *testing.T) {
+		db, mock, _ := sqlmock.New()
+		ctx := context.TODO()
+
+		r := NewLocalityRepository(db)
+
+		mock.ExpectPrepare(regexp.QuoteMeta(DeleteLocalityByID))
+		mock.ExpectExec(regexp.QuoteMeta(DeleteLocalityByID)).
+			WithArgs(
+				6700,
+			).WillReturnError(sql.ErrNoRows)
+
+		err := r.Delete(ctx, 6700)
+
+		assert.Equal(t, true, err != nil)
+	})
 }
 
 func Test_localityRepository_GetNumberOfSellers(t *testing.T) {

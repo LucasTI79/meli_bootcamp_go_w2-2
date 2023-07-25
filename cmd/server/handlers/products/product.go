@@ -114,7 +114,7 @@ func (p *Product) Get() gin.HandlerFunc {
 //	@Description	Create Product
 //	@Accept			json
 //	@Produce		json
-//	@Param			Product	body		requestCreateProduct	true	"Product to Create"
+//	@Param			Product	body		RequestCreateProduct	true	"Product to Create"
 //	@Success		201		{object}	web.response
 //	@Router			/api/v1/products [post]
 func (p *Product) Create() gin.HandlerFunc {
@@ -204,7 +204,7 @@ func (p *Product) Create() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		string			true	"ID of Products to be updated"
-//	@Param			Products	body		requestUpdateProduct	true	"Updated Product details"
+//	@Param			Products	body		RequestUpdateProduct	true	"Updated Product details"
 //	@Success		200			{object}	web.response
 //	@Router			/api/v1/products/{id} [patch]
 func (p *Product) Update() gin.HandlerFunc {
