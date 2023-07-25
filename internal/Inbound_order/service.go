@@ -133,8 +133,8 @@ func (s *service) CountInboundOrders(ctx *context.Context) ([]domain.EmployeeInb
 
 	inboundOrdersCount := []domain.EmployeeInboundOrdersCount{}
 
-	count := 0
 	for _, employee := range allEmployees {
+		count := 0
 		for _, inboundOrder := range allInboundOrders {
 			inboundOrderEmployeeID, _ := strconv.Atoi(inboundOrder.EmployeeID)
 			if inboundOrderEmployeeID == employee.ID {

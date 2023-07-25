@@ -106,7 +106,7 @@ func CarrierFullRequestValidator(c *gin.Context, req dtos.CarrierRequestDTO) err
 //	@Tags			Carriers
 //	@Description	get report carriers by localities
 //	@Produce		json
-//	@Param			id	path		int		"locality_id"
+//	@Param			id	path		int false "locality_id"
 //	@Success		200	{object}	[]dtos.DataLocalityAndCarrier
 //	@Router			/api/v1/localities/reportCarries [get]
 func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {

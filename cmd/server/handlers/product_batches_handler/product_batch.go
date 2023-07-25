@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	ErrInvalidID = errors.New("Invalid ID").Error()
+	ErrInvalidID              = errors.New("Invalid ID").Error()
 	ErrSectionProductsReports = errors.New("error returning product reports by Section").Error()
 )
 
@@ -50,7 +50,7 @@ func (p *ProductBatches) Get() gin.HandlerFunc {
 			web.Success(c, http.StatusOK, result)
 			return
 		}
-		
+
 		sectionID, err := strconv.Atoi(idParam)
 		if err != nil {
 			web.Error(c, http.StatusBadRequest, ErrInvalidID)
@@ -77,7 +77,7 @@ func (p *ProductBatches) Get() gin.HandlerFunc {
 // @Description	Create section
 // @Accept			json
 // @Produce		json
-// @Param			Section	body		requestCreateSection	true	"Section to Create"
+// @Param			Section	body		productbatchesdto.CreateProductBatchesDTO	true	"Section to Create"
 // @Success		201		{object}	web.response
 // @Router			/api/v1/sections [post]
 func (p *ProductBatches) Create() gin.HandlerFunc {
