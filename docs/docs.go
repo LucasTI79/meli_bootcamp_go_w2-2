@@ -1032,6 +1032,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/productBatches": {
+            "post": {
+                "description": "Create ProductBatch",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBatch"
+                ],
+                "summary": "Create ProductBatch",
+                "parameters": [
+                    {
+                        "description": "ProductBatch to Create",
+                        "name": "ProductBatch",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productbatchesdto.CreateProductBatchesDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/products": {
             "get": {
                 "description": "getAll products",
@@ -1678,6 +1712,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/sections/reportProducts/{id}": {
+            "get": {
+                "description": "Get all products by section / Section Products Reports By Section",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductBatch"
+                ],
+                "summary": "SectionProductsReports / SectionProductsReportsBySection",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of a Products Reports to search",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.ProductBySection"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/sections/{id}": {
             "get": {
                 "description": "Get the details of a Section",
@@ -2144,6 +2212,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "province_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ProductBySection": {
+            "type": "object",
+            "properties": {
+                "products_count": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                },
+                "section_number": {
                     "type": "string"
                 }
             }

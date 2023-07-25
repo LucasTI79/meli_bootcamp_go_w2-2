@@ -2,6 +2,7 @@ package routes
 
 import (
 	"database/sql"
+
 	handlers "github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/localities"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/cmd/server/handlers/purchase_orders"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
@@ -109,8 +110,8 @@ func (r *router) buildProductBatchesRoutes() {
 	sectionRepo := section.NewRepository(r.db)
 	service := prodBatches.NewService(repo, productRepo, sectionRepo)
 	handler := productbatcheshandler.NewProductBatches(service)
-	r.rg.POST("/product-batch", handler.Create())
-	r.rg.GET("/product-batches/sections/report-products/:id", handler.Get())
+	r.rg.POST("/productBatches", handler.Create())
+	r.rg.GET("sections/reportProducts/:id", handler.Get())
 }
 
 func (r *router) buildWarehouseRoutes() {

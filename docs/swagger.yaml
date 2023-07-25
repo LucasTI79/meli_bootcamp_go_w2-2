@@ -45,6 +45,15 @@ definitions:
     - locality_name
     - province_name
     type: object
+  domain.ProductBySection:
+    properties:
+      products_count:
+        type: integer
+      section_id:
+        type: integer
+      section_number:
+        type: string
+    type: object
   domain.PurchaseOrder:
     properties:
       buyer_id:
@@ -1099,6 +1108,28 @@ paths:
       summary: Get Report Carriers By Localities
       tags:
       - Carriers
+  /api/v1/productBatches:
+    post:
+      consumes:
+      - application/json
+      description: Create ProductBatch
+      parameters:
+      - description: ProductBatch to Create
+        in: body
+        name: ProductBatch
+        required: true
+        schema:
+          $ref: '#/definitions/productbatchesdto.CreateProductBatchesDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web.response'
+      summary: Create ProductBatch
+      tags:
+      - ProductBatch
   /api/v1/products:
     get:
       consumes:
@@ -1588,6 +1619,28 @@ paths:
       summary: Update Section
       tags:
       - Sections
+  /api/v1/sections/reportProducts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all products by section / Section Products Reports By Section
+      parameters:
+      - description: ID of a Products Reports to search
+        in: path
+        name: id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.ProductBySection'
+            type: array
+      summary: SectionProductsReports / SectionProductsReportsBySection
+      tags:
+      - ProductBatch
   /api/v1/sellers:
     get:
       consumes:
