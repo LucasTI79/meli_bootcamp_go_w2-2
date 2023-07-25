@@ -3,13 +3,14 @@ package localities
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/dtos"
 	errors2 "github.com/extmatperez/meli_bootcamp_go_w2-2/internal/application/errors"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/domain"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/internal/locality"
 	"github.com/extmatperez/meli_bootcamp_go_w2-2/pkg/web"
-	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -226,7 +227,7 @@ func (handler *LocalityHandler) Delete() gin.HandlerFunc {
 //	@Failure		404		{object}	web.errorResponse
 //	@Failure		422		{object}	web.errorResponse
 //	@Failure		500		{object}	web.errorResponse
-//	@Router			/api/v1/localities [post]
+//	@Router			/api/v1/localities/count [get]
 func (handler *LocalityHandler) CountSellers() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := getIdFromUri(c)

@@ -261,6 +261,129 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/buyers/{id}/report-purchase-orders": {
+            "get": {
+                "description": "search for a purchaseOrder and return the number of sellers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "CountPurchaseOrders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of PurchaseOrder to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/carriers": {
+            "get": {
+                "description": "get carriers",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carriers"
+                ],
+                "summary": "List carriers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Carrier"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create carriers",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carriers"
+                ],
+                "summary": "Create carriers",
+                "parameters": [
+                    {
+                        "description": "carrier to create",
+                        "name": "Carrier",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.CarrierRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Carrier"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/employees": {
             "get": {
                 "description": "getAll employees",
@@ -417,6 +540,498 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/inbound-orders": {
+            "get": {
+                "description": "getAll inboundOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InboundOrders"
+                ],
+                "summary": "List InboundOrders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create inboundOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InboundOrders"
+                ],
+                "summary": "Create InboundOrders",
+                "parameters": [
+                    {
+                        "description": "InboundOrders to Create",
+                        "name": "InboundOrders",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.RequestCreateInboundOrders"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/inbound-orders/{id}": {
+            "get": {
+                "description": "Get the details of a InboundOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InboundOrders"
+                ],
+                "summary": "Get InboundOrders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of InboundOrders to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete InboundOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InboundOrders"
+                ],
+                "summary": "Delete InboundOrders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of a InboundOrders to be excluded",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update the details of a InboundOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "InboundOrders"
+                ],
+                "summary": "Update InboundOrders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of InboundOrders to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated InboundOrders details",
+                        "name": "InboundOrders",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.RequestUpdateInboundOrders"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/localities": {
+            "get": {
+                "description": "Get the details of all localities on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "List Localities",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.Locality"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Save a locality on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Create Locality",
+                "parameters": [
+                    {
+                        "description": "Locality to Create",
+                        "name": "Seller",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Locality"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Locality"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/localities/count": {
+            "get": {
+                "description": "search for a locality and return the number of sellers.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "CountSellers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Locality to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dtos.GetNumberOfSellersResponseDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/localities/reportCarries": {
+            "get": {
+                "description": "get report carriers by localities",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Carriers"
+                ],
+                "summary": "Get Report Carriers By Localities",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of a Locality to search",
+                        "name": "id",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dtos.DataLocalityAndCarrier"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/localities/{id}": {
+            "get": {
+                "description": "Get the details of a Locality",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Get Locality",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Locality to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Locality"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete Localities",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Delete Locality",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of a Locality to be excluded",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update the details of a Locality",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localities"
+                ],
+                "summary": "Update Locality",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of Locality to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated Locality details",
+                        "name": "Locality",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdateLocalityRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Locality"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/products": {
             "get": {
                 "description": "getAll products",
@@ -458,7 +1073,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestCreateProduct"
+                            "$ref": "#/definitions/products.RequestCreateProduct"
                         }
                     }
                 ],
@@ -559,10 +1174,445 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestUpdateProduct"
+                            "$ref": "#/definitions/products.RequestUpdateProduct"
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/productsRecords": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductsRecords"
+                ],
+                "summary": "List productsRecords",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductsRecords"
+                ],
+                "summary": "Create ProductRecord",
+                "parameters": [
+                    {
+                        "description": "ProductRecord to Create",
+                        "name": "ProductRecord",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRecords.RequestCreateProductRecord"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/productsRecords/{id}": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductsRecords"
+                ],
+                "summary": "Get ProductRecord",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of ProductRecord to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete ProductRecord",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductsRecords"
+                ],
+                "summary": "Delete ProductRecord",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of a ProductRecord to be excluded",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductsRecords"
+                ],
+                "summary": "Update ProductRecord",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of ProductsRecords to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated ProductRecord details",
+                        "name": "ProductsRecords",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/productsRecords.RequestUpdateProductRecord"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/purchase-orders": {
+            "get": {
+                "description": "Get the details of all purchase-orders on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "List PurchaseOrders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/web.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/domain.PurchaseOrder"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Save a purchaseOrder on the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "Create PurchaseOrder",
+                "parameters": [
+                    {
+                        "description": "PurchaseOrder to Create",
+                        "name": "Seller",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.PurchaseOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.PurchaseOrder"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/purchase-orders/{id}": {
+            "get": {
+                "description": "Get the details of a PurchaseOrder",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "Get PurchaseOrder",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of PurchaseOrder to be searched",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.PurchaseOrder"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete PurchaseOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "Delete PurchaseOrder",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of a PurchaseOrder to be excluded",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Update the details of a PurchaseOrder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PurchaseOrders"
+                ],
+                "summary": "Update PurchaseOrder",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of PurchaseOrder to be updated",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated PurchaseOrder details",
+                        "name": "PurchaseOrder",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dtos.UpdatePurchaseOrderRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.PurchaseOrder"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reportInboundOrders": {
+            "get": {
+                "description": "get countInboundOrders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CountInboundOrders"
+                ],
+                "summary": "List InboundOrders Count",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/reportInboundOrders/{id}": {
+            "get": {
+                "description": "get countInboundOrdersById",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CountInboundOrdersByID"
+                ],
+                "summary": "List InboundOrders Count by Id",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -614,7 +1664,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestCreateSection"
+                            "$ref": "#/definitions/sections.CreateSectionRequestDTO"
                         }
                     }
                 ],
@@ -715,7 +1765,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.requestUpdateSection"
+                            "$ref": "#/definitions/sections.UpdateSectionRequestDTO"
                         }
                     }
                 ],
@@ -1052,6 +2102,94 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.Carrier": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "string"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locality_id": {
+                    "type": "integer"
+                },
+                "telephone": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Locality": {
+            "type": "object",
+            "required": [
+                "country_name",
+                "id",
+                "locality_name",
+                "province_name"
+            ],
+            "properties": {
+                "country_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "province_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.PurchaseOrder": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "x-order": "0"
+                },
+                "order_number": {
+                    "type": "string",
+                    "x-order": "1"
+                },
+                "order_date": {
+                    "type": "string",
+                    "format": "2006-01-02",
+                    "x-order": "2"
+                },
+                "tracking_code": {
+                    "type": "string",
+                    "x-order": "3"
+                },
+                "buyer_id": {
+                    "type": "integer",
+                    "x-order": "4"
+                },
+                "carrier_id": {
+                    "type": "integer",
+                    "x-order": "5"
+                },
+                "order_status_id": {
+                    "type": "integer",
+                    "x-order": "6"
+                },
+                "warehouse_id": {
+                    "type": "integer",
+                    "x-order": "7"
+                },
+                "product_record_id": {
+                    "type": "integer",
+                    "x-order": "8"
+                }
+            }
+        },
         "domain.RequestCreateEmployee": {
             "type": "object",
             "properties": {
@@ -1069,6 +2207,26 @@ const docTemplate = `{
                 }
             }
         },
+        "domain.RequestCreateInboundOrders": {
+            "type": "object",
+            "properties": {
+                "employee_id": {
+                    "type": "string"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "product_batch_id": {
+                    "type": "string"
+                },
+                "warehouse_id": {
+                    "type": "string"
+                }
+            }
+        },
         "domain.RequestUpdateEmployee": {
             "type": "object",
             "properties": {
@@ -1083,6 +2241,26 @@ const docTemplate = `{
                 },
                 "warehouse_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "domain.RequestUpdateInboundOrders": {
+            "type": "object",
+            "properties": {
+                "employee_id": {
+                    "type": "string"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "product_batch_id": {
+                    "type": "string"
+                },
+                "warehouse_id": {
+                    "type": "string"
                 }
             }
         },
@@ -1105,6 +2283,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "warehouse_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.CarrierRequestDTO": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "cid": {
+                    "type": "string"
+                },
+                "company_name": {
+                    "type": "string"
+                },
+                "locality_id": {
+                    "type": "integer"
+                },
+                "telephone": {
                     "type": "string"
                 }
             }
@@ -1134,6 +2332,7 @@ const docTemplate = `{
                 "address",
                 "cid",
                 "company_name",
+                "locality_id",
                 "telephone"
             ],
             "properties": {
@@ -1146,8 +2345,51 @@ const docTemplate = `{
                 "company_name": {
                     "type": "string"
                 },
+                "locality_id": {
+                    "type": "string"
+                },
                 "telephone": {
                     "type": "string"
+                }
+            }
+        },
+        "dtos.DataLocalityAndCarrier": {
+            "type": "object",
+            "properties": {
+                "count_carrier": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "locality_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.GetNumberOfPurchaseOrdersByBuyerResponseDTO": {
+            "type": "object",
+            "properties": {
+                "buyer_id": {
+                    "type": "integer"
+                },
+                "purchase_orders_count": {
+                    "description": "LocalityName string ` + "`" + `json:\"locality_name\"` + "`" + `",
+                    "type": "integer"
+                }
+            }
+        },
+        "dtos.GetNumberOfSellersResponseDTO": {
+            "type": "object",
+            "properties": {
+                "locality_id": {
+                    "type": "integer"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "sellers_count": {
+                    "type": "integer"
                 }
             }
         },
@@ -1168,6 +2410,49 @@ const docTemplate = `{
                 }
             }
         },
+        "dtos.UpdateLocalityRequestDTO": {
+            "type": "object",
+            "properties": {
+                "country_name": {
+                    "type": "string"
+                },
+                "locality_name": {
+                    "type": "string"
+                },
+                "province_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dtos.UpdatePurchaseOrderRequestDTO": {
+            "type": "object",
+            "properties": {
+                "buyer_id": {
+                    "type": "integer"
+                },
+                "carrier_id": {
+                    "type": "integer"
+                },
+                "order_date": {
+                    "type": "string"
+                },
+                "order_number": {
+                    "type": "string"
+                },
+                "order_status_id": {
+                    "type": "integer"
+                },
+                "product_record_id": {
+                    "type": "integer"
+                },
+                "tracking_code": {
+                    "type": "string"
+                },
+                "warehouse_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "dtos.UpdateSellerRequestDTO": {
             "type": "object",
             "properties": {
@@ -1178,6 +2463,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "company_name": {
+                    "type": "string"
+                },
+                "locality_id": {
                     "type": "string"
                 },
                 "telephone": {
@@ -1205,7 +2493,55 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.requestCreateProduct": {
+        "productbatchesdto.CreateProductBatchesDTO": {
+            "type": "object",
+            "required": [
+                "batch_number",
+                "current_quantity",
+                "current_temperature",
+                "due_date",
+                "initial_quantity",
+                "manufacturing_date",
+                "manufacturing_hour",
+                "minimum_temperature",
+                "product_id",
+                "section_id"
+            ],
+            "properties": {
+                "batch_number": {
+                    "type": "integer"
+                },
+                "current_quantity": {
+                    "type": "integer"
+                },
+                "current_temperature": {
+                    "type": "number"
+                },
+                "due_date": {
+                    "description": "Example: \"2023-07-06\"",
+                    "type": "string"
+                },
+                "initial_quantity": {
+                    "type": "integer"
+                },
+                "manufacturing_date": {
+                    "type": "string"
+                },
+                "manufacturing_hour": {
+                    "type": "integer"
+                },
+                "minimum_temperature": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "section_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "products.RequestCreateProduct": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1243,7 +2579,79 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.requestCreateSection": {
+        "products.RequestUpdateProduct": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "expiration_rate": {
+                    "type": "integer"
+                },
+                "freezing_rate": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "length": {
+                    "type": "number"
+                },
+                "netweight": {
+                    "type": "number"
+                },
+                "product_code": {
+                    "type": "string"
+                },
+                "product_type_id": {
+                    "type": "integer"
+                },
+                "recommended_freezing_temperature": {
+                    "type": "number"
+                },
+                "seller_id": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "productsRecords.RequestCreateProductRecord": {
+            "type": "object",
+            "properties": {
+                "last_update_date": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "purchase_price": {
+                    "type": "number"
+                },
+                "sale_price": {
+                    "type": "number"
+                }
+            }
+        },
+        "productsRecords.RequestUpdateProductRecord": {
+            "type": "object",
+            "properties": {
+                "last_update_date": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "purchase_price": {
+                    "type": "number"
+                },
+                "sale_price": {
+                    "type": "number"
+                }
+            }
+        },
+        "sections.CreateSectionRequestDTO": {
             "type": "object",
             "properties": {
                 "current_capacity": {
@@ -1272,45 +2680,7 @@ const docTemplate = `{
                 }
             }
         },
-        "handlers.requestUpdateProduct": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "expiration_rate": {
-                    "type": "integer"
-                },
-                "freezing_rate": {
-                    "type": "integer"
-                },
-                "height": {
-                    "type": "number"
-                },
-                "length": {
-                    "type": "number"
-                },
-                "netweight": {
-                    "type": "number"
-                },
-                "product_code": {
-                    "type": "string"
-                },
-                "product_type_id": {
-                    "type": "integer"
-                },
-                "recommended_freezing_temperature": {
-                    "type": "number"
-                },
-                "seller_id": {
-                    "type": "integer"
-                },
-                "width": {
-                    "type": "number"
-                }
-            }
-        },
-        "handlers.requestUpdateSection": {
+        "sections.UpdateSectionRequestDTO": {
             "type": "object",
             "properties": {
                 "current_capacity": {

@@ -90,7 +90,7 @@ func (s *Section) Get() gin.HandlerFunc {
 //	@Description	Create section
 //	@Accept			json
 //	@Produce		json
-//	@Param			Section	body		requestCreateSection	true	"Section to Create"
+//	@Param			Section	body		sections.CreateSectionRequestDTO	true	"Section to Create"
 //	@Success		201		{object}	web.response
 //	@Router			/api/v1/sections [post]
 func (s *Section) Create() gin.HandlerFunc {
@@ -166,7 +166,7 @@ func (s *Section) Create() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		string			true	"ID of Section to be updated"
-//	@Param			Sections	body		requestUpdateSection	true	"Updated Section details"
+//	@Param			Sections	body		sections.UpdateSectionRequestDTO	true	"Updated Section details"
 //	@Success		200			{object}	web.response
 //	@Router			/api/v1/sections/{id} [patch]
 func (s *Section) Update() gin.HandlerFunc {

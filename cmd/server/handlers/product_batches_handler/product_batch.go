@@ -77,7 +77,7 @@ func (p *ProductBatches) Get() gin.HandlerFunc {
 // @Description	Create section
 // @Accept			json
 // @Produce		json
-// @Param			Section	body		requestCreateSection	true	"Section to Create"
+// @Param			Section	body		productbatchesdto.CreateProductBatchesDTO	true	"Section to Create"
 // @Success		201		{object}	web.response
 // @Router			/api/v1/sections [post]
 func (p *ProductBatches) Create() gin.HandlerFunc {

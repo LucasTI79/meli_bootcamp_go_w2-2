@@ -104,7 +104,7 @@ func (p *ProductRecord) Get() gin.HandlerFunc {
 //	@LastUpdateDate	Create ProductRecord
 //	@Accept			json
 //	@Produce		json
-//	@Param			ProductRecord	body		requestCreateProductRecord	true	"ProductRecord to Create"
+//	@Param			ProductRecord	body		RequestCreateProductRecord	true	"ProductRecord to Create"
 //	@Success		201		{object}	web.response
 //	@Router			/api/v1/productsRecords [post]
 func (p *ProductRecord) Create() gin.HandlerFunc {
@@ -159,7 +159,7 @@ func (p *ProductRecord) Create() gin.HandlerFunc {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id			path		string			true	"ID of ProductsRecords to be updated"
-//	@Param			ProductsRecords	body		requestUpdateProductRecord	true	"Updated ProductRecord details"
+//	@Param			ProductsRecords	body		RequestUpdateProductRecord	true	"Updated ProductRecord details"
 //	@Success		200			{object}	web.response
 //	@Router			/api/v1/productsRecords/{id} [patch]
 func (p *ProductRecord) Update() gin.HandlerFunc {
