@@ -2,7 +2,6 @@ package carriers
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -106,7 +105,7 @@ func CarrierFullRequestValidator(c *gin.Context, req dtos.CarrierRequestDTO) err
 //	@Tags			Carriers
 //	@Description	get report carriers by localities
 //	@Produce		json
-//	@Param			id	path	int	true	"ID of a Locality to search"
+//	@Param			id	path	int	false	"ID of a Locality to search"
 //	@Success		200	{object}	[]dtos.DataLocalityAndCarrier
 //	@Router			/api/v1/localities/reportCarries [get]
 func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
@@ -122,7 +121,6 @@ func (carrier *Carrier) GetReportCarriersByLocalities() gin.HandlerFunc {
 
 		} else {
 			localityId, e := strconv.Atoi(c.Query("id"))
-			fmt.Print(localityId)
 			if e != nil {
 				web.Error(c, http.StatusBadRequest, "parameter id must be a integer")
 				return
