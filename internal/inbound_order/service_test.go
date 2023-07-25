@@ -432,3 +432,213 @@ func TestUpdate(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestCountInboundOrdersByID(t *testing.T) {
+
+	t.Run("find_by_id_existent", func(t *testing.T) {
+		expectedCountInboundOrders := domain.EmployeeInboundOrdersCount{
+			ID:                 1,
+			CardNumberID:       "123",
+			FirstName:          "Maria",
+			LastName:           "Silva",
+			WarehouseID:        1,
+			InboundOrdersCount: 2,
+		}
+
+		employeeFound := domain.Employee{
+			ID:           1,
+			CardNumberID: "123",
+			FirstName:    "Maria",
+			LastName:     "Silva",
+			WarehouseID:  1,
+		}
+
+		inboundOrdersFound := []domain.InboundOrders{
+			{
+				ID:             1,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "1",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+			{
+				ID:             2,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "1",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+		}
+
+		ctx := context.TODO()
+
+		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(employeeFound, nil)
+		inboundOrdersRepositoryMock.On("GetAll", ctx).Return(inboundOrdersFound, nil)
+
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+		contInboundOrdersReceived, err := service.CountInboundOrdersByID(&ctx, 1)
+
+		assert.Equal(t, expectedCountInboundOrders, contInboundOrdersReceived)
+		assert.Equal(t, nil, err)
+	})
+
+	t.Run("find_by_employeeid_non_existent", func(t *testing.T) {
+		ctx := context.TODO()
+
+		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, inbound_order.ErrNotFound)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+		contInboundOrdersReceived, err := service.CountInboundOrdersByID(&ctx, 1)
+
+		assert.Equal(t, domain.EmployeeInboundOrdersCount{}, contInboundOrdersReceived)
+		assert.Equal(t, inbound_order.ErrNotFound, err)
+	})
+
+	t.Run("find_inbound_orders_non_existent", func(t *testing.T) {
+		ctx := context.TODO()
+
+		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("Get", ctx, mock.AnythingOfType("int")).Return(domain.Employee{}, nil)
+		inboundOrdersRepositoryMock.On("GetAll", ctx).Return([]domain.InboundOrders{}, inbound_order.ErrNotFound)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+		contInboundOrdersReceived, err := service.CountInboundOrdersByID(&ctx, 1)
+
+		assert.Equal(t, domain.EmployeeInboundOrdersCount{}, contInboundOrdersReceived)
+		assert.Equal(t, inbound_order.ErrNotFound, err)
+	})
+
+}
+
+func TestCountInboundOrders(t *testing.T) {
+	t.Run("find_all", func(t *testing.T) {
+		expectedCountInboundOrders := []domain.EmployeeInboundOrdersCount{
+			{
+				ID:                 1,
+				CardNumberID:       "123",
+				FirstName:          "Maria",
+				LastName:           "Silva",
+				WarehouseID:        1,
+				InboundOrdersCount: 0,
+			},
+			{
+				ID:                 2,
+				CardNumberID:       "321",
+				FirstName:          "teste",
+				LastName:           "teste",
+				WarehouseID:        1,
+				InboundOrdersCount: 2,
+			},
+		}
+
+		employeeFound := []domain.Employee{
+			{
+				ID:           1,
+				CardNumberID: "123",
+				FirstName:    "Maria",
+				LastName:     "Silva",
+				WarehouseID:  1,
+			},
+			{
+				ID:           2,
+				CardNumberID: "321",
+				FirstName:    "teste",
+				LastName:     "teste",
+				WarehouseID:  1,
+			},
+		}
+
+		inboundOrdersFound := []domain.InboundOrders{
+			{
+				ID:             1,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "2",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+			{
+				ID:             2,
+				OrderDate:      "teste",
+				OrderNumber:    "teste",
+				EmployeeID:     "2",
+				ProductBatchID: "teste",
+				WarehouseID:    "teste",
+			},
+		}
+
+		ctx := context.TODO()
+
+		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("GetAll", ctx).Return(employeeFound, nil)
+		inboundOrdersRepositoryMock.On("GetAll", ctx).Return(inboundOrdersFound, nil)
+
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+		countInboundOrdersReceived, err := service.CountInboundOrders(&ctx)
+
+		assert.Equal(t, expectedCountInboundOrders, countInboundOrdersReceived)
+		assert.Equal(t, nil, err)
+	})
+
+	t.Run("find_by_employeeid_non_existent", func(t *testing.T) {
+		ctx := context.TODO()
+
+		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("GetAll", ctx).Return([]domain.Employee{}, inbound_order.ErrNotFound)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+		contInboundOrdersReceived, err := service.CountInboundOrders(&ctx)
+
+		assert.Nil(t, contInboundOrdersReceived)
+		assert.Equal(t, inbound_order.ErrNotFound, err)
+	})
+
+	t.Run("find_inbound_orders_non_existent", func(t *testing.T) {
+		ctx := context.TODO()
+
+		inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+		employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+		employeeRepositoryMock.On("GetAll", ctx).Return([]domain.Employee{}, nil)
+		inboundOrdersRepositoryMock.On("GetAll", ctx).Return([]domain.InboundOrders{}, inbound_order.ErrNotFound)
+		service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+		contInboundOrdersReceived, err := service.CountInboundOrders(&ctx)
+
+		assert.Nil(t, contInboundOrdersReceived)
+		assert.Equal(t, inbound_order.ErrNotFound, err)
+	})
+
+	// t.Run("unexpected_error", func(t *testing.T) {
+
+	// 	ctx := context.TODO()
+
+	// 	inboundOrdersRepositoryMock := mocks.NewInboundOrdersRepositoryMock()
+	// 	employeeRepositoryMock := new(employee_mocks.EmployeeRepositoryMock)
+
+	// 	inboundOrdersRepositoryMock.On("GetAll", ctx).Return([]domain.InboundOrders{}, errors.New("error"))
+	// 	service := inbound_order.NewService(inboundOrdersRepositoryMock, employeeRepositoryMock)
+
+	// 	inboundOrdersReceived, err := service.GetAll(&ctx)
+
+	// 	assert.Nil(t, inboundOrdersReceived)
+	// 	assert.Equal(t, errors.New("error"), err)
+	// })
+
+}
